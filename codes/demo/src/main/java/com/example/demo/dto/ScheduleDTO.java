@@ -19,6 +19,7 @@ public class ScheduleDTO {
 		this.id = entity.getId();
 		this.title = entity.getTitle();
 		this.done = entity.isDone();
+		
 	}
 
 	// DTO -> Entity 변환
