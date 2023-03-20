@@ -16,4 +16,5 @@ public class GroupEntity {
     private String leaderId;
     private String lastModifiedAt;
     private String createdAt;
+    
 }
