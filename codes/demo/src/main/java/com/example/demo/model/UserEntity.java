@@ -20,7 +20,7 @@ public class UserEntity {
 	@Id
 	@GeneratedValue(generator = "system-uuid")
 	@GenericGenerator(name = "system-uuid", strategy = "uuid")
-	private String originkey;
+	private String originKey;
 	
 	@NonNull
 	private String id;
@@ -31,9 +31,9 @@ public class UserEntity {
 
 	private String birth;
 
-	private String last_modified_at;
+	private String lastModifiedAt;
 
-	private String created_at;
+	private String createdAt;
 
 
 }
