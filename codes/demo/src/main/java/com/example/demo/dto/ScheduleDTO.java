@@ -1,5 +1,6 @@
 package com.example.demo.dto;
 
+import com.example.demo.model.ScheduleEntity;
 import com.example.demo.model.TodoEntity;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
@@ -11,23 +12,40 @@ import lombok.Data;
 @AllArgsConstructor
 @Data
 public class ScheduleDTO {
-	private String id;
-	private String title;
-	private boolean done;
+	private String name;
+	private String start;
+	private String end;
+	private String memo;
+	private Boolean notification;
+	private Boolean allDayToggle ;
+	private String lastModifiedAt;
+	private String createdAt;
+	private String token;
 
-	public ScheduleDTO(final TodoEntity entity) {
-		this.id = entity.getId();
-		this.title = entity.getTitle();
-		this.done = entity.isDone();
-		
+	public ScheduleDTO(final ScheduleEntity entity) {
+		this.name = entity.getName();
+		this.start = entity.getStart();
+		this.end = entity.getEnd();
+		this.memo = entity.getMemo();
+		this.notification = entity.getNotification();
+		this.allDayToggle = entity.getAllDayToggle();
+		this.lastModifiedAt = entity.getLastModifiedAt();
+		this.createdAt = entity.getCreatedAt();
+		this.token = entity.getToken();
 	}
 
 	// DTO -> Entity 변환
-	public static TodoEntity toEntity(final ScheduleDTO dto) {
-		return TodoEntity.builder()
-				.id(dto.getId())
-				.title(dto.getTitle())
-				.done(dto.isDone())
+	public static ScheduleEntity toEntity(final ScheduleDTO dto) {
+		return ScheduleEntity.builder()
+				.name(dto.getName())
+				.start(dto.getStart())
+				.end(dto.getEnd())
+				.memo(dto.getMemo())
+				.notification(dto.getNotification())
+				.allDayToggle(dto.getAllDayToggle())
+				.lastModifiedAt(dto.getLastModifiedAt())
+				.createdAt(dto.getCreatedAt())
+				.token(dto.getToken())
 				.build();
 	}
 }

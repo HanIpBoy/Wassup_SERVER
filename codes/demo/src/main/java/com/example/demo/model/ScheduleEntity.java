@@ -31,4 +31,5 @@ public class ScheduleEntity {
     private Boolean allDayToggle ;
     private String lastModifiedAt;
     private String createdAt;
+    private String token;
 }

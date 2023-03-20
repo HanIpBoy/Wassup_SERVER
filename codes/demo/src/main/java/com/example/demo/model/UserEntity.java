@@ -24,16 +24,9 @@ public class UserEntity {
 	
 	@NonNull
 	private String id;
-
 	private String password;
-
 	private String username;
-
 	private String birth;
-
 	private String lastModifiedAt;
-
 	private String createdAt;
-
-
 }
