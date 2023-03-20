@@ -1,9 +1,6 @@
 package com.example.demo.model;
 
-import lombok.Builder;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor; 
-import lombok.Data;
+import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.Entity;
@@ -23,12 +20,20 @@ public class UserEntity {
 	@Id
 	@GeneratedValue(generator = "system-uuid")
 	@GenericGenerator(name = "system-uuid", strategy = "uuid")
+	private String originkey;
+	
+	@NonNull
 	private String id;
-	
-	@Column(nullable = false)
-	private String username;
+
 	private String password;
-	private String role;
-	private String authProvider;
-	
+
+	private String username;
+
+	private String birth;
+
+	private String last_modified_at;
+
+	private String created_at;
+
+
 }
