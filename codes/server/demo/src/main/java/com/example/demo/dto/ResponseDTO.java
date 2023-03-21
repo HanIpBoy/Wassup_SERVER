@@ -16,4 +16,6 @@ public class ResponseDTO<T> {
 
 	// 성공, 실패 시 String으로 succeed, failed 전송
 	private String success;
+
+	private String error;
 }
