@@ -42,8 +42,8 @@ public class UserController {
 					.password(passwordEncoder.encode(userDTO.getPassword()))
 					.userName(userDTO.getUserName())
 					.birth(userDTO.getBirth())
-					.lastModifiedAt(userDTO.getLast_modified_at())
-					.createdAt(userDTO.getCreated_at())
+					.lastModifiedAt(userDTO.getLastModifiedAt())
+					.createdAt(userDTO.getCreatedAt())
 					.build();
 			
 			userService.create(user);
