@@ -25,7 +25,7 @@ public class ScheduleEntity {
     private String name;
     private String start;
     private String end;
-    private String creatorId;
+    private String userId;
     private String memo;
     private Boolean notification;
     private Boolean allDayToggle ;

@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 public class GroupUserDTO {
 	private String userName;
 	private String groupName;
-	private String id;
+	private String userId;
 	private String leaderId;
 	private String lastModifiedAt;
 	private String createdAt;
@@ -23,7 +23,7 @@ public class GroupUserDTO {
 	public GroupUserDTO(GroupUserEntity entity) {
 		this.userName = entity.getUserName();
 		this.groupName = entity.getGroupName();
-		this.id = entity.getId();
+		this.userId = entity.getUserId();
 		this.leaderId = entity.getLeaderId();
 		this.lastModifiedAt = entity.getLastModifiedAt();
 		this.createdAt = entity.getCreatedAt();
@@ -35,7 +35,7 @@ public class GroupUserDTO {
 		return GroupUserEntity.builder()
 				.userName(dto.getUserName())
 				.groupName(dto.getGroupName())
-				.id(dto.getId())
+				.userId(dto.getUserId())
 				.leaderId(dto.getLeaderId())
 				.lastModifiedAt(dto.getLastModifiedAt())
 				.createdAt(dto.getCreatedAt())

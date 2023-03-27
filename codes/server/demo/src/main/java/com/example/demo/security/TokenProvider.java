@@ -22,8 +22,8 @@ public class TokenProvider {
 		
 		return Jwts.builder()
 				.signWith(SignatureAlgorithm.HS512, SECRET_KEY)
-				.setSubject(userEntity.getId())
-				.setIssuer("demo app")
+				.setSubject(userEntity.getUserId())
+				.setIssuer("Wassup")
 				.setIssuedAt(new Date())
 				.setExpiration(expiryDate)
 				.compact();

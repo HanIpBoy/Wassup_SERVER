@@ -7,8 +7,8 @@ import com.example.demo.model.UserEntity;
 @Repository
 public interface UserRepository extends JpaRepository<UserEntity, String>{
 	
-	UserEntity findByUserName(String userName);
-	boolean existsById(String id);
+	UserEntity findByUserId(String userId);
+	boolean existsById(String userId);
 	UserEntity findByUserNameAndPassword(String userName, String password);
 
 }

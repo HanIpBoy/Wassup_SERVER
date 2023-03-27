@@ -15,6 +15,7 @@ public class ScheduleDTO {
 	private String name;
 	private String start;
 	private String end;
+	private String userId;
 	private String memo;
 	private Boolean notification;
 	private Boolean allDayToggle ;
@@ -26,6 +27,7 @@ public class ScheduleDTO {
 		this.name = entity.getName();
 		this.start = entity.getStart();
 		this.end = entity.getEnd();
+		this.userId = entity.getUserId();
 		this.memo = entity.getMemo();
 		this.notification = entity.getNotification();
 		this.allDayToggle = entity.getAllDayToggle();
@@ -40,6 +42,7 @@ public class ScheduleDTO {
 				.name(dto.getName())
 				.start(dto.getStart())
 				.end(dto.getEnd())
+				.userId(dto.getUserId())
 				.memo(dto.getMemo())
 				.notification(dto.getNotification())
 				.allDayToggle(dto.getAllDayToggle())

@@ -24,7 +24,7 @@ public class GroupUserEntity {
     private String orginKey;
     private String userName;
     private String groupName;
-    private String id;
+    private String userId;
     private String leaderId;
     private String lastModifiedAt;
     private String createdAt;

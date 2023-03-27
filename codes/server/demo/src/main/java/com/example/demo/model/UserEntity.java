@@ -23,7 +23,7 @@ public class UserEntity {
 	private String originKey;
 	
 	@NonNull
-	private String id;
+	private String userId;
 
 	@NonNull
 	private String password;

@@ -10,7 +10,7 @@ import lombok.Data;
 @AllArgsConstructor
 @Data
 public class UserDTO {
-	private String id;
+	private String userId;
 	private String password;
 	private String userName;
 	private String birth;
