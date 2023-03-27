@@ -8,7 +8,7 @@ import com.example.demo.model.UserEntity;
 public interface UserRepository extends JpaRepository<UserEntity, String>{
 	
 	UserEntity findByUsername(String username);
-	Boolean existsByUsername(String username);
+	boolean existsById(String id);
 	UserEntity findByUsernameAndPassword(String username, String password);
 
 }

@@ -18,13 +18,13 @@ public class UserService {
 	private UserRepository userRepository;
 	
 	public UserEntity create(final UserEntity userEntity) {
-		if(userEntity == null || userEntity.getUsername() == null) {
+		if(userEntity == null || userEntity.getId() == null ) {
 			throw new RuntimeException("Invalid arguments");
 		}
-		final String username = userEntity.getUsername();
-		if(userRepository.existsByUsername(username)) {
-			log.warn("Username already exists {}", username);
-			throw new RuntimeException("Username already exists");
+		final String id = userEntity.getId();
+		if(userRepository.existsById(id)) {
+			log.warn("id already exists {}", id);
+			throw new RuntimeException("id already exists");
 		}
 		
 		return userRepository.save(userEntity);

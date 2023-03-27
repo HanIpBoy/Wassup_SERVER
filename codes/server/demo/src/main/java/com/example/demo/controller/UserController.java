@@ -38,16 +38,17 @@ public class UserController {
 			}
 			
 			UserEntity user = UserEntity.builder()
-					.id(userDTO.getId()) 
-					.username(userDTO.getUsername())
+					.id(userDTO.getId())
 					.password(passwordEncoder.encode(userDTO.getPassword()))
+					.userName(userDTO.getUserName())
+					.birth(userDTO.getBirth())
+					.lastModifiedAt(userDTO.getLast_modified_at())
+					.createdAt(userDTO.getCreated_at())
 					.build();
 			
-			
-			UserEntity registeredUser = userService.create(user);
-			UserDTO responseUserDTO = userDTO.builder()
-					.id(registeredUser.getId())
-					.username(registeredUser.getUsername())
+			userService.create(user);
+			ResponseDTO responseUserDTO = ResponseDTO.builder()
+					.success("true")
 					.build();
 			
 			return ResponseEntity.ok().body(responseUserDTO);
@@ -60,12 +61,12 @@ public class UserController {
 	
 	@PostMapping("/signin")
 	public ResponseEntity<?> authenticate(@RequestBody UserDTO userDTO) {
-		UserEntity user = userService.getByCredentials(userDTO.getUsername(), userDTO.getPassword(), passwordEncoder);
+		UserEntity user = userService.getByCredentials(userDTO.getUserName(), userDTO.getPassword(), passwordEncoder);
 		
 		if(user != null) {
 			final String token = tokenProvider.create(user);
 			final UserDTO responseUserDTO = UserDTO.builder()
-					.username(user.getUsername())
+					.userName(user.getUserName())
 					.id(user.getId())
 					.token(token)
 					.build();

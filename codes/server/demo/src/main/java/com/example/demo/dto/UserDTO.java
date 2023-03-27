@@ -12,7 +12,7 @@ import lombok.Data;
 public class UserDTO {
 	private String id;
 	private String password;
-	private String username;
+	private String userName;
 	private String birth;
 	private String created_at;
 	private String last_modified_at;

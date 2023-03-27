@@ -24,9 +24,19 @@ public class UserEntity {
 	
 	@NonNull
 	private String id;
+
+	@NonNull
 	private String password;
-	private String username;
+
+	@NonNull
+	private String userName;
+
+	@NonNull
 	private String birth;
+
+	@NonNull
 	private String lastModifiedAt;
+
+	@NonNull
 	private String createdAt;
 }
