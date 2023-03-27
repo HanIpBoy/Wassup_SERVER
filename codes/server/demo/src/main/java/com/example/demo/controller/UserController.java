@@ -38,7 +38,7 @@ public class UserController {
 			}
 			
 			UserEntity user = UserEntity.builder()
-					.id(userDTO.getId())
+					//.id(userDTO.getId())
 					.username(userDTO.getUsername())
 					.password(passwordEncoder.encode(userDTO.getPassword()))
 					.build();
