@@ -29,5 +29,4 @@ public class GroupUserEntity {
     private String lastModifiedAt;
     private String createdAt;
     private String token;
-
 }
