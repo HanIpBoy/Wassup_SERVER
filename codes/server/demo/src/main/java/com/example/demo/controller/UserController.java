@@ -8,6 +8,7 @@ import com.example.demo.service.UserService;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,9 +28,18 @@ public class UserController {
 	
 	@Autowired
 	private TokenProvider tokenProvider;
+
+	@Autowired
+	private JavaMailSender mailSender;
 	
 	private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-	
+
+	@PostMapping("/emailverification")
+	public ResponseEntity<?> emailVerficate(@RequestBody UserDTO userDTO){
+
+
+	}
+
 	@PostMapping("/signup")
 	public ResponseEntity<?> registerUser(@RequestBody UserDTO userDTO) {
 		try {
@@ -77,4 +87,5 @@ public class UserController {
 			return ResponseEntity.badRequest().body(responseDTO);
 		}
 	}
+
 }

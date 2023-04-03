@@ -1,6 +1,15 @@
 server:
    port : 5000
 spring:
+   mail:
+      host: smtp.gmail.com # SMTP 서버 주소
+      port: 587 # SMTP 포트
+      username: wassup.hansung@gmail.com  # SMTP 계정 이메일
+      password: Ws12345! # SMTP 계정 비밀번호
+      protocol: smtp
+      properties: # 추가 설정
+         auth: true
+         starttls.enable: true
    datasource:
       url: jdbc:mysql://<wscalendardb.csqfm7ao5z48.ap-northeast-2.rds.amazonaws.com>/<wscalendardb>?useSSL=false&serverTimezone=UTC&characterEncoding=UTF-8
       username: <admin>
