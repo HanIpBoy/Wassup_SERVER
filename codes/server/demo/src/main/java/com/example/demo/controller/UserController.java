@@ -4,19 +4,21 @@ import com.example.demo.dto.ResponseDTO;
 import com.example.demo.dto.UserDTO;
 import com.example.demo.model.UserEntity;
 import com.example.demo.security.TokenProvider;
+import com.example.demo.service.MailService;
 import com.example.demo.service.UserService;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
+import javax.servlet.http.HttpServletRequest;
 
 @Slf4j
 @RestController
@@ -30,13 +32,19 @@ public class UserController {
 	private TokenProvider tokenProvider;
 
 	@Autowired
-	private JavaMailSender mailSender;
+	private MailService mailService;
 	
 	private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-	@PostMapping("/emailverification")
+	@PostMapping("/email-verify")
+	public ResponseEntity<?> sendEmail(@RequestBody UserDTO userDTO){
+		mailService.send(userDTO);
+		return ResponseEntity.ok().body(userDTO.getUserId());
+	}
+	@GetMapping("/email-verify")
 	public ResponseEntity<?> emailVerficate(@RequestBody UserDTO userDTO){
-		return null;
+		JavaMailSender javaMailSender;
+		return ResponseEntity.ok().body(userDTO.getUserId());
 	}
 
 	@PostMapping("/signup")
