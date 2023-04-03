@@ -36,8 +36,7 @@ public class UserController {
 
 	@PostMapping("/emailverification")
 	public ResponseEntity<?> emailVerficate(@RequestBody UserDTO userDTO){
-
-
+		return null;
 	}
 
 	@PostMapping("/signup")
