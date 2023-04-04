@@ -15,10 +15,10 @@ export default function Home() {
         <div>
         <div>
         <Link to='/signin'>
-            <button className={styles.loginHome} href="#">로그인</button>
+            <button className={styles.loginHome} href="#">로그인!</button>
         </Link>
         </div>
-        <button className={styles.signUpHome} href="#">회원가입</button>
+        <button className={styles.signUpHome} href="#">회원가입!</button>
         </div>
         </div>
         <br  />
