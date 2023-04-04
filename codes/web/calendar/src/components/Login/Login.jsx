@@ -24,9 +24,19 @@ const handleSubmit = (event) => {
     const data = new FormData(event.currentTarget);
     const id = data.get("id");
     const password = data.get("password");
+    fetch('/auth/signin',{
+        method: 'POST',
+        body: JSON.stringify({id, password}),
+        headers: {'Content-Type': 'application/json'}
+    })
+    .then(response => response.json())
+    .then(dat => {
+        //서버 응답 처리 코드
+    })
+    .catch(error => {
+        console.error('Error:',error);
+    });
     console.log({
-    id: data.get('id'),
-    password: data.get('password'),
     });
 };
 
