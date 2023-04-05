@@ -82,10 +82,13 @@ public class UserController {
 		
 		if(user != null) {
 			final String token = tokenProvider.create(user);
+			log.info("token create!");
+			log.info(token);
 			final UserDTO responseUserDTO = UserDTO.builder()
 					.userId(user.getUserId())
 					.token(token)
 					.build();
+
 			return ResponseEntity.ok().body(responseUserDTO);
 		} else {
 			ResponseDTO responseDTO = ResponseDTO.builder()

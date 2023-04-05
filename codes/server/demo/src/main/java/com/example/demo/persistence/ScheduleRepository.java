@@ -11,6 +11,6 @@ import java.util.List;
 public interface ScheduleRepository extends JpaRepository<ScheduleEntity, String> {
 
 	List<ScheduleEntity> findByUserId(String userId);
-		
+
 }
 

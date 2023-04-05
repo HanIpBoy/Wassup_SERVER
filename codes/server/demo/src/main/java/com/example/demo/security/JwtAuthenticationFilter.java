@@ -3,10 +3,13 @@ package com.example.demo.security;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -24,21 +27,24 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
 	
 	@Autowired
 	private TokenProvider tokenProvider;
-	
+
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
 		try {
 			String token = parseBearerToken(request);
 			log.info("Filter is Running..");
-			
+			log.info(String.valueOf(token != null && !token.equalsIgnoreCase("null")));
+
 			if(token != null && !token.equalsIgnoreCase("null")) {
+				log.info("조건문 진입");
 				String userId = tokenProvider.validateAndGetUserId(token);
 				log.info("Authenticated user ID : " + userId);
-				
-				AbstractAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-						userId, // AuthenticationPrinciple
-						null, 
+
+				// authentication 객체 생성
+				UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+						userId, // AuthenticationPrincipal
+						null,
 						AuthorityUtils.NO_AUTHORITIES);
 				authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 				SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
