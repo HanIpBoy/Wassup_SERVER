@@ -69,7 +69,7 @@ public class ScheduleController {
 
 		List<ScheduleDTO> dtos = entities.stream().map(ScheduleDTO::new).collect(Collectors.toList());
 
-		ResponseDTO<ScheduleDTO> response = ResponseDTO.<ScheduleDTO>builder().data(dtos).build();
+		ResponseDTO<ScheduleDTO> response = ResponseDTO.<ScheduleDTO>builder().data(dtos).status("succeed").build();
 
 		return ResponseEntity.ok().body(response);
 	}
@@ -85,7 +85,7 @@ public class ScheduleController {
 
 			List<ScheduleDTO> dtos = entities.stream().map(ScheduleDTO::new).collect(Collectors.toList());
 
-			ResponseDTO response = ResponseDTO.<ScheduleDTO>builder().data(dtos).build();
+			ResponseDTO response = ResponseDTO.<ScheduleDTO>builder().data(dtos).status("succeed").build();
 
 			return ResponseEntity.ok().body(response);
 
