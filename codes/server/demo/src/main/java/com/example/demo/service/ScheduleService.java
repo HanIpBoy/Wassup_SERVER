@@ -34,7 +34,7 @@ public class ScheduleService {
 	public List<ScheduleEntity> update(final ScheduleEntity entity) {
 		validate(entity);
 
-		final Optional<ScheduleEntity> original = repository.findById(entity.getUserId());
+		final Optional<ScheduleEntity> original = repository.findById(entity.getOrginKey());
 
 		original.ifPresent(schedule -> {
 			schedule.setName(entity.getName());
