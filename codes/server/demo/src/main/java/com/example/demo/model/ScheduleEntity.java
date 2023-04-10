@@ -16,15 +16,15 @@ import org.hibernate.annotations.GenericGenerator;
 @AllArgsConstructor
 @Data
 @Entity
-@Table(name = "Schedule")
+@Table(name = "Sche")
 public class ScheduleEntity {
     @Id
     @GeneratedValue(generator="system-uuid")
     @GenericGenerator(name="system-uuid", strategy="uuid")
     private String orginKey;
     private String name;
-    private String start;
-    private String end;
+    private String startAt;
+    private String endAt;
     private String userId;
     private String memo;
     private Boolean notification;

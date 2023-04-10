@@ -1,7 +1,6 @@
 package com.example.demo.dto;
 
 import com.example.demo.model.ScheduleEntity;
-import com.example.demo.model.TodoEntity;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
@@ -13,8 +12,8 @@ import lombok.Data;
 @Data
 public class ScheduleDTO {
 	private String name;
-	private String start;
-	private String end;
+	private String startAt;
+	private String endAt;
 	private String userId;
 	private String memo;
 	private Boolean notification;
@@ -25,8 +24,8 @@ public class ScheduleDTO {
 
 	public ScheduleDTO(final ScheduleEntity entity) {
 		this.name = entity.getName();
-		this.start = entity.getStart();
-		this.end = entity.getEnd();
+		this.startAt = entity.getStartAt();
+		this.endAt = entity.getEndAt();
 		this.userId = entity.getUserId();
 		this.memo = entity.getMemo();
 		this.notification = entity.getNotification();
@@ -40,8 +39,8 @@ public class ScheduleDTO {
 	public static ScheduleEntity toEntity(final ScheduleDTO dto) {
 		return ScheduleEntity.builder()
 				.name(dto.getName())
-				.start(dto.getStart())
-				.end(dto.getEnd())
+				.startAt(dto.getStartAt())
+				.endAt(dto.getEndAt())
 				.userId(dto.getUserId())
 				.memo(dto.getMemo())
 				.notification(dto.getNotification())

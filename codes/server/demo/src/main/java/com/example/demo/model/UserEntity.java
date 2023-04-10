@@ -15,7 +15,7 @@ import javax.persistence.GeneratedValue;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(uniqueConstraints = {@UniqueConstraint(columnNames = "userId")})
+@Table(name = "Usr",uniqueConstraints = {@UniqueConstraint(columnNames = "userId")})
 public class UserEntity {
 	@Id
 	@GeneratedValue(generator = "system-uuid")
