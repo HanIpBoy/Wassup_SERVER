@@ -1,4 +1,5 @@
 localhost:8080/auth/signup
+(POST Method)
 {
 "userId":"hansung",
 "password":"yeah",
@@ -9,13 +10,14 @@ localhost:8080/auth/signup
 }
 
 localhost:8080/auth/signin
+(POST Method)
 {
 "userId":"hansung",
 "password":"yeah"
 }
 
 localhost:8080/schedule
-
+(POST,GET,PUT,DELETE Method)
 {
 	"name" : "밥먹기",
 	"startAt" : "2023-03-17-19:11",
