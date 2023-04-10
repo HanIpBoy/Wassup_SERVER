@@ -31,34 +31,37 @@ public class ScheduleService {
 		return repository.findByUserId(userId);
 	}
 
-//	public List<ScheduleEntity> update(final ScheduleEntity entity) {
-//		validate(entity);
-//
-//		final Optional<ScheduleEntity> original = repository.findById(entity.getuserId());
-//
-//		original.ifPresent(schedule -> {
-//			schedule.setName(entity.getTitle());
-//			schedule.setDone(entity.isDone());
-//
-//			repository.save(schedule);
-//		});
-//
-//		return retrieve(entity.getUserId());
-//	}
+	public List<ScheduleEntity> update(final ScheduleEntity entity) {
+		validate(entity);
 
-//	public List<ScheduleEntity> delete(final ScheduleEntity entity) {
-//		validate(entity);
-//
-//		try {
-//			repository.delete(entity);
-//		} catch(Exception e) {
-//			log.error("error deleting entity", entity.getId(), e);
-//
-//			throw new RuntimeException("error deleting entity " + entity.getId());
-//		}
-//
-//		return retrieve(entity.getUserId());
-//	}
+		final Optional<ScheduleEntity> original = repository.findById(entity.getUserId());
+
+		original.ifPresent(schedule -> {
+			schedule.setName(entity.getName());
+			schedule.setStartAt(entity.getStartAt());
+			schedule.setEndAt(entity.getEndAt());
+			schedule.setMemo(entity.getMemo());
+			schedule.setNotification(entity.getNotification());
+			schedule.setAllDayToggle(entity.getAllDayToggle());
+			repository.save(schedule);
+		});
+
+		return retrieve(entity.getUserId());
+	}
+
+	public List<ScheduleEntity> delete(final ScheduleEntity entity) {
+		validate(entity);
+
+		try {
+			repository.delete(entity);
+		} catch(Exception e) {
+			log.error("error deleting entity", entity.getUserId(), e);
+
+			throw new RuntimeException("error deleting entity " + entity.getUserId());
+		}
+
+		return retrieve(entity.getUserId());
+	}
 
 	private void validate(final ScheduleEntity entity) {
 		if(entity == null) {

@@ -1,7 +1,9 @@
 package com.example.demo.model;
 
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.Entity;
 import javax.persistence.Column;
@@ -31,8 +33,10 @@ public class UserEntity {
 
 	private String birth;
 
+//	@UpdateTimestamp
 	private String lastModifiedAt;
 
+//	@CreationTimestamp
 	private String createdAt;
 
 	public String role;

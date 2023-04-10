@@ -4,7 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -26,7 +28,12 @@ public class GroupUserEntity {
     private String groupName;
     private String userId;
     private String leaderId;
+
+//    @UpdateTimestamp
     private String lastModifiedAt;
+
+//    @CreationTimestamp
     private String createdAt;
+
     private String token;
 }

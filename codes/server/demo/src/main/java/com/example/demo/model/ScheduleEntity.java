@@ -9,7 +9,10 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Id;
 import javax.persistence.GeneratedValue;
+
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.UpdateTimestamp;
 
 @Builder
 @NoArgsConstructor
@@ -29,7 +32,11 @@ public class ScheduleEntity {
     private String memo;
     private Boolean notification;
     private Boolean allDayToggle ;
+
+//    @UpdateTimestamp
     private String lastModifiedAt;
+
+//    @CreationTimestamp
     private String createdAt;
     private String token;
 }

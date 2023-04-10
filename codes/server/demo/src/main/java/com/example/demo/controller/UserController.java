@@ -66,7 +66,7 @@ public class UserController {
 			
 			userService.create(user);
 			ResponseDTO responseUserDTO = ResponseDTO.builder()
-					.success("true")
+					.status("succeed")
 					.build();
 			
 			return ResponseEntity.ok().body(responseUserDTO);
