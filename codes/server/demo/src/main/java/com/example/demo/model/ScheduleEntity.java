@@ -24,7 +24,7 @@ public class ScheduleEntity {
     @Id
     @GeneratedValue(generator="system-uuid")
     @GenericGenerator(name="system-uuid", strategy="uuid")
-    private String orginKey;
+    private String originKey;
     private String name;
     private String startAt;
     private String endAt;

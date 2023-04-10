@@ -22,7 +22,7 @@ public class ScheduleService {
 
 		repository.save(entity);
 
-		log.info("Entity id : {} is saved.", entity.getOrginKey());
+		log.info("Entity id : {} is saved.", entity.getOriginKey());
 
 		return repository.findByUserId(entity.getUserId());
 	}
@@ -34,7 +34,7 @@ public class ScheduleService {
 	public List<ScheduleEntity> update(final ScheduleEntity entity) {
 		validate(entity);
 
-		final Optional<ScheduleEntity> original = repository.findById(entity.getOrginKey());
+		final Optional<ScheduleEntity> original = repository.findByOriginKey(entity.getOriginKey());
 
 		original.ifPresent(schedule -> {
 			schedule.setName(entity.getName());

@@ -23,7 +23,7 @@ public class GroupEntity {
     @Id
     @GeneratedValue(generator="system-uuid")
     @GenericGenerator(name="system-uuid", strategy="uuid")
-    private String orginKey;
+    private String originKey;
     private String groupName;
     private String description;
     private int numOfUsers;

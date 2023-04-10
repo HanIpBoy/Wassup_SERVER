@@ -61,15 +61,15 @@ public class ScheduleController {
 	@PutMapping
 	public ResponseEntity<?> updateSchedule(@AuthenticationPrincipal String userId, @RequestBody ScheduleDTO dto) {
 		ScheduleEntity entity = ScheduleDTO.toEntity(dto);
+		log.info("update originKey : " + entity.getOriginKey());
 
 		entity.setUserId(userId);
-		log.info("userid : " + userId);
 
 		List<ScheduleEntity> entities = service.update(entity);
 
 		List<ScheduleDTO> dtos = entities.stream().map(ScheduleDTO::new).collect(Collectors.toList());
 
-		ResponseDTO<ScheduleDTO> response = ResponseDTO.<ScheduleDTO>builder().data(dtos).build();
+		ResponseDTO<ScheduleDTO> response = ResponseDTO.<ScheduleDTO>builder().data(dtos).status("succeed").build();
 
 		return ResponseEntity.ok().body(response);
 	}
@@ -85,7 +85,7 @@ public class ScheduleController {
 
 			List<ScheduleDTO> dtos = entities.stream().map(ScheduleDTO::new).collect(Collectors.toList());
 
-			ResponseDTO response = ResponseDTO.<ScheduleDTO>builder().data(dtos).build();
+			ResponseDTO response = ResponseDTO.<ScheduleDTO>builder().data(dtos).status("succeed").build();
 
 			return ResponseEntity.ok().body(response);
 
