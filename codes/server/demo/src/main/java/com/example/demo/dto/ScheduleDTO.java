@@ -11,6 +11,7 @@ import lombok.Data;
 @AllArgsConstructor
 @Data
 public class ScheduleDTO {
+	private String originKey;
 	private String name;
 	private String startAt;
 	private String endAt;
@@ -23,6 +24,7 @@ public class ScheduleDTO {
 	private String token;
 
 	public ScheduleDTO(final ScheduleEntity entity) {
+		this.originKey = entity.getOriginKey();
 		this.name = entity.getName();
 		this.startAt = entity.getStartAt();
 		this.endAt = entity.getEndAt();
@@ -38,6 +40,7 @@ public class ScheduleDTO {
 	// DTO -> Entity 변환
 	public static ScheduleEntity toEntity(final ScheduleDTO dto) {
 		return ScheduleEntity.builder()
+				.originKey(dto.getOriginKey())
 				.name(dto.getName())
 				.startAt(dto.getStartAt())
 				.endAt(dto.getEndAt())

@@ -61,9 +61,9 @@ public class ScheduleController {
 	@PutMapping
 	public ResponseEntity<?> updateSchedule(@AuthenticationPrincipal String userId, @RequestBody ScheduleDTO dto) {
 		ScheduleEntity entity = ScheduleDTO.toEntity(dto);
+		log.info("update originKey : " + entity.getOriginKey());
 
 		entity.setUserId(userId);
-		log.info("userid : " + userId);
 
 		List<ScheduleEntity> entities = service.update(entity);
 
