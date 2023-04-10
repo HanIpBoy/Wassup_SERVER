@@ -1,0 +1,30 @@
+localhost:8080/auth/signup
+{
+"userId":"hansung",
+"password":"yeah",
+"userName":"윤재",
+"birth":"2010-10-22",
+"lastModifiedAt":"2010-10-22 20:33",
+"createdAt":"2010-10-22 20:33"
+}
+
+localhost:8080/auth/signin
+{
+"userId":"hansung",
+"password":"yeah"
+}
+
+localhost:8080/schedule
+
+{
+	"name" : "밥먹기",
+	"startAt" : "2023-03-17-19:11",
+	"endAt" : "2023-03-17-19:11",
+	"userId" : "hansung",
+	"memo" : "오늘 저녁은 고기!",
+	"notification" : "true",
+	"all_day_toogle" : "true",
+	"created_at" : "2023-03-17-19:11",
+	"last_modified_at" : "2023-03-17-19:11"
+}
+
