@@ -15,7 +15,7 @@ public class ResponseDTO<T> {
 	private List<T> data;
 
 	// 성공, 실패 시 String으로 succeed, failed 전송
-	private String success;
+	private String status;
 
 	private String error;
 }

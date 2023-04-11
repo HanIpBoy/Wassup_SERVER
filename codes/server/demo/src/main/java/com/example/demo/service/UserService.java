@@ -27,12 +27,13 @@ public class UserService {
 			log.warn("id already exists {}", id);
 			throw new RuntimeException("id already exists");
 		}
-
+		log.info("id 생성 완료! " + userEntity);
 		return userRepository.save(userEntity);
 	}
 
 	public UserEntity getByCredentials(final String userId, final String password, final PasswordEncoder encoder) {
 		final UserEntity originalUser = userRepository.findByUserId(userId);
+		log.info("id 검색 완료! " + originalUser);
 
 		if(originalUser != null && encoder.matches(password, originalUser.getPassword())) {
 			return originalUser;

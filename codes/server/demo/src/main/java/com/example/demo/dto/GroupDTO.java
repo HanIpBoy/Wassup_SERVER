@@ -1,7 +1,6 @@
 package com.example.demo.dto;
 
 import com.example.demo.model.GroupEntity;
-import com.example.demo.model.ScheduleEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

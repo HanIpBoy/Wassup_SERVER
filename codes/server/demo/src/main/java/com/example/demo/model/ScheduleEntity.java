@@ -9,27 +9,34 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Id;
 import javax.persistence.GeneratedValue;
+
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.UpdateTimestamp;
 
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
 @Entity
-@Table(name = "Schedule")
+@Table(name = "Sche")
 public class ScheduleEntity {
     @Id
     @GeneratedValue(generator="system-uuid")
     @GenericGenerator(name="system-uuid", strategy="uuid")
-    private String orginKey;
+    private String originKey;
     private String name;
-    private String start;
-    private String end;
+    private String startAt;
+    private String endAt;
     private String userId;
     private String memo;
     private Boolean notification;
     private Boolean allDayToggle ;
+
+//    @UpdateTimestamp
     private String lastModifiedAt;
+
+//    @CreationTimestamp
     private String createdAt;
     private String token;
 }

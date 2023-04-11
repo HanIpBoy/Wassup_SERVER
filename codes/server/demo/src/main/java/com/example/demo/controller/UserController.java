@@ -41,6 +41,7 @@ public class UserController {
 		mailService.send(userDTO);
 		return ResponseEntity.ok().body(userDTO.getUserId());
 	}
+
 	@GetMapping("/email-verify")
 	public ResponseEntity<?> emailVerficate(@RequestBody UserDTO userDTO){
 		JavaMailSender javaMailSender;
@@ -65,7 +66,7 @@ public class UserController {
 			
 			userService.create(user);
 			ResponseDTO responseUserDTO = ResponseDTO.builder()
-					.success("true")
+					.status("succeed")
 					.build();
 			
 			return ResponseEntity.ok().body(responseUserDTO);

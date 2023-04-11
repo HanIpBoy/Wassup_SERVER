@@ -39,7 +39,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				.anyRequest()
 				.authenticated();
 
-
 		http.addFilterAfter(jwtAuthenticationFilter, CorsFilter.class);
 	}
 }
