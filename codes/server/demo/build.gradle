@@ -33,8 +33,9 @@ dependencies {
 	implementation group: 'com.google.guava', name: 'guava', version: '31.1-jre'
 	implementation group: 'io.jsonwebtoken', name: 'jjwt', version: '0.9.1'
 	implementation 'org.springframework.boot:spring-boot-starter-mail'
-	// https://mvnrepository.com/artifact/org.springframework.security.oauth/spring-security-oauth2
-	implementation group: 'org.springframework.security.oauth', name: 'spring-security-oauth2', version: '2.5.0.RELEASE'
+	// https://mvnrepository.com/artifact/com.google.auth/google-auth-library-oauth2-http
+	implementation group: 'com.google.auth', name: 'google-auth-library-oauth2-http', version: '1.16.0'
+
 
 }
 
