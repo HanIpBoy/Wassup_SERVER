@@ -17,7 +17,7 @@ build/*
 bin/
 !**/src/main/**/bin/
 !**/src/test/**/bin/
-.yaml
+*.yaml
 
 ### IntelliJ IDEA ###
 .idea
