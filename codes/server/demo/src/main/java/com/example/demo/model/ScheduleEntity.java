@@ -14,6 +14,8 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import java.time.LocalDateTime;
+
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -33,10 +35,10 @@ public class ScheduleEntity {
     private Boolean notification;
     private Boolean allDayToggle ;
 
-//    @UpdateTimestamp
-    private String lastModifiedAt;
+    @UpdateTimestamp
+    private LocalDateTime lastModifiedAt;
 
-//    @CreationTimestamp
-    private String createdAt;
-    private String token;
+    @CreationTimestamp
+    private LocalDateTime createdAt;
+//    private String token;
 }

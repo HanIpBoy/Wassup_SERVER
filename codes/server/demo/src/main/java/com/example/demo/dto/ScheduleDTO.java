@@ -6,6 +6,9 @@ import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -19,9 +22,9 @@ public class ScheduleDTO {
 	private String memo;
 	private Boolean notification;
 	private Boolean allDayToggle;
-	private String lastModifiedAt;
-	private String createdAt;
-	private String token;
+	private LocalDateTime lastModifiedAt;
+	private LocalDateTime createdAt;
+//	private String token;
 
 	public ScheduleDTO(final ScheduleEntity entity) {
 		this.originKey = entity.getOriginKey();
@@ -34,7 +37,7 @@ public class ScheduleDTO {
 		this.allDayToggle = entity.getAllDayToggle();
 		this.lastModifiedAt = entity.getLastModifiedAt();
 		this.createdAt = entity.getCreatedAt();
-		this.token = entity.getToken();
+//		this.token = entity.getToken();
 	}
 
 	// DTO -> Entity 변환
@@ -50,7 +53,7 @@ public class ScheduleDTO {
 				.allDayToggle(dto.getAllDayToggle())
 				.lastModifiedAt(dto.getLastModifiedAt())
 				.createdAt(dto.getCreatedAt())
-				.token(dto.getToken())
+//				.token(dto.getToken())
 				.build();
 	}
 }

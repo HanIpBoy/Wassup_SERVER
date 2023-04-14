@@ -37,12 +37,12 @@ public class ScheduleService {
 		final Optional<ScheduleEntity> original = repository.findByOriginKey(entity.getOriginKey());
 
 		original.ifPresent(schedule -> {
-			schedule.setName(entity.getName());
-			schedule.setStartAt(entity.getStartAt());
-			schedule.setEndAt(entity.getEndAt());
-			schedule.setMemo(entity.getMemo());
-			schedule.setNotification(entity.getNotification());
-			schedule.setAllDayToggle(entity.getAllDayToggle());
+			schedule.setName(entity.getName() != null ? entity.getName() : schedule.getName());
+			schedule.setStartAt(entity.getStartAt() != null ? entity.getStartAt() : schedule.getStartAt());
+			schedule.setEndAt(entity.getEndAt() != null ? entity.getEndAt() : schedule.getEndAt());
+			schedule.setMemo(entity.getMemo() != null ? entity.getMemo() : schedule.getMemo());
+			schedule.setNotification(entity.getNotification() != null ? entity.getNotification() : schedule.getNotification());
+			schedule.setAllDayToggle(entity.getAllDayToggle() != null ? entity.getAllDayToggle() : schedule.getAllDayToggle());
 			repository.save(schedule);
 		});
 

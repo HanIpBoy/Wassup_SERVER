@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -15,9 +17,9 @@ public class GroupUserDTO {
 	private String groupName;
 	private String userId;
 	private String leaderId;
-	private String lastModifiedAt;
-	private String createdAt;
-	private String token;
+	private LocalDateTime lastModifiedAt;
+	private LocalDateTime createdAt;
+//	private String token;
 
 	public GroupUserDTO(GroupUserEntity entity) {
 		this.userName = entity.getUserName();
@@ -26,7 +28,7 @@ public class GroupUserDTO {
 		this.leaderId = entity.getLeaderId();
 		this.lastModifiedAt = entity.getLastModifiedAt();
 		this.createdAt = entity.getCreatedAt();
-		this.token = entity.getToken();
+//		this.token = entity.getToken();
 	}
 
 	// DTO -> Entity 변환
@@ -38,7 +40,7 @@ public class GroupUserDTO {
 				.leaderId(dto.getLeaderId())
 				.lastModifiedAt(dto.getLastModifiedAt())
 				.createdAt(dto.getCreatedAt())
-				.token(dto.getToken())
+//				.token(dto.getToken())
 				.build();
 	}
 }

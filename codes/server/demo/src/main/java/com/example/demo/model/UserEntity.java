@@ -11,6 +11,7 @@ import javax.persistence.UniqueConstraint;
 import javax.persistence.Table;
 import javax.persistence.Id;
 import javax.persistence.GeneratedValue;
+import java.time.LocalDateTime;
 
 @Data
 @Entity
@@ -33,12 +34,13 @@ public class UserEntity {
 
 	private String birth;
 
-//	@UpdateTimestamp
-	private String lastModifiedAt;
+	@UpdateTimestamp
+	private LocalDateTime lastModifiedAt;
 
-//	@CreationTimestamp
-	private String createdAt;
+	@CreationTimestamp
+	private LocalDateTime createdAt;
 
-	public String role;
+	private String token;
+//	public String role;
 
 }

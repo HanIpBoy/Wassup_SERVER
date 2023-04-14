@@ -12,6 +12,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.time.LocalDateTime;
 
 @Builder
 @NoArgsConstructor
@@ -29,11 +30,11 @@ public class GroupUserEntity {
     private String userId;
     private String leaderId;
 
-//    @UpdateTimestamp
-    private String lastModifiedAt;
+    @UpdateTimestamp
+    private LocalDateTime lastModifiedAt;
 
-//    @CreationTimestamp
-    private String createdAt;
+    @CreationTimestamp
+    private LocalDateTime createdAt;
 
-    private String token;
+//    private String token;
 }
