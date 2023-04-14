@@ -41,8 +41,10 @@ public class UserController {
 	
 	private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
+	private int num = 0;
 	@PostMapping("/email-send")
 	public ResponseEntity<?> sendEmail(@RequestBody UserDTO userDTO){
+
 		Random random = new Random(System.currentTimeMillis());
 		int randomNum = random.nextInt(9000) + 1000;
 
@@ -54,6 +56,7 @@ public class UserController {
 				.build();
 
 		userService.create(user);
+		System.out.println("**********number " + num++);
 
 		mailService.send(userDTO);
 		return ResponseEntity.ok().body(userDTO.getUserId());
@@ -73,20 +76,14 @@ public class UserController {
 	@PostMapping("/signup")
 	public ResponseEntity<?> registerUser(@RequestBody UserDTO userDTO) {
 		try {
+			if(userService.getByUserId(userDTO.getUserId()) == null) {
+				throw new RuntimeException("This User is not email verified");
+			}
 			if(userDTO == null || userDTO.getPassword() == null) {
 				throw new RuntimeException("Invalid Password value");
 			}
-			
-//			UserEntity user = UserEntity.builder()
-//					.userId(userDTO.getUserId())
-//					.password(passwordEncoder.encode(userDTO.getPassword()))
-//					.userName(userDTO.getUserName())
-//					.birth(userDTO.getBirth())
-//					.lastModifiedAt(userDTO.getLastModifiedAt())
-//					.createdAt(userDTO.getCreatedAt())
-//					.build();
-//
-//			userService.create(user);
+
+//			userService.update(userService.getByUserId(userDTO.getUserId()));
 			ResponseDTO responseUserDTO = ResponseDTO.builder()
 					.status("succeed")
 					.build();

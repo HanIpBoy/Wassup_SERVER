@@ -35,6 +35,4 @@ public class GroupEntity {
 
     @CreationTimestamp
     private LocalDateTime createdAt;
-
-//    private String token;
 }

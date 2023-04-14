@@ -32,13 +32,12 @@ public class ScheduleEntity {
     private String endAt;
     private String userId;
     private String memo;
-    private Boolean notification;
-    private Boolean allDayToggle ;
+    private String notification;
+    private String allDayToggle;
 
     @UpdateTimestamp
     private LocalDateTime lastModifiedAt;
 
     @CreationTimestamp
     private LocalDateTime createdAt;
-//    private String token;
 }

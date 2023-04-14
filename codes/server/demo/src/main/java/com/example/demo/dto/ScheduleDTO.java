@@ -20,8 +20,8 @@ public class ScheduleDTO {
 	private String endAt;
 	private String userId;
 	private String memo;
-	private Boolean notification;
-	private Boolean allDayToggle;
+	private String notification;
+	private String allDayToggle;
 	private LocalDateTime lastModifiedAt;
 	private LocalDateTime createdAt;
 //	private String token;

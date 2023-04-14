@@ -31,6 +31,9 @@ public class UserService {
 		return userRepository.save(userEntity);
 	}
 
+//	public UserEntity update(final UserEntity userEntity) {
+//		userEntity.set
+//	}
 	public UserEntity getByUserId(String userId) {
 		return userRepository.findByUserId(userId);
 	}
