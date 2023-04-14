@@ -1,7 +1,6 @@
 package com.example.demo.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import com.example.demo.model.UserEntity;
 import com.example.demo.persistence.UserRepository;
@@ -30,10 +29,25 @@ public class UserService {
 		log.info("id 생성 완료! " + userEntity);
 		return userRepository.save(userEntity);
 	}
+	public UserEntity retrieve(final String userId) {
+		return userRepository.findByUserId(userId);
+	}
 
-//	public UserEntity update(final UserEntity userEntity) {
-//		userEntity.set
-//	}
+	public UserEntity update(UserEntity userEntity) {
+		PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
+		final Optional<UserEntity> original = userRepository.findById(userRepository.findByUserId(userEntity.getUserId()).getOriginKey());
+		original.ifPresent(user -> {
+			user.setUserName(userEntity.getUserName());
+			user.setBirth(userEntity.getBirth());
+			user.setPassword(passwordEncoder.encode(userEntity.getPassword()));
+
+			userRepository.save(user);
+		});
+		return retrieve(userEntity.getUserId());
+	}
+
+
 	public UserEntity getByUserId(String userId) {
 		return userRepository.findByUserId(userId);
 	}
@@ -41,10 +55,11 @@ public class UserService {
 	public UserEntity getByCredentials(final String userId, final String password, final PasswordEncoder encoder) {
 		final UserEntity originalUser = userRepository.findByUserId(userId);
 		log.info("id 검색 완료! " + originalUser);
-
 		if(originalUser != null && encoder.matches(password, originalUser.getPassword())) {
 			return originalUser;
 		}
 		return null;
 	}
+
+
 }

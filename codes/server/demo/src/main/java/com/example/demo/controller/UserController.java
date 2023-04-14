@@ -41,7 +41,7 @@ public class UserController {
 	
 	private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-	private int num = 0;
+
 	@PostMapping("/email-send")
 	public ResponseEntity<?> sendEmail(@RequestBody UserDTO userDTO){
 
@@ -56,9 +56,9 @@ public class UserController {
 				.build();
 
 		userService.create(user);
-		System.out.println("**********number " + num++);
 
 		mailService.send(userDTO);
+
 		return ResponseEntity.ok().body(userDTO.getUserId());
 	}
 
@@ -82,8 +82,10 @@ public class UserController {
 			if(userDTO == null || userDTO.getPassword() == null) {
 				throw new RuntimeException("Invalid Password value");
 			}
+			UserEntity userEntity = userDTO.toEntity(userDTO);
 
-//			userService.update(userService.getByUserId(userDTO.getUserId()));
+			userService.update(userEntity);
+
 			ResponseDTO responseUserDTO = ResponseDTO.builder()
 					.status("succeed")
 					.build();

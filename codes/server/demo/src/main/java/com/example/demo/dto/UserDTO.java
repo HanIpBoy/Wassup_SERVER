@@ -1,5 +1,6 @@
 package com.example.demo.dto;
 
+import com.example.demo.model.UserEntity;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
@@ -20,4 +21,13 @@ public class UserDTO {
 	private LocalDateTime createdAt;
 	private String token;
 	private String emailAuthCode;
+
+	public static UserEntity toEntity(UserDTO userDTO){
+		return UserEntity.builder()
+				.userId(userDTO.getUserId())
+				.password(userDTO.getPassword())
+				.userName(userDTO.getUserName())
+				.birth(userDTO.getBirth())
+				.build();
+	}
 }
