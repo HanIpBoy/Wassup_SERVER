@@ -19,4 +19,5 @@ public class UserDTO {
 	private LocalDateTime lastModifiedAt;
 	private LocalDateTime createdAt;
 	private String token;
+	private String emailAuthCode;
 }

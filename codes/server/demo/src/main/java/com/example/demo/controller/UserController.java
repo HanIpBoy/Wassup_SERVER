@@ -8,10 +8,13 @@ import com.example.demo.service.MailService;
 import com.example.demo.service.UserService;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.env.RandomValuePropertySource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,12 +22,14 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Random;
+import java.util.random.RandomGenerator;
 
 @Slf4j
 @RestController
 @RequestMapping("/auth")
 public class UserController {
-	
+
 	@Autowired
 	private UserService userService;
 	
@@ -36,16 +41,33 @@ public class UserController {
 	
 	private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-	@PostMapping("/email-verify")
+	@PostMapping("/email-send")
 	public ResponseEntity<?> sendEmail(@RequestBody UserDTO userDTO){
+		Random random = new Random(System.currentTimeMillis());
+		int randomNum = random.nextInt(9000) + 1000;
+
+		userDTO.setEmailAuthCode(String.valueOf(randomNum));
+
+		UserEntity user = UserEntity.builder()
+				.userId(userDTO.getUserId())
+				.emailAuthCode(userDTO.getEmailAuthCode())
+				.build();
+
+		userService.create(user);
+
 		mailService.send(userDTO);
 		return ResponseEntity.ok().body(userDTO.getUserId());
 	}
 
-	@GetMapping("/email-verify")
+	@PostMapping("/email-verify")
 	public ResponseEntity<?> emailVerficate(@RequestBody UserDTO userDTO){
-		JavaMailSender javaMailSender;
-		return ResponseEntity.ok().body(userDTO.getUserId());
+
+		UserEntity user = userService.getByUserId(userDTO.getUserId());
+
+		if(mailService.verifyEmailCode(user, userDTO.getEmailAuthCode()))
+			return ResponseEntity.ok().body(userDTO.getUserId() + " status : success");
+		else
+			return ResponseEntity.ok().body(userDTO.getUserId() + " status : failure");
 	}
 
 	@PostMapping("/signup")
@@ -55,16 +77,16 @@ public class UserController {
 				throw new RuntimeException("Invalid Password value");
 			}
 			
-			UserEntity user = UserEntity.builder()
-					.userId(userDTO.getUserId())
-					.password(passwordEncoder.encode(userDTO.getPassword()))
-					.userName(userDTO.getUserName())
-					.birth(userDTO.getBirth())
-					.lastModifiedAt(userDTO.getLastModifiedAt())
-					.createdAt(userDTO.getCreatedAt())
-					.build();
-			
-			userService.create(user);
+//			UserEntity user = UserEntity.builder()
+//					.userId(userDTO.getUserId())
+//					.password(passwordEncoder.encode(userDTO.getPassword()))
+//					.userName(userDTO.getUserName())
+//					.birth(userDTO.getBirth())
+//					.lastModifiedAt(userDTO.getLastModifiedAt())
+//					.createdAt(userDTO.getCreatedAt())
+//					.build();
+//
+//			userService.create(user);
 			ResponseDTO responseUserDTO = ResponseDTO.builder()
 					.status("succeed")
 					.build();

@@ -31,6 +31,10 @@ public class UserService {
 		return userRepository.save(userEntity);
 	}
 
+	public UserEntity getByUserId(String userId) {
+		return userRepository.findByUserId(userId);
+	}
+
 	public UserEntity getByCredentials(final String userId, final String password, final PasswordEncoder encoder) {
 		final UserEntity originalUser = userRepository.findByUserId(userId);
 		log.info("id 검색 완료! " + originalUser);
