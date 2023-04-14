@@ -41,6 +41,8 @@ public class UserEntity {
 	private LocalDateTime createdAt;
 
 	private String token;
+
+	private String emailAuthCode;
 //	public String role;
 
 }
