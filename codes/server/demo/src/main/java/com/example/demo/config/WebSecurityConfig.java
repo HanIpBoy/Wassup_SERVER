@@ -13,6 +13,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
@@ -23,6 +24,7 @@ import org.springframework.web.filter.CorsFilter;
 @Slf4j
 @Configuration
 @RequiredArgsConstructor
+
 
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
@@ -43,16 +45,5 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				.authenticated();
 
 		http.addFilterAfter(jwtAuthenticationFilter, CorsFilter.class);
-	}
-	@Bean
-	public CorsConfigurationSource corsConfigurationSource() {
-		CorsConfiguration configuration = new CorsConfiguration();
-		configuration.addAllowedOrigin("*");
-		configuration.addAllowedMethod("*");
-		configuration.addAllowedHeader("*");
-		configuration.setAllowCredentials(true);
-		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-		source.registerCorsConfiguration("/**", configuration);
-		return (CorsConfigurationSource) source;
 	}
 }
