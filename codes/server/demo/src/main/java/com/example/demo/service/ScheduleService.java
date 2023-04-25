@@ -29,7 +29,7 @@ public class ScheduleService {
 
 	public List<ScheduleEntity> retrieve(final String userId) {
 
-		return repository.findAllByOrderedByStartAtAsc();
+		return repository.findAllByOrderByStartAtAsc();
 	}
 
 	public List<ScheduleEntity> update(final ScheduleEntity entity) {

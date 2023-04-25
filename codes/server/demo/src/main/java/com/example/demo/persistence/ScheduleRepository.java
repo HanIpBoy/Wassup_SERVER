@@ -12,6 +12,6 @@ public interface ScheduleRepository extends JpaRepository<ScheduleEntity, String
 
 	List<ScheduleEntity> findByUserId(String userId);
 	Optional<ScheduleEntity> findByOriginKey(String originKey);
-	List<ScheduleEntity> findAllByOrderedByStartAtAsc();
+	List<ScheduleEntity> findAllByOrderByStartAtAsc();
 }
 
