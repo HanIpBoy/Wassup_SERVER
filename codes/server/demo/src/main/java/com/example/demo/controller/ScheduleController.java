@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
-@RequestMapping("schedule")
+@RequestMapping("/schedule")
 public class ScheduleController {
 
     @Autowired
