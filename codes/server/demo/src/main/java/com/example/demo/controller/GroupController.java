@@ -3,6 +3,7 @@ package com.example.demo.controller;
 import com.example.demo.dto.GroupDTO;
 import com.example.demo.dto.ResponseDTO;
 import com.example.demo.model.GroupEntity;
+import com.example.demo.model.GroupUserEntity;
 import com.example.demo.service.GroupService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,7 @@ public class GroupController {
 
     @Autowired
     private GroupService service;
+
 
 //	private TokenProvider tokenProvider;
 
@@ -42,9 +44,10 @@ public class GroupController {
 			// 그룹을 생성하는 유저가 그룹장이 되기 때문
 			entity.setLeaderId(userId);
 
-			List<GroupEntity> entities = service.create(entity);
+			List<GroupEntity> groupEntities = service.create(entity);
 
-			List<GroupDTO> dtos = entities.stream().map(GroupDTO::new).collect(Collectors.toList());
+
+			List<GroupDTO> dtos = groupEntities.stream().map(GroupDTO::new).collect(Collectors.toList());
 
 			ResponseDTO<GroupDTO> response = ResponseDTO.<GroupDTO>builder().data(dtos).status("succeed").build();
 
@@ -60,19 +63,24 @@ public class GroupController {
 	@PutMapping
 	public ResponseEntity<?> updateGroup(@AuthenticationPrincipal String userId, @RequestBody GroupDTO dto) {
 		GroupEntity entity = GroupDTO.toEntity(dto);
-		log.info("update originKey : " + entity.getOriginKey());
 
-		// 그룹의 정보를 수정할 수 있는 건 그룹장 뿐, update 요청을 보낼 수 있는 건 그룹장 뿐임.
-		// 그래서 leaderId를 현재 이를 요청한 유저의 id로 설정해도 됨.
 		entity.setLeaderId(userId);
 
-		List<GroupEntity> entities = service.update(entity);
+		GroupEntity groupEntity = service.update(entity);
 
-		List<GroupDTO> dtos = entities.stream().map(GroupDTO::new).collect(Collectors.toList());
+		final GroupDTO responseGroupDTO = GroupDTO.builder()
+				.originKey(groupEntity.getOriginKey())
+				.groupName(groupEntity.getGroupName())
+				.description(groupEntity.getGroupName())
+				.numOfUsers(groupEntity.getNumOfUsers())
+				.leaderId(userId)
+				.lastModifiedAt(groupEntity.getLastModifiedAt())
+				.createdAt(groupEntity.getCreatedAt())
+				.groupUsers(groupEntity.getGroupUsers())
+				.build();
 
-		ResponseDTO<GroupDTO> response = ResponseDTO.<GroupDTO>builder().data(dtos).status("succeed").build();
 
-		return ResponseEntity.ok().body(response);
+		return ResponseEntity.ok().body(responseGroupDTO);
 	}
 
 	@DeleteMapping

@@ -20,6 +20,7 @@ public class GroupDTO {
 	private String leaderId;
 	private LocalDateTime lastModifiedAt;
 	private LocalDateTime createdAt;
+	private String groupUsers;
 //	private String token;
 
 	public GroupDTO(GroupEntity entity) {
@@ -30,6 +31,7 @@ public class GroupDTO {
 		this.leaderId = entity.getLeaderId();;
 		this.lastModifiedAt = entity.getLastModifiedAt();;
 		this.createdAt = entity.getCreatedAt();;
+		this.groupUsers = entity.getGroupUsers();
 //		this.token = entity.getToken();;
 	}
 
@@ -43,7 +45,7 @@ public class GroupDTO {
 				.leaderId(dto.getLeaderId())
 				.lastModifiedAt(dto.getLastModifiedAt())
 				.createdAt(dto.getCreatedAt())
-//				.token(dto.getToken())
+				.groupUsers(dto.getGroupUsers())
 				.build();
 	}
 }

@@ -11,7 +11,7 @@ import java.util.Optional;
 public interface GroupRepository extends JpaRepository<GroupEntity, String> {
 
 	List<GroupEntity> findByUserId(String userId);
-	Optional<GroupEntity> findByOriginKey(String originKey);
+	GroupEntity findByOriginKey(String originKey);
 	List<GroupEntity> findAllByOrderedByStartAtAsc();
 }
 

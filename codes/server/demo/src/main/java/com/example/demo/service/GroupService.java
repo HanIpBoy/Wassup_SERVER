@@ -15,10 +15,9 @@ import java.util.Optional;
 public class GroupService {
 
 	@Autowired
-	private GroupRepository repository;
-
+	private GroupRepository groupRepository;
 	@Autowired
-	private GroupUserRepository guRepository;
+	private GroupUserRepository groupUserRepository;
 
 	public List<GroupEntity> create(final GroupEntity entity) {
 		// Validations
@@ -35,22 +34,23 @@ public class GroupService {
 		return repository.findAllByOrderedByStartAtAsc();
 	}
 
-	public List<GroupEntity> update(final GroupEntity entity) {
+	public GroupEntity update(final GroupEntity entity) {
 		validate(entity);
 
-		final Optional<GroupEntity> original = repository.findByOriginKey(entity.getOriginKey());
+		validateLeader(entity);
 
-		original.ifPresent(schedule -> {
-			schedule.setName(entity.getName() != null ? entity.getName() : schedule.getName());
-			schedule.setStartAt(entity.getStartAt() != null ? entity.getStartAt() : schedule.getStartAt());
-			schedule.setEndAt(entity.getEndAt() != null ? entity.getEndAt() : schedule.getEndAt());
-			schedule.setMemo(entity.getMemo() != null ? entity.getMemo() : schedule.getMemo());
-			schedule.setNotification(entity.getNotification() != null ? entity.getNotification() : schedule.getNotification());
-			schedule.setAllDayToggle(entity.getAllDayToggle() != null ? entity.getAllDayToggle() : schedule.getAllDayToggle());
-			repository.save(schedule);
+		final Optional<GroupEntity> original = Optional.ofNullable(groupRepository.findByOriginKey(entity.getOriginKey()));
+
+		original.ifPresent(group -> {
+			group.setGroupName(entity.getGroupName() != null ? entity.getGroupName() : group.getGroupName());
+			group.setDescription(entity.getDescription() != null ? entity.getDescription() : group.getDescription());
+			group.setNumOfUsers(group.getNumOfUsers());
+			group.setLeaderId(entity.getLeaderId() != null ? entity.getLeaderId() : group.getLeaderId());
+			group.setGroupUsers(entity.getGroupUsers() != null ? entity.getGroupUsers() : group.getGroupUsers());
+			groupRepository.save(group);
 		});
 
-		return retrieve(entity.getUserId());
+		return groupRepository.findByOriginKey(entity.getOriginKey());
 	}
 
 	public List<GroupEntity> delete(final GroupEntity entity) {
@@ -78,5 +78,11 @@ public class GroupService {
 			throw new RuntimeException("Unknown user.");
 		}
 
+	}
+	private void validateLeader(final GroupEntity entity) {
+		if(!entity.getLeaderId().equals(groupRepositoryrepository.findByOriginKey(entity.getOriginKey()).getLeaderId())){
+			log.warn("Unauthorized user");
+			throw new RuntimeException("Unauthorized user");
+		}
 	}
 }

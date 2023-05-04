@@ -30,6 +30,8 @@ public class GroupEntity {
     private int numOfUsers;
     private String leaderId;
 
+    private String groupUsers;
+
     @UpdateTimestamp
     private LocalDateTime lastModifiedAt;
 
