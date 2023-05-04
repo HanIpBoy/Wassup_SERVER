@@ -48,14 +48,7 @@ public class GroupController {
 			// 그룹을 생성하는 유저가 그룹장이 되기 때문
 			entity.setLeaderId(userId);
 
-<<<<<<< Updated upstream
-			List<GroupEntity> groupEntities = service.create(entity);
-
-
-			List<GroupDTO> dtos = groupEntities.stream().map(GroupDTO::new).collect(Collectors.toList());
-=======
 			GroupEntity groupEntity = service.create(entity);
->>>>>>> Stashed changes
 
 			final GroupDTO responseGroupDTO = GroupDTO.builder()
 					.originKey(groupEntity.getOriginKey())
