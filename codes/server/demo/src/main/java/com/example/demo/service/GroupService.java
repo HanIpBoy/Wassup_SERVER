@@ -1,12 +1,15 @@
 package com.example.demo.service;
 
 import com.example.demo.model.GroupEntity;
+import com.example.demo.model.GroupUserEntity;
+import com.example.demo.model.UserEntity;
 import com.example.demo.persistence.GroupRepository;
 import com.example.demo.persistence.GroupUserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,19 +22,39 @@ public class GroupService {
 	@Autowired
 	private GroupUserRepository groupUserRepository;
 
-	public List<GroupEntity> create(final GroupEntity entity) {
+	public GroupEntity create(final GroupEntity entity) {
 		// Validations
 		validate(entity);
 
+		String groupUsersString = entity.getGroupUsers();
+		String[] tokenizedGroupUsersString = groupUsersString.split(",");
+
+		// group create
 		repository.save(entity);
+
+		// groupUser create
+		for(int i=0; i<entity.getNumOfUsers(); i++) {
+			GroupUserEntity groupUserEntity = GroupUserEntity.builder()
+					.groupOriginKey(entity.getOriginKey())
+					.userId(tokenizedGroupUsersString[i])
+					.build();
+			guRepository.save(groupUserEntity);
+		}
 
 		log.info("Entity id : {} is saved.", entity.getOriginKey());
 
-		return repository.findByOriginKey(entity.getOriginKey());
+		return entity;
 	}
 
 	public List<GroupEntity> retrieve(final String userId) {
-		return repository.findAllByOrderedByStartAtAsc();
+		// 사용자의 Id로 groupUser 테이블을 검색
+		List<GroupUserEntity> groupUserEntities = guRepository.findByUserId(userId);
+		List<GroupEntity> groupEntities = null; // 최종적으로 반환할 List
+
+		for(GroupUserEntity entitiy : groupUserEntities) {
+			groupEntities.add(repository.findByOriginKey(entitiy.getGroupOriginKey()));
+		}
+		return groupEntities;
 	}
 
 	public GroupEntity update(final GroupEntity entity) {

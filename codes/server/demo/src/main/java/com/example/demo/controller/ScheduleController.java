@@ -26,7 +26,7 @@ public class ScheduleController {
 //	private TokenProvider tokenProvider;
 
 	@GetMapping
-	public ResponseEntity<?> retrieveScheduleList(@AuthenticationPrincipal String userId) {
+	public ResponseEntity<?> retrieveSchedule(@AuthenticationPrincipal String userId) {
 		List<ScheduleEntity> entites = service.retrieve(userId);
 
 		List<ScheduleDTO> dtos = entites.stream().map(ScheduleDTO::new).collect(Collectors.toList());

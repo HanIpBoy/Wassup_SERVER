@@ -6,6 +6,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Repository;
 import com.example.demo.model.UserEntity;
 
+import java.util.List;
+
 @Repository
 public interface UserRepository extends JpaRepository<UserEntity, String>{
 
@@ -13,4 +15,5 @@ public interface UserRepository extends JpaRepository<UserEntity, String>{
 	boolean existsById(String userId);
 	UserEntity findByUserNameAndPassword(String userId, String password);
 	UserEntity findByUserName(String userId);
+	List<UserEntity> findAll();
 }

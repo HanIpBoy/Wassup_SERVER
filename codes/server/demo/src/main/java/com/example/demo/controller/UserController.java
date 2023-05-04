@@ -1,7 +1,9 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.ResponseDTO;
+import com.example.demo.dto.ScheduleDTO;
 import com.example.demo.dto.UserDTO;
+import com.example.demo.model.ScheduleEntity;
 import com.example.demo.model.UserEntity;
 import com.example.demo.security.TokenProvider;
 import com.example.demo.service.MailService;
@@ -22,12 +24,13 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 import java.util.Random;
 import java.util.random.RandomGenerator;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
-@RequestMapping("/auth")
 public class UserController {
 
 	@Autowired
@@ -42,7 +45,18 @@ public class UserController {
 	private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
 
-	@PostMapping("/email-send")
+	@GetMapping("/user")
+	public ResponseEntity<?> retrieveUserList() {
+		List<UserEntity> entites = userService.retrieve();
+
+		List<UserDTO> dtos = entites.stream().map(UserDTO::new).collect(Collectors.toList());
+
+		ResponseDTO response = ResponseDTO.<UserDTO>builder().data(dtos).status("succeed").build();
+
+		return ResponseEntity.ok().body(response);
+	}
+
+	@PostMapping("/auth/email-send")
 	public ResponseEntity<?> sendEmail(@RequestBody UserDTO userDTO){
 
 		Random random = new Random(System.currentTimeMillis());
@@ -62,7 +76,7 @@ public class UserController {
 		return ResponseEntity.ok().body(userDTO.getUserId());
 	}
 
-	@PostMapping("/email-verify")
+	@PostMapping("/auth/email-verify")
 	public ResponseEntity<?> emailVerficate(@RequestBody UserDTO userDTO){
 
 		UserEntity user = userService.getByUserId(userDTO.getUserId());
@@ -73,7 +87,7 @@ public class UserController {
 			return ResponseEntity.ok().body(userDTO.getUserId() + " status : failure");
 	}
 
-	@PostMapping("/signup")
+	@PostMapping("/auth/signup")
 	public ResponseEntity<?> registerUser(@RequestBody UserDTO userDTO) {
 		try {
 			if(userService.getByUserId(userDTO.getUserId()) == null) {
@@ -98,7 +112,7 @@ public class UserController {
 		}
 	}
 	
-	@PostMapping("/signin")
+	@PostMapping("/auth/signin")
 	public ResponseEntity<?> authenticate(@RequestBody UserDTO userDTO) {
 		UserEntity user = userService.getByCredentials(userDTO.getUserId(), userDTO.getPassword(), passwordEncoder);
 		
@@ -119,7 +133,4 @@ public class UserController {
 			return ResponseEntity.badRequest().body(responseDTO);
 		}
 	}
-
-
-
 }

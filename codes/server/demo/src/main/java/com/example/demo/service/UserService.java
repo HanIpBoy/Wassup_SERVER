@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -29,9 +30,10 @@ public class UserService {
 		log.info("id 생성 완료! " + userEntity);
 		return userRepository.save(userEntity);
 	}
-	public UserEntity retrieve(final String userId) {
-		return userRepository.findByUserId(userId);
+	public List<UserEntity> retrieve() {
+		return userRepository.findAll();
 	}
+
 
 	public UserEntity update(UserEntity userEntity) {
 		PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
@@ -44,7 +46,7 @@ public class UserService {
 
 			userRepository.save(user);
 		});
-		return retrieve(userEntity.getUserId());
+		return userRepository.findByUserId(userEntity.getUserId());
 	}
 
 

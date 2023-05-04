@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.dto.GroupDTO;
 import com.example.demo.dto.ResponseDTO;
+import com.example.demo.dto.UserDTO;
 import com.example.demo.model.GroupEntity;
 import com.example.demo.model.GroupUserEntity;
 import com.example.demo.service.GroupService;
@@ -22,11 +23,14 @@ public class GroupController {
     @Autowired
     private GroupService service;
 
+<<<<<<< Updated upstream
 
 //	private TokenProvider tokenProvider;
 
+=======
+>>>>>>> Stashed changes
 	@GetMapping
-	public ResponseEntity<?> retrieveGroupList(@AuthenticationPrincipal String userId) {
+	public ResponseEntity<?> retrieveGroup(@AuthenticationPrincipal String userId) {
 		List<GroupEntity> entites = service.retrieve(userId);
 
 		List<GroupDTO> dtos = entites.stream().map(GroupDTO::new).collect(Collectors.toList());
@@ -44,14 +48,27 @@ public class GroupController {
 			// 그룹을 생성하는 유저가 그룹장이 되기 때문
 			entity.setLeaderId(userId);
 
+<<<<<<< Updated upstream
 			List<GroupEntity> groupEntities = service.create(entity);
 
 
 			List<GroupDTO> dtos = groupEntities.stream().map(GroupDTO::new).collect(Collectors.toList());
+=======
+			GroupEntity groupEntity = service.create(entity);
+>>>>>>> Stashed changes
 
-			ResponseDTO<GroupDTO> response = ResponseDTO.<GroupDTO>builder().data(dtos).status("succeed").build();
+			final GroupDTO responseGroupDTO = GroupDTO.builder()
+					.originKey(groupEntity.getOriginKey())
+					.groupName(groupEntity.getGroupName())
+					.description(groupEntity.getGroupName())
+					.numOfUsers(groupEntity.getNumOfUsers())
+					.leaderId(userId)
+					.lastModifiedAt(groupEntity.getLastModifiedAt())
+					.createdAt(groupEntity.getCreatedAt())
+					.groupUsers(groupEntity.getGroupUsers())
+					.build();
 
-			return ResponseEntity.ok().body(response);
+			return ResponseEntity.ok().body(responseGroupDTO);
 
 		} catch(Exception e) {
 			String error = e.getMessage();

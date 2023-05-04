@@ -29,12 +29,19 @@ public class GroupEntity {
     private String description;
     private int numOfUsers;
     private String leaderId;
+<<<<<<< Updated upstream
 
     private String groupUsers;
 
+=======
+    private String groupUsers;
+>>>>>>> Stashed changes
     @UpdateTimestamp
     private LocalDateTime lastModifiedAt;
 
     @CreationTimestamp
     private LocalDateTime createdAt;
+
+
+
 }
