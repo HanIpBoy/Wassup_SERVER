@@ -83,7 +83,6 @@ public class GroupController {
 				.groupUsers(groupEntity.getGroupUsers())
 				.build();
 
-
 		return ResponseEntity.ok().body(responseGroupDTO);
 	}
 
@@ -94,11 +93,9 @@ public class GroupController {
 
 			entity.setLeaderId(userId);
 
-			List<GroupEntity> entities = service.delete(entity);
+			service.delete(entity);
 
-			List<GroupDTO> dtos = entities.stream().map(GroupDTO::new).collect(Collectors.toList());
-
-			ResponseDTO response = ResponseDTO.<GroupDTO>builder().data(dtos).status("succeed").build();
+			ResponseDTO response = ResponseDTO.<GroupDTO>builder().status("succeed").build();
 
 			return ResponseEntity.ok().body(response);
 

@@ -14,5 +14,6 @@ public interface GroupUserRepository extends JpaRepository<GroupUserEntity, Stri
 	List<GroupUserEntity> findByUserId(String userId);
 	Optional<GroupUserEntity> findByOriginKey(String originKey);
 	List<GroupUserEntity> findAllByOrderedByStartAtAsc();
+	List<GroupUserEntity> findByGroupOriginKey(String groupOriginKey);
 }
 

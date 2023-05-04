@@ -30,7 +30,7 @@ public class GroupService {
 		String[] tokenizedGroupUsersString = groupUsersString.split(",");
 
 		// group create
-		repository.save(entity);
+		groupRepository.save(entity);
 
 		// groupUser create
 		for(int i=0; i<entity.getNumOfUsers(); i++) {
@@ -38,7 +38,7 @@ public class GroupService {
 					.groupOriginKey(entity.getOriginKey())
 					.userId(tokenizedGroupUsersString[i])
 					.build();
-			guRepository.save(groupUserEntity);
+			groupUserRepository.save(groupUserEntity);
 		}
 
 		log.info("Entity id : {} is saved.", entity.getOriginKey());
@@ -48,11 +48,11 @@ public class GroupService {
 
 	public List<GroupEntity> retrieve(final String userId) {
 		// 사용자의 Id로 groupUser 테이블을 검색
-		List<GroupUserEntity> groupUserEntities = guRepository.findByUserId(userId);
+		List<GroupUserEntity> groupUserEntities = groupUserRepository.findByUserId(userId);
 		List<GroupEntity> groupEntities = null; // 최종적으로 반환할 List
 
 		for(GroupUserEntity entitiy : groupUserEntities) {
-			groupEntities.add(repository.findByOriginKey(entitiy.getGroupOriginKey()));
+			groupEntities.add(groupRepository.findByOriginKey(entitiy.getGroupOriginKey()));
 		}
 		return groupEntities;
 	}
@@ -76,18 +76,20 @@ public class GroupService {
 		return groupRepository.findByOriginKey(entity.getOriginKey());
 	}
 
-	public List<GroupEntity> delete(final GroupEntity entity) {
+	public void delete(final GroupEntity entity) {
 		validate(entity);
 
 		try {
-			repository.delete(entity);
+			List<GroupUserEntity> groupUserEntities = groupUserRepository.findByGroupOriginKey(entity.getOriginKey());
+			for(GroupUserEntity k : groupUserEntities) {
+				groupUserRepository.delete(k);
+			}
+			groupRepository.delete(entity);
 		} catch(Exception e) {
-			log.error("error deleting entity", entity.getUserId(), e);
+			log.error("error deleting entity", entity.getOriginKey(), e);
 
-			throw new RuntimeException("error deleting entity " + entity.getUserId());
+			throw new RuntimeException("error deleting entity " + entity.getOriginKey());
 		}
-
-		return retrieve(entity.getUserId());
 	}
 
 	private void validate(final GroupEntity entity) {
@@ -103,7 +105,7 @@ public class GroupService {
 
 	}
 	private void validateLeader(final GroupEntity entity) {
-		if(!entity.getLeaderId().equals(groupRepositoryrepository.findByOriginKey(entity.getOriginKey()).getLeaderId())){
+		if(!entity.getLeaderId().equals(groupRepository.findByOriginKey(entity.getOriginKey()).getLeaderId())){
 			log.warn("Unauthorized user");
 			throw new RuntimeException("Unauthorized user");
 		}
