@@ -23,12 +23,6 @@ public class GroupController {
     @Autowired
     private GroupService service;
 
-<<<<<<< Updated upstream
-
-//	private TokenProvider tokenProvider;
-
-=======
->>>>>>> Stashed changes
 	@GetMapping
 	public ResponseEntity<?> retrieveGroup(@AuthenticationPrincipal String userId) {
 		List<GroupEntity> entites = service.retrieve(userId);
