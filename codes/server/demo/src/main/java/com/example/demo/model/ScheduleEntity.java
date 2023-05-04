@@ -34,6 +34,7 @@ public class ScheduleEntity {
     private String memo;
     private String notification;
     private String allDayToggle;
+    private String color;
 
     @UpdateTimestamp
     private LocalDateTime lastModifiedAt;

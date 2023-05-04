@@ -75,7 +75,7 @@ public class ScheduleController {
 	}
 
 	@DeleteMapping
-	public ResponseEntity<?> deleteTodo(@AuthenticationPrincipal String userId, @RequestBody ScheduleDTO dto) {
+	public ResponseEntity<?> deleteSchedule(@AuthenticationPrincipal String userId, @RequestBody ScheduleDTO dto) {
 		try {
 			ScheduleEntity entity = ScheduleDTO.toEntity(dto);
 

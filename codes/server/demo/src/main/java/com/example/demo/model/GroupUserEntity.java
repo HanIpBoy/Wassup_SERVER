@@ -25,10 +25,8 @@ public class GroupUserEntity {
     @GeneratedValue(generator="system-uuid")
     @GenericGenerator(name="system-uuid", strategy="uuid")
     private String originKey;
-    private String userName;
-    private String groupName;
+    private String groupOriginKey;
     private String userId;
-    private String leaderId;
 
     @UpdateTimestamp
     private LocalDateTime lastModifiedAt;

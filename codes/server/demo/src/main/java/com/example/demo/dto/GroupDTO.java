@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Data
 public class GroupDTO {
+	private String originKey;
 	private String groupName;
 	private String description;
 	private int numOfUsers;
@@ -22,6 +23,7 @@ public class GroupDTO {
 //	private String token;
 
 	public GroupDTO(GroupEntity entity) {
+		this.originKey = entity.getOriginKey();
 		this.groupName = entity.getGroupName();
 		this.description = entity.getDescription();;
 		this.numOfUsers = entity.getNumOfUsers();;
@@ -34,6 +36,7 @@ public class GroupDTO {
 	// DTO -> Entity 변환
 	public static GroupEntity toEntity(final GroupDTO dto) {
 		return GroupEntity.builder()
+				.originKey(dto.getOriginKey())
 				.groupName(dto.getGroupName())
 				.description(dto.getDescription())
 				.numOfUsers(dto.getNumOfUsers())

@@ -24,6 +24,7 @@ public class ScheduleDTO {
 	private String allDayToggle;
 	private LocalDateTime lastModifiedAt;
 	private LocalDateTime createdAt;
+	private String color;
 //	private String token;
 
 	public ScheduleDTO(final ScheduleEntity entity) {
@@ -37,6 +38,7 @@ public class ScheduleDTO {
 		this.allDayToggle = entity.getAllDayToggle();
 		this.lastModifiedAt = entity.getLastModifiedAt();
 		this.createdAt = entity.getCreatedAt();
+		this.color = entity.getColor();
 //		this.token = entity.getToken();
 	}
 
@@ -53,6 +55,7 @@ public class ScheduleDTO {
 				.allDayToggle(dto.getAllDayToggle())
 				.lastModifiedAt(dto.getLastModifiedAt())
 				.createdAt(dto.getCreatedAt())
+				.color(dto.getColor())
 //				.token(dto.getToken())
 				.build();
 	}

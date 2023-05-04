@@ -13,34 +13,28 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Data
 public class GroupUserDTO {
-	private String userName;
-	private String groupName;
+	private String originKey;
+	private String groupOriginKey;
 	private String userId;
-	private String leaderId;
 	private LocalDateTime lastModifiedAt;
 	private LocalDateTime createdAt;
-//	private String token;
 
 	public GroupUserDTO(GroupUserEntity entity) {
-		this.userName = entity.getUserName();
-		this.groupName = entity.getGroupName();
+		this.originKey = entity.getOriginKey();
+		this.groupOriginKey = entity.getGroupOriginKey();
 		this.userId = entity.getUserId();
-		this.leaderId = entity.getLeaderId();
 		this.lastModifiedAt = entity.getLastModifiedAt();
 		this.createdAt = entity.getCreatedAt();
-//		this.token = entity.getToken();
 	}
 
 	// DTO -> Entity 변환
 	public static GroupUserEntity toEntity(final GroupUserDTO dto) {
 		return GroupUserEntity.builder()
-				.userName(dto.getUserName())
-				.groupName(dto.getGroupName())
+				.originKey(dto.getOriginKey())
+				.groupOriginKey(dto.getGroupOriginKey())
 				.userId(dto.getUserId())
-				.leaderId(dto.getLeaderId())
 				.lastModifiedAt(dto.getLastModifiedAt())
 				.createdAt(dto.getCreatedAt())
-//				.token(dto.getToken())
 				.build();
 	}
 }
