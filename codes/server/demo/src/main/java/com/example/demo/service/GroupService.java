@@ -73,20 +73,25 @@ public class GroupService {
 		return null;
 	}
 
-	public void delete(final GroupEntity entity) {
+	public GroupEntity deleteGroup(final GroupEntity entity) {
 		validate(entity);
 
 		try {
 			List<GroupUserEntity> groupUserEntities = groupUserRepository.findByGroupOriginKey(entity.getOriginKey());
 			for(GroupUserEntity k : groupUserEntities) {
-				groupUserRepository.delete(k);
+				deleteGroupUser(k);
 			}
 			groupRepository.delete(entity);
+			return null;
 		} catch(Exception e) {
 			log.error("error deleting entity", entity.getOriginKey(), e);
 
 			throw new RuntimeException("error deleting entity " + entity.getOriginKey());
 		}
+	}
+
+	public void deleteGroupUser(GroupUserEntity entity) {
+		groupUserRepository.delete(entity);
 	}
 
 	private void validate(final GroupEntity entity) {
@@ -107,6 +112,7 @@ public class GroupService {
 			throw new RuntimeException("Unauthorized user is trying to access the group");
 		}
 	}
+
 
 
 }

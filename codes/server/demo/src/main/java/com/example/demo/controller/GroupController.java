@@ -14,6 +14,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,6 +34,8 @@ public class GroupController {
 		List<GroupEntity> entites = groupService.retrieveByUserId(userId);
 
 		List<GroupDTO> dtos = entites.stream().map(GroupDTO::new).collect(Collectors.toList());
+
+		//setGroupDTO()
 
 		ResponseDTO response = ResponseDTO.<GroupDTO>builder().data(dtos).status("succeed").build();
 
@@ -63,18 +66,12 @@ public class GroupController {
 					GroupUserEntity groupUserEntity = new GroupUserEntity();
 					groupUserEntity.setUserId(userid);
 					groupUserEntity.setGroupOriginKey(groupEntity.getOriginKey());
+					groupUserEntity.setGroupName(groupEntity.getGroupName());
 					groupService.createGroupUser(groupUserEntity);
 				}
 			}
 
-			// 클라에게 보낼 DTO 세팅
-			List<GroupUserEntity> groupUserEntities = groupService.retrieveByGroupOriginKey(groupEntity.getOriginKey());
-			List<String> userIds = new ArrayList<>();
-			for (GroupUserEntity groupUserEntity : groupUserEntities) {
-				userIds.add(groupUserEntity.getUserId());
-			}
-			GroupDTO dtos = new GroupDTO(groupEntity);
-			dtos.setGroupUsers(userIds);
+			GroupDTO dtos = setGroupDTO(groupEntity);
 
 
 			return ResponseEntity.ok().body(dtos);
@@ -86,6 +83,7 @@ public class GroupController {
 		}
 	}
 
+
 	@PutMapping
 	public ResponseEntity<?> updateGroup(@AuthenticationPrincipal String userId, @RequestBody GroupDTO dto) {
 		GroupEntity entity = GroupDTO.toEntity(dto);
@@ -96,26 +94,38 @@ public class GroupController {
 
 		if(dto.getGroupUsers()!=null){
 			List<GroupUserEntity> savedGroupUsers =  groupService.retrieveByGroupOriginKey(groupEntity.getOriginKey());
-			for(GroupUserEntity e : savedGroupUsers){
-				e.getUserId();
+			List<String> requestGroupUsers = dto.getGroupUsers();
+
+			// 기존에 저장된 그룹 유저 목록에서 삭제 대상인 유저를 찾아서 삭제
+			for(GroupUserEntity savedGroupUser : savedGroupUsers) {
+				if(!requestGroupUsers.contains(savedGroupUser.getUserId())) {
+					groupService.deleteGroupUser(savedGroupUser);
+				}
 			}
-			//List<GroupUserEntity> requestGroupUsers = dto.getGroupUsers();
-			//GroupUserEntity groupUserEntity = groupService.updateGroupUser();
+
+			// 새로 추가할 유저 목록을 찾아서 추가
+			for(String uid : requestGroupUsers) {
+				boolean isNewUser = true;
+				for (Iterator<GroupUserEntity> iterator = savedGroupUsers.iterator(); iterator.hasNext();) {
+					GroupUserEntity savedGroupUser = iterator.next();
+					if (savedGroupUser.getUserId().equals(userId)) {
+						isNewUser = false;
+						iterator.remove();
+						break;
+					}
+				}
+
+				if(isNewUser) {
+					GroupUserEntity newGroupUser = new GroupUserEntity();
+					newGroupUser.setGroupOriginKey(groupEntity.getOriginKey());
+					newGroupUser.setUserId(uid);
+					newGroupUser.setGroupName(groupEntity.getGroupName());
+					groupService.createGroupUser(newGroupUser);
+				}
+			}
 		}
 
-
-
-		final GroupDTO responseGroupDTO = GroupDTO.builder()
-				.originKey(groupEntity.getOriginKey())
-				.groupName(groupEntity.getGroupName())
-				.description(groupEntity.getGroupName())
-				.numOfUsers(groupEntity.getNumOfUsers())
-				.leaderId(userId)
-				.lastModifiedAt(groupEntity.getLastModifiedAt())
-				.createdAt(groupEntity.getCreatedAt())
-				.build();
-
-		return ResponseEntity.ok().body(responseGroupDTO);
+		return ResponseEntity.ok().body(setGroupDTO(groupEntity));
 	}
 
 	@DeleteMapping
@@ -123,9 +133,12 @@ public class GroupController {
 		try {
 			GroupEntity entity = GroupDTO.toEntity(dto);
 
+			//권한 검사???
+
+			// 그룹을 생성하는 유저가 그룹장이 되기 때문
 			entity.setLeaderId(userId);
 
-			groupService.delete(entity);
+			groupService.deleteGroup(entity);
 
 			ResponseDTO response = ResponseDTO.<GroupDTO>builder().status("succeed").build();
 
@@ -137,6 +150,16 @@ public class GroupController {
 			return ResponseEntity.badRequest().body(response);
 		}
 	}
-
+	private GroupDTO setGroupDTO(GroupEntity groupEntity) {
+		// 클라에게 보낼 DTO 세팅
+		List<GroupUserEntity> groupUserEntities = groupService.retrieveByGroupOriginKey(groupEntity.getOriginKey());
+		List<String> userIds = new ArrayList<>();
+		for (GroupUserEntity groupUserEntity : groupUserEntities) {
+			userIds.add(groupUserEntity.getUserId());
+		}
+		GroupDTO dtos = new GroupDTO(groupEntity);
+		dtos.setGroupUsers(userIds);
+		return dtos;
+	}
 
 }
