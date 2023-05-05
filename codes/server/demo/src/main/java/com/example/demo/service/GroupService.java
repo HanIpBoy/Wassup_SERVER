@@ -2,14 +2,13 @@ package com.example.demo.service;
 
 import com.example.demo.model.GroupEntity;
 import com.example.demo.model.GroupUserEntity;
-import com.example.demo.model.UserEntity;
 import com.example.demo.persistence.GroupRepository;
 import com.example.demo.persistence.GroupUserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,34 +21,23 @@ public class GroupService {
 	@Autowired
 	private GroupUserRepository groupUserRepository;
 
-	public GroupEntity create(final GroupEntity entity) {
+	public GroupEntity createGroup(final GroupEntity entity) {
 		// Validations
 		validate(entity);
 
-		String groupUsersString = entity.getGroupUsers();
-		String[] tokenizedGroupUsersString = groupUsersString.split(",");
-
-		// group create
 		groupRepository.save(entity);
-
-		// groupUser create
-		for(int i=0; i<entity.getNumOfUsers(); i++) {
-			GroupUserEntity groupUserEntity = GroupUserEntity.builder()
-					.groupOriginKey(entity.getOriginKey())
-					.userId(tokenizedGroupUsersString[i])
-					.build();
-			groupUserRepository.save(groupUserEntity);
-		}
-
-		log.info("Entity id : {} is saved.", entity.getOriginKey());
 
 		return entity;
 	}
 
-	public List<GroupEntity> retrieve(final String userId) {
+	public void createGroupUser(GroupUserEntity groupUserEntity) {
+		groupUserRepository.save(groupUserEntity);
+	}
+
+	public List<GroupEntity> retrieveByUserId(final String userId) {
 		// 사용자의 Id로 groupUser 테이블을 검색
 		List<GroupUserEntity> groupUserEntities = groupUserRepository.findByUserId(userId);
-		List<GroupEntity> groupEntities = null; // 최종적으로 반환할 List
+		List<GroupEntity> groupEntities = new ArrayList<>();; // 최종적으로 반환할 List
 
 		for(GroupUserEntity entitiy : groupUserEntities) {
 			groupEntities.add(groupRepository.findByOriginKey(entitiy.getGroupOriginKey()));
@@ -57,23 +45,32 @@ public class GroupService {
 		return groupEntities;
 	}
 
-	public GroupEntity update(final GroupEntity entity) {
+	public List<GroupUserEntity> retrieveByGroupOriginKey(final String groupOriginKey){
+		return groupUserRepository.findByGroupOriginKey(groupOriginKey);
+	}
+
+	public GroupEntity updateGroup(final GroupEntity entity) {
 		validate(entity);
 
 		validateLeader(entity);
 
 		final Optional<GroupEntity> original = Optional.ofNullable(groupRepository.findByOriginKey(entity.getOriginKey()));
 
+
 		original.ifPresent(group -> {
 			group.setGroupName(entity.getGroupName() != null ? entity.getGroupName() : group.getGroupName());
 			group.setDescription(entity.getDescription() != null ? entity.getDescription() : group.getDescription());
 			group.setNumOfUsers(group.getNumOfUsers());
 			group.setLeaderId(entity.getLeaderId() != null ? entity.getLeaderId() : group.getLeaderId());
-			group.setGroupUsers(entity.getGroupUsers() != null ? entity.getGroupUsers() : group.getGroupUsers());
+			//group.setGroupUsers(entity.getGroupUsers() != null ? entity.getGroupUsers() : group.getGroupUsers());
 			groupRepository.save(group);
 		});
 
 		return groupRepository.findByOriginKey(entity.getOriginKey());
+	}
+
+	public GroupUserEntity updateGroupUser(final GroupUserEntity entity){
+		return null;
 	}
 
 	public void delete(final GroupEntity entity) {
@@ -106,8 +103,10 @@ public class GroupService {
 	}
 	private void validateLeader(final GroupEntity entity) {
 		if(!entity.getLeaderId().equals(groupRepository.findByOriginKey(entity.getOriginKey()).getLeaderId())){
-			log.warn("Unauthorized user");
-			throw new RuntimeException("Unauthorized user");
+			log.warn("Unauthorized user is trying to access the group");
+			throw new RuntimeException("Unauthorized user is trying to access the group");
 		}
 	}
+
+
 }

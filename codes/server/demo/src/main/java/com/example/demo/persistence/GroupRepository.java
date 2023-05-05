@@ -10,8 +10,7 @@ import java.util.Optional;
 @Repository
 public interface GroupRepository extends JpaRepository<GroupEntity, String> {
 
-	List<GroupEntity> findByUserId(String userId);
 	GroupEntity findByOriginKey(String originKey);
-	List<GroupEntity> findAllByOrderedByStartAtAsc();
+	//List<GroupEntity> findAllByOrderedByStartAtAsc();
 }
 

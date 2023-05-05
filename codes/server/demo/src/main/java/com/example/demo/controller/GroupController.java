@@ -2,16 +2,18 @@ package com.example.demo.controller;
 
 import com.example.demo.dto.GroupDTO;
 import com.example.demo.dto.ResponseDTO;
-import com.example.demo.dto.UserDTO;
 import com.example.demo.model.GroupEntity;
 import com.example.demo.model.GroupUserEntity;
+import com.example.demo.model.UserEntity;
 import com.example.demo.service.GroupService;
+import com.example.demo.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,11 +23,14 @@ import java.util.stream.Collectors;
 public class GroupController {
 
     @Autowired
-    private GroupService service;
+    private GroupService groupService;
+
+	@Autowired
+	private UserService userService;
 
 	@GetMapping
 	public ResponseEntity<?> retrieveGroup(@AuthenticationPrincipal String userId) {
-		List<GroupEntity> entites = service.retrieve(userId);
+		List<GroupEntity> entites = groupService.retrieveByUserId(userId);
 
 		List<GroupDTO> dtos = entites.stream().map(GroupDTO::new).collect(Collectors.toList());
 
@@ -33,6 +38,8 @@ public class GroupController {
 
 		return ResponseEntity.ok().body(response);
 	}
+
+
 
     @PostMapping
 	public ResponseEntity<?> createGroup(@AuthenticationPrincipal String userId, @RequestBody GroupDTO dto) {
@@ -42,20 +49,35 @@ public class GroupController {
 			// 그룹을 생성하는 유저가 그룹장이 되기 때문
 			entity.setLeaderId(userId);
 
-			GroupEntity groupEntity = service.create(entity);
+			//Group 생성
+			GroupEntity groupEntity = groupService.createGroup(entity);
 
-			final GroupDTO responseGroupDTO = GroupDTO.builder()
-					.originKey(groupEntity.getOriginKey())
-					.groupName(groupEntity.getGroupName())
-					.description(groupEntity.getGroupName())
-					.numOfUsers(groupEntity.getNumOfUsers())
-					.leaderId(userId)
-					.lastModifiedAt(groupEntity.getLastModifiedAt())
-					.createdAt(groupEntity.getCreatedAt())
-					.groupUsers(groupEntity.getGroupUsers())
-					.build();
+			//GroupUser 생성
+			for(String userid : dto.getGroupUsers()){
+				UserEntity userEntity = userService.getByUserId(userid);
+				//생성하려는 GroupUser가 존재하지 않으면 warn 로그 생성
+				if(userEntity == null)
+					log.warn(userid + "is not existed");
+				//GroupUser 생성
+				if(userEntity != null){
+					GroupUserEntity groupUserEntity = new GroupUserEntity();
+					groupUserEntity.setUserId(userid);
+					groupUserEntity.setGroupOriginKey(groupEntity.getOriginKey());
+					groupService.createGroupUser(groupUserEntity);
+				}
+			}
 
-			return ResponseEntity.ok().body(responseGroupDTO);
+			// 클라에게 보낼 DTO 세팅
+			List<GroupUserEntity> groupUserEntities = groupService.retrieveByGroupOriginKey(groupEntity.getOriginKey());
+			List<String> userIds = new ArrayList<>();
+			for (GroupUserEntity groupUserEntity : groupUserEntities) {
+				userIds.add(groupUserEntity.getUserId());
+			}
+			GroupDTO dtos = new GroupDTO(groupEntity);
+			dtos.setGroupUsers(userIds);
+
+
+			return ResponseEntity.ok().body(dtos);
 
 		} catch(Exception e) {
 			String error = e.getMessage();
@@ -70,7 +92,18 @@ public class GroupController {
 
 		entity.setLeaderId(userId);
 
-		GroupEntity groupEntity = service.update(entity);
+		GroupEntity groupEntity = groupService.updateGroup(entity);
+
+		if(dto.getGroupUsers()!=null){
+			List<GroupUserEntity> savedGroupUsers =  groupService.retrieveByGroupOriginKey(groupEntity.getOriginKey());
+			for(GroupUserEntity e : savedGroupUsers){
+				e.getUserId();
+			}
+			//List<GroupUserEntity> requestGroupUsers = dto.getGroupUsers();
+			//GroupUserEntity groupUserEntity = groupService.updateGroupUser();
+		}
+
+
 
 		final GroupDTO responseGroupDTO = GroupDTO.builder()
 				.originKey(groupEntity.getOriginKey())
@@ -80,7 +113,6 @@ public class GroupController {
 				.leaderId(userId)
 				.lastModifiedAt(groupEntity.getLastModifiedAt())
 				.createdAt(groupEntity.getCreatedAt())
-				.groupUsers(groupEntity.getGroupUsers())
 				.build();
 
 		return ResponseEntity.ok().body(responseGroupDTO);
@@ -93,7 +125,7 @@ public class GroupController {
 
 			entity.setLeaderId(userId);
 
-			service.delete(entity);
+			groupService.delete(entity);
 
 			ResponseDTO response = ResponseDTO.<GroupDTO>builder().status("succeed").build();
 
