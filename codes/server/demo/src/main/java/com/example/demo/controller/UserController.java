@@ -56,7 +56,7 @@ public class UserController {
 		return ResponseEntity.ok().body(response);
 	}
 
-	@GetMapping("/user/search")
+	@PostMapping("/user/search")
 	public ResponseEntity<?> retrieveUser(@RequestBody UserDTO userDTO) {
 		UserEntity userEntity = userService.getByUserId(userDTO.getUserId());
 		UserDTO user = UserDTO.builder()
