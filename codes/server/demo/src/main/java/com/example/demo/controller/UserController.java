@@ -56,6 +56,18 @@ public class UserController {
 		return ResponseEntity.ok().body(response);
 	}
 
+	@GetMapping("/user/search")
+	public ResponseEntity<?> retrieveUser(@RequestBody UserDTO userDTO) {
+		UserEntity userEntity = userService.getByUserId(userDTO.getUserId());
+		UserDTO user = UserDTO.builder()
+				.userId(userEntity.getUserId())
+				.userName(userEntity.getUserName())
+				.birth(userEntity.getBirth())
+				.build();
+
+		return ResponseEntity.ok().body(user);
+	}
+
 	@PostMapping("/auth/email-send")
 	public ResponseEntity<?> sendEmail(@RequestBody UserDTO userDTO){
 
