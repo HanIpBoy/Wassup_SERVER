@@ -16,6 +16,9 @@ public class ScheduleService {
 	@Autowired
 	private ScheduleRepository repository;
 
+	@Autowired
+	private EmitterService emitterService;
+
 	public List<ScheduleEntity> create(final ScheduleEntity entity) {
 		// Validations
 		validate(entity);
@@ -23,6 +26,8 @@ public class ScheduleService {
 		repository.save(entity);
 
 		log.info("Entity id : {} is saved.", entity.getOriginKey());
+
+		emitterService.send(entity.getUserId(), notification, "알림이다 알림!!!!");
 
 		return repository.findByUserId(entity.getUserId());
 	}

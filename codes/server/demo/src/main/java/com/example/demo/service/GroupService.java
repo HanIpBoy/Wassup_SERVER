@@ -21,17 +21,20 @@ public class GroupService {
 	@Autowired
 	private GroupUserRepository groupUserRepository;
 
-	public GroupEntity createGroup(final GroupEntity entity) {
+	public void createGroup(final GroupEntity entity) {
 		// Validations
 		validate(entity);
 
 		groupRepository.save(entity);
-
-		return entity;
 	}
 
-	public void createGroupUser(GroupUserEntity groupUserEntity) {
+	public GroupUserEntity createGroupUser(String userId, GroupEntity groupEntity) {
+		GroupUserEntity groupUserEntity = new GroupUserEntity();
+		groupUserEntity.setUserId(userId);
+		groupUserEntity.setGroupOriginKey(groupEntity.getOriginKey());
+		groupUserEntity.setGroupName(groupEntity.getGroupName());
 		groupUserRepository.save(groupUserEntity);
+		return groupUserEntity;
 	}
 
 	public List<GroupEntity> retrieveByUserId(final String userId) {

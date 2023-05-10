@@ -1,11 +1,15 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.GroupDTO;
+import com.example.demo.dto.NotificationDTO;
 import com.example.demo.dto.ResponseDTO;
 import com.example.demo.model.GroupEntity;
 import com.example.demo.model.GroupUserEntity;
+import com.example.demo.model.NotificationEntity;
 import com.example.demo.model.UserEntity;
+import com.example.demo.service.EmitterService;
 import com.example.demo.service.GroupService;
+import com.example.demo.service.NotificationService;
 import com.example.demo.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +33,12 @@ public class GroupController {
 	@Autowired
 	private UserService userService;
 
+	@Autowired
+	private NotificationService notificationService;
+
+	@Autowired
+	private EmitterService emitterService;
+
 	@GetMapping
 	public ResponseEntity<?> retrieveGroup(@AuthenticationPrincipal String userId) {
 		List<GroupEntity> entites = groupService.retrieveByUserId(userId);
@@ -42,8 +52,6 @@ public class GroupController {
 		return ResponseEntity.ok().body(response);
 	}
 
-
-
     @PostMapping
 	public ResponseEntity<?> createGroup(@AuthenticationPrincipal String userId, @RequestBody GroupDTO dto) {
 		try {
@@ -53,26 +61,19 @@ public class GroupController {
 			entity.setLeaderId(userId);
 
 			//Group 생성
-			GroupEntity groupEntity = groupService.createGroup(entity);
+			groupService.createGroup(entity);
 
-			//GroupUser 생성
-			for(String userid : dto.getGroupUsers()){
-				UserEntity userEntity = userService.getByUserId(userid);
-				//생성하려는 GroupUser가 존재하지 않으면 warn 로그 생성
-				if(userEntity == null)
-					log.warn(userid + "is not existed");
-				//GroupUser 생성
-				if(userEntity != null){
-					GroupUserEntity groupUserEntity = new GroupUserEntity();
-					groupUserEntity.setUserId(userid);
-					groupUserEntity.setGroupOriginKey(groupEntity.getOriginKey());
-					groupUserEntity.setGroupName(groupEntity.getGroupName());
-					groupService.createGroupUser(groupUserEntity);
-				}
-			}
+			//그룹장 GroupUser 테이블 생성
+			GroupUserEntity groupUserEntity = groupService.createGroupUser(userId, entity);
 
-			GroupDTO dtos = setGroupDTO(groupEntity);
+			//생성하는 그룹 정보를 토대로 각 유저 아이디를 세팅해 noti를 만들고 DB에 저장
+			List<NotificationEntity> notificationEntities = notificationService.createGroupInviteNotification(dto.getGroupUsers(), entity);
 
+			emitterService.sendToClients(notificationEntities, entity);
+
+
+
+			GroupDTO dtos = setGroupDTO(entity);
 
 			return ResponseEntity.ok().body(dtos);
 
@@ -83,6 +84,7 @@ public class GroupController {
 		}
 	}
 
+	@PostMapping("/user")
 
 	@PutMapping
 	public ResponseEntity<?> updateGroup(@AuthenticationPrincipal String userId, @RequestBody GroupDTO dto) {

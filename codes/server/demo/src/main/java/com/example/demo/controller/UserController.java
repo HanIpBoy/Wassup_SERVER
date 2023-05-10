@@ -6,9 +6,11 @@ import com.example.demo.dto.UserDTO;
 import com.example.demo.model.ScheduleEntity;
 import com.example.demo.model.UserEntity;
 import com.example.demo.security.TokenProvider;
+import com.example.demo.service.EmitterService;
 import com.example.demo.service.MailService;
 import com.example.demo.service.UserService;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.env.RandomValuePropertySource;
@@ -41,7 +43,10 @@ public class UserController {
 
 	@Autowired
 	private MailService mailService;
-	
+
+	@Autowired
+	private EmitterService emitterService;
+
 	private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
 
@@ -54,6 +59,18 @@ public class UserController {
 		ResponseDTO response = ResponseDTO.<UserDTO>builder().data(dtos).status("succeed").build();
 
 		return ResponseEntity.ok().body(response);
+	}
+
+	@PostMapping("/user/search")
+	public ResponseEntity<?> retrieveUser(@RequestBody UserDTO userDTO) {
+		UserEntity userEntity = userService.getByUserId(userDTO.getUserId());
+		UserDTO user = UserDTO.builder()
+				.userId(userEntity.getUserId())
+				.userName(userEntity.getUserName())
+				.birth(userEntity.getBirth())
+				.build();
+
+		return ResponseEntity.ok().body(user);
 	}
 
 	@PostMapping("/auth/email-send")
@@ -73,7 +90,7 @@ public class UserController {
 
 		mailService.send(userDTO);
 
-		return ResponseEntity.ok().body(userDTO.getUserId());
+		return ResponseEntity.ok().body(userDTO);
 	}
 
 	@PostMapping("/auth/email-verify")
@@ -113,7 +130,7 @@ public class UserController {
 	}
 	
 	@PostMapping("/auth/signin")
-	public ResponseEntity<?> authenticate(@RequestBody UserDTO userDTO) {
+	public ResponseEntity<?> authenticate(@RequestBody UserDTO userDTO) throws JsonProcessingException {
 		UserEntity user = userService.getByCredentials(userDTO.getUserId(), userDTO.getPassword(), passwordEncoder);
 		
 		if(user != null) {
@@ -125,6 +142,9 @@ public class UserController {
 					.token(token)
 					.build();
 
+			// 유저가 로그인하면, Emitter 만들기
+			emitterService.subscribe(userDTO.getUserId());
+
 			return ResponseEntity.ok().body(responseUserDTO);
 		} else {
 			ResponseDTO responseDTO = ResponseDTO.builder()
@@ -133,4 +153,5 @@ public class UserController {
 			return ResponseEntity.badRequest().body(responseDTO);
 		}
 	}
+
 }
