@@ -11,11 +11,13 @@ import lombok.NoArgsConstructor;
 @Data
 public class NotificationDTO<T> {
 	private GroupEntity group;
-	private NotificationEntity noti;
+	private NotificationEntity notification;
+	private String isAccepted;
 
-	public NotificationDTO(GroupEntity group, NotificationEntity noti) {
+	public NotificationDTO(GroupEntity group, NotificationEntity notification, String isAccepted) {
 		this.group = group;
-		this.noti = noti;
+		this.notification = notification;
+		this.isAccepted = isAccepted;
 	}
 }
 

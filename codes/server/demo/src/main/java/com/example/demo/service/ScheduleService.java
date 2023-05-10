@@ -27,8 +27,6 @@ public class ScheduleService {
 
 		log.info("Entity id : {} is saved.", entity.getOriginKey());
 
-		emitterService.send(entity.getUserId(), notification, "알림이다 알림!!!!");
-
 		return repository.findByUserId(entity.getUserId());
 	}
 

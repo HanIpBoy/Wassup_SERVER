@@ -23,8 +23,6 @@ public class GroupDTO {
 	private LocalDateTime createdAt;
 	private List<String> groupUsers;
 
-//	private String token;
-
 	public GroupDTO(GroupEntity entity) {
 		this.originKey = entity.getOriginKey();
 		this.groupName = entity.getGroupName();
@@ -32,8 +30,7 @@ public class GroupDTO {
 		this.numOfUsers = entity.getNumOfUsers();;
 		this.leaderId = entity.getLeaderId();;
 		this.lastModifiedAt = entity.getLastModifiedAt();;
-		this.createdAt = entity.getCreatedAt();;
-		//this.groupUsers = entity.getGroupUsers();
+		this.createdAt = entity.getCreatedAt();
 	}
 
 	// DTO -> Entity 변환
