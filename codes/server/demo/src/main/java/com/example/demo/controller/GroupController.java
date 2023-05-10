@@ -52,7 +52,7 @@ public class GroupController {
 		return ResponseEntity.ok().body(response);
 	}
 
-    @PostMapping
+    @PostMapping("/createRequest")
 	public ResponseEntity<?> createGroup(@AuthenticationPrincipal String userId, @RequestBody GroupDTO dto) {
 		try {
 			GroupEntity entity = GroupDTO.toEntity(dto);
@@ -69,13 +69,10 @@ public class GroupController {
 			//생성하는 그룹 정보를 토대로 각 유저 아이디를 세팅해 noti를 만들고 DB에 저장
 			List<NotificationEntity> notificationEntities = notificationService.createGroupInviteNotification(dto.getGroupUsers(), entity);
 
+			// 생성한 notificationEntity와 groupEntity로 NotificationDTO를 만들어 SseEmitter로 요청 알림 전송
 			emitterService.sendToClients(notificationEntities, entity);
 
-
-
-			GroupDTO dtos = setGroupDTO(entity);
-
-			return ResponseEntity.ok().body(dtos);
+			return ResponseEntity.ok().body("success");
 
 		} catch(Exception e) {
 			String error = e.getMessage();
@@ -84,7 +81,21 @@ public class GroupController {
 		}
 	}
 
-	@PostMapping("/user")
+	@PostMapping("/createResponse")
+	public ResponseEntity<?> handleGroupCreateResponse(@AuthenticationPrincipal String userId, @RequestBody NotificationDTO dto) {
+		// client는 사용자가 요청 알림을 받아서 버튼을 눌렀을 때, 이 API를 사용하면 됨. ResponseDTO의 status에 accept/deny 문자열이 날라옴.
+
+		GroupEntity entity = dto.getGroup();
+		if(dto.getIsAccepted().equals("accept")) { // 사용자가 그룹 초대 요청을 수락하면
+			groupService.createGroupUser(userId, entity); // groupUser 테이블을 생성
+
+			// 해당 notification을 DB에서 삭제해야 함. -> notificationEntity를 찾아야 함. -> 그래서 매개변수 자체를 notificationDTO로 받음.
+			notificationService.deleteNotification(dto.getNotification());
+		}
+		ResponseDTO response = ResponseDTO.<GroupDTO>builder().status("succeed").build();
+
+		return ResponseEntity.ok().body(response);
+	}
 
 	@PutMapping
 	public ResponseEntity<?> updateGroup(@AuthenticationPrincipal String userId, @RequestBody GroupDTO dto) {
@@ -122,7 +133,7 @@ public class GroupController {
 					newGroupUser.setGroupOriginKey(groupEntity.getOriginKey());
 					newGroupUser.setUserId(uid);
 					newGroupUser.setGroupName(groupEntity.getGroupName());
-					groupService.createGroupUser(newGroupUser);
+//					groupService.createGroupUser(newGroupUser);
 				}
 			}
 		}

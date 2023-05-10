@@ -90,7 +90,7 @@ public class EmitterService {
             // 각 groupUser마다 notificationDTO를 만듦, 지금 for문에서 leader의 notientity는 존재X
             NotificationDTO dto = NotificationDTO.builder()
                     .group(groupEntity)
-                    .noti(noti)
+                    .notification(noti)
                     .build();
             Optional<EmitterEntity> emitterEntity = emitterRepository.findById(noti.getUserId());
 
