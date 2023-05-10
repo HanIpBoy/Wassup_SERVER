@@ -16,8 +16,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.filter.CorsFilter;
 
 @SuppressWarnings("deprecation")
-@EnableWebSecurity
-//@EnableWebSecurity(debug = true)
+//@EnableWebSecurity
+@EnableWebSecurity(debug = true)
 @Slf4j
 @Configuration
 @RequiredArgsConstructor
