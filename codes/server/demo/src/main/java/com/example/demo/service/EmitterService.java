@@ -15,6 +15,7 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -50,33 +51,33 @@ public class EmitterService {
         return emitter;
     }
 
-    public void send(String receiverId, NotificationEntity notification, String content) {
-        NotificationEntity noti = createNotification(receiverId, notification, content);
-
-        // 로그인 한 유저의 SseEmitter 모두 가져오기
-        Map<String, SseEmitter> sseEmitters = emitterRepository.findAllStartWithById(receiverId);
-        sseEmitters.forEach(
-                (key, emitter) -> {
-                    // 데이터 전송
-                    sendToClient(emitter, key, noti);
-                }
-        );
-    }
-
-    private NotificationEntity createNotification(String receiver, NotificationEntity notification, String content) {
-        return NotificationEntity.builder()
-                .receiver(receiver)
-                .content(content)
-                .notification(notification)
-                .url("/group/schedule/" + notification.getNotificationId())
-                .build();
-    }
+//    public void send(String receiverId, NotificationEntity notification, String content) {
+//        NotificationEntity noti = createNotification(receiverId, notification, content);
+//
+//        // 로그인 한 유저의 SseEmitter 모두 가져오기
+//        Map<String, SseEmitter> sseEmitters = emitterRepository.findAllStartWithById(receiverId);
+//        sseEmitters.forEach(
+//                (key, emitter) -> {
+//                    // 데이터 전송
+//                    sendToClient(emitter, key, noti);
+//                }
+//        );
+//    }
+//
+//    private NotificationEntity createNotification(String receiver, NotificationEntity notification, String content) {
+//        return NotificationEntity.builder()
+//                .receiver(receiver)
+//                .content(content)
+//                .notification(notification)
+//                .url("/group/schedule/" + notification.getNotificationId())
+//                .build();
+//    }
 
     private void sendToClient(SseEmitter emitter, String id, Object data) {
         try {
             emitter.send(SseEmitter.event()
                     .id(id)
-                    .name("sse")
+                    .name("notification")
                     .data(data));
         } catch (IOException exception) {
             emitterRepository.deleteById(id);
@@ -86,11 +87,27 @@ public class EmitterService {
 
     public void sendToClients(List<NotificationEntity> notificationEntities, GroupEntity groupEntity) {
         for(NotificationEntity noti : notificationEntities) {
+            // 각 groupUser마다 notificationDTO를 만듦, 지금 for문에서 leader의 notientity는 존재X
             NotificationDTO dto = NotificationDTO.builder()
                     .group(groupEntity)
                     .noti(noti)
                     .build();
-            
+            Optional<EmitterEntity> emitterEntity = emitterRepository.findById(noti.getUserId());
+
+            if (emitterEntity.isPresent()) {
+                String jsonEmitter = emitterEntity.get().getSseEmitter();
+                try {
+                    SseEmitter emitter = objectMapper.readValue(jsonEmitter, SseEmitter.class);
+                    emitter.send(SseEmitter.event()
+                            .id(noti.getUserId())
+                            .name("notification")
+                            .data(dto)
+                    );
+                } catch (IOException e) {
+                    // Exception 처리 (emitter를 json 파싱을 못했을때, 또는 emitter.send를 못했을때)
+                    e.printStackTrace();
+                }
+            }
         }
     }
 }
