@@ -31,7 +31,6 @@ public class GroupScheduleEntity {
     private String startAt;
     private String endAt;
     private String memo;
-    private String notification;
     private String allDayToggle;
     private String color;
 

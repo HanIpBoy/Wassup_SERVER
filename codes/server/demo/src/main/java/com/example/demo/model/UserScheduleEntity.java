@@ -22,7 +22,7 @@ import java.time.LocalDateTime;
 @Data
 @Entity
 @Table(name = "Schedule")
-public class PersonalScheduleEntity {
+public class UserScheduleEntity {
     @Id
     @GeneratedValue(generator="system-uuid")
     @GenericGenerator(name="system-uuid", strategy="uuid")
@@ -32,7 +32,6 @@ public class PersonalScheduleEntity {
     private String endAt;
     private String userId;
     private String memo;
-    private String notification;
     private String allDayToggle;
     private String color;
 

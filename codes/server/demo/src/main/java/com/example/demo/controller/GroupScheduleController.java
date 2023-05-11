@@ -1,9 +1,13 @@
 package com.example.demo.controller;
 
-
+import com.example.demo.dto.GroupScheduleDTO;
+import com.example.demo.dto.NotificationDTO;
 import com.example.demo.dto.ResponseDTO;
-import com.example.demo.dto.ScheduleDTO;
-import com.example.demo.model.PersonalScheduleEntity;
+import com.example.demo.dto.UserScheduleDTO;
+import com.example.demo.model.GroupScheduleEntity;
+import com.example.demo.model.UserScheduleEntity;
+import com.example.demo.service.EmitterService;
+import com.example.demo.service.NotificationService;
 import com.example.demo.service.ScheduleService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,62 +25,66 @@ public class GroupScheduleController {
     @Autowired
     private ScheduleService service;
 
+    @Autowired
+    private EmitterService emitterService;
+
+    @Autowired
+    private NotificationService notificationService;
+
     @PostMapping
-    public ResponseEntity<?> createGroupSchedule(@AuthenticationPrincipal String userId, @RequestBody ScheduleDTO dto) {
+    public ResponseEntity<?> createGroupSchedule(@AuthenticationPrincipal String userId, @RequestBody GroupScheduleDTO dto) {
         try {
-            PersonalScheduleEntity entity = ScheduleDTO.toEntity(dto);
+            GroupScheduleEntity entity = GroupScheduleDTO.toEntity(dto);
 
-            List<PersonalScheduleEntity> entities = service.createGroupSchedule(entity);
+            // 그룹 일정 생성
+            GroupScheduleEntity groupScheduleEntity = service.createGroupSchedule(entity);
 
-            List<ScheduleDTO> dtos = entities.stream().map(ScheduleDTO::new).collect(Collectors.toList());
+            // 그룹원들에게 그룹 일정 생성 알림을 보내려면, 필요한 정보가 그룹에 대한 정보와 일정에 대한 정보
+            List<NotificationDTO> notificationDTOs = notificationService.createGroupScheduleNotification(groupScheduleEntity);
 
-            ResponseDTO<ScheduleDTO> response = ResponseDTO.<ScheduleDTO>builder().data(dtos).status("succeed").build();
+            // NotificationDTO를 만들어 SseEmitter로 요청 알림 전송
+            emitterService.sendToClientsGroupScheduleEvent(notificationDTOs);
 
-            return ResponseEntity.ok().body(response);
+            return ResponseEntity.ok().body(notificationDTOs);
 
         } catch(Exception e) {
             String error = e.getMessage();
-            ResponseDTO<ScheduleDTO> response = ResponseDTO.<ScheduleDTO>builder().error(error).build();
+            ResponseDTO<GroupScheduleDTO> response = ResponseDTO.<GroupScheduleDTO>builder().error(error).build();
             return ResponseEntity.badRequest().body(response);
         }
     }
 
-
-
     @PutMapping
-    public ResponseEntity<?> updateSchedule(@AuthenticationPrincipal String userId, @RequestBody ScheduleDTO dto) {
-        PersonalScheduleEntity entity = ScheduleDTO.toEntity(dto);
-        log.info("update originKey : " + entity.getOriginKey());
+    public ResponseEntity<?> updateGroupSchedule(@AuthenticationPrincipal String userId, @RequestBody GroupScheduleDTO dto) {
+        GroupScheduleEntity entity = GroupScheduleDTO.toEntity(dto);
 
-        entity.setUserId(userId);
+        List<GroupScheduleEntity> entities = service.updateGroupSchedule(entity);
 
-        List<PersonalScheduleEntity> entities = service.update(entity);
+        List<GroupScheduleDTO> dtos = entities.stream().map(GroupScheduleDTO::new).collect(Collectors.toList());
 
-        List<ScheduleDTO> dtos = entities.stream().map(ScheduleDTO::new).collect(Collectors.toList());
-
-        ResponseDTO<ScheduleDTO> response = ResponseDTO.<ScheduleDTO>builder().data(dtos).status("succeed").build();
+        ResponseDTO<GroupScheduleDTO> response = ResponseDTO.<GroupScheduleDTO>builder().data(dtos).status("succeed").build();
 
         return ResponseEntity.ok().body(response);
     }
 
     @DeleteMapping
-    public ResponseEntity<?> deleteSchedule(@AuthenticationPrincipal String userId, @RequestBody ScheduleDTO dto) {
+    public ResponseEntity<?> deleteSchedule(@AuthenticationPrincipal String userId, @RequestBody UserScheduleDTO dto) {
         try {
-            PersonalScheduleEntity entity = ScheduleDTO.toEntity(dto);
+            UserScheduleEntity entity = UserScheduleDTO.toEntity(dto);
 
             entity.setUserId(userId);
 
-            List<PersonalScheduleEntity> entities = service.delete(entity);
+            List<UserScheduleEntity> entities = service.deleteUserSchedule(entity);
 
-            List<ScheduleDTO> dtos = entities.stream().map(ScheduleDTO::new).collect(Collectors.toList());
+            List<UserScheduleDTO> dtos = entities.stream().map(UserScheduleDTO::new).collect(Collectors.toList());
 
-            ResponseDTO response = ResponseDTO.<ScheduleDTO>builder().data(dtos).status("succeed").build();
+            ResponseDTO response = ResponseDTO.<UserScheduleDTO>builder().data(dtos).status("succeed").build();
 
             return ResponseEntity.ok().body(response);
 
         } catch (Exception e) {
             String error = e.getMessage();
-            ResponseDTO response = ResponseDTO.<ScheduleDTO>builder().error(error).build();
+            ResponseDTO response = ResponseDTO.<UserScheduleDTO>builder().error(error).build();
             return ResponseEntity.badRequest().body(response);
         }
     }

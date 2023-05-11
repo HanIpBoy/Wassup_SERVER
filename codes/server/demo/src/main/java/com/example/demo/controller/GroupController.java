@@ -6,7 +6,6 @@ import com.example.demo.dto.ResponseDTO;
 import com.example.demo.model.GroupEntity;
 import com.example.demo.model.GroupUserEntity;
 import com.example.demo.model.NotificationEntity;
-import com.example.demo.model.UserEntity;
 import com.example.demo.service.EmitterService;
 import com.example.demo.service.GroupService;
 import com.example.demo.service.NotificationService;
@@ -18,7 +17,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -70,7 +68,7 @@ public class GroupController {
 			List<NotificationEntity> notificationEntities = notificationService.createGroupInviteNotification(dto.getGroupUsers(), entity);
 
 			// 생성한 notificationEntity와 groupEntity로 NotificationDTO를 만들어 SseEmitter로 요청 알림 전송
-			emitterService.sendToClients(notificationEntities, entity);
+			emitterService.sendToClientsGroupInviteEvent(notificationEntities, entity);
 
 			return ResponseEntity.ok().body("success");
 

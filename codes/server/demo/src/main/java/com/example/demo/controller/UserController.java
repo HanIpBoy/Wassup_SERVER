@@ -120,7 +120,7 @@ public class UserController {
 	}
 	
 //	@PostMapping(value = "/auth/signin", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-	@GetMapping("/auth/signin")
+	@PostMapping("/auth/signin")
 	public ResponseEntity<?> authenticate(@RequestBody UserDTO userDTO){
 		UserEntity user = userService.getByCredentials(userDTO.getUserId(), userDTO.getPassword(), passwordEncoder);
 		

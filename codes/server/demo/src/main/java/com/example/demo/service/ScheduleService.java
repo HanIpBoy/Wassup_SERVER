@@ -1,14 +1,14 @@
 package com.example.demo.service;
 
-import com.example.demo.model.GroupUserEntity;
-import com.example.demo.model.PersonalScheduleEntity;
+import com.example.demo.model.GroupScheduleEntity;
+import com.example.demo.model.UserScheduleEntity;
 import com.example.demo.persistence.EmitterRepository;
+import com.example.demo.persistence.GroupScheduleRepository;
 import com.example.demo.persistence.GroupUserRepository;
-import com.example.demo.persistence.ScheduleRepository;
+import com.example.demo.persistence.UserScheduleRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.List;
 import java.util.Optional;
@@ -18,116 +18,88 @@ import java.util.Optional;
 public class ScheduleService {
 
 	@Autowired
-	private ScheduleRepository repository;
+	private UserScheduleRepository userScheduleRepository;
 
 	@Autowired
-	private GroupUserRepository groupUserRepository;
+	private GroupScheduleRepository groupScheduleRepository;
 
-	@Autowired
-	private EmitterRepository emitterRepository;
-
-	@Autowired
-	private EmitterService emitterService;
-
-	public List<PersonalScheduleEntity> create(final PersonalScheduleEntity entity) {
+	public List<UserScheduleEntity> createUserSchedule(final UserScheduleEntity entity) {
 		// Validations
 		validate(entity);
 
-		repository.save(entity);
+		userScheduleRepository.save(entity);
 
 		log.info("Entity id : {} is saved.", entity.getOriginKey());
 
-		return repository.findByUserId(entity.getUserId());
+		return userScheduleRepository.findByUserId(entity.getUserId());
 	}
 
-	public List<PersonalScheduleEntity> createGroupSchedule(PersonalScheduleEntity entity) {
-		// Validations
-		validate(entity);
-
-		// groupOriginKey를 받아서 이로 groupUsers를 찾아냄
-		List<GroupUserEntity> groupUserEntities = groupUserRepository.findByGroupOriginKey(entity.getGroupOriginKey());
-
-		// 루프를 돌면서 groupUserId로 entity 세팅해서 Repo에 저장
-		for(GroupUserEntity e : groupUserEntities) {
-			entity.setUserId(e.getUserId());
-			repository.save(entity);
-			Optional<SseEmitter> emitter = emitterRepository.get(e.getUserId());
-			emitter.ifPresent(emt -> {
-				emitterService.sendToClient(emt, e.getUserId(), entity);
-			});
-		}
+	public GroupScheduleEntity createGroupSchedule(GroupScheduleEntity entity) {
+		groupScheduleRepository.save(entity);
 
 		log.info("Entity id : {} is saved.", entity.getOriginKey());
 
-		return repository.findByGroupOriginKey(entity.getGroupOriginKey());
+		return entity;
 	}
 
-	public List<PersonalScheduleEntity> retrieve(final String userId) {
+	public List<UserScheduleEntity> retrieveUserSchedule(final String userId) {
 
-		return repository.findAllByUserIdOrderByStartAtAsc(userId);
+		return userScheduleRepository.findAllByUserIdOrderByStartAtAsc(userId);
 	}
 
-	public List<PersonalScheduleEntity> update(final PersonalScheduleEntity entity) {
+	public List<GroupScheduleEntity> retrieveGroupSchedule(final String groupOriginKey){
+		return groupScheduleRepository.findByGroupOriginKey(groupOriginKey);
+	}
+
+	public List<UserScheduleEntity> updateUserSchedule(final UserScheduleEntity entity) {
 		validate(entity);
 
-		final Optional<PersonalScheduleEntity> original = repository.findByOriginKey(entity.getOriginKey());
+		final Optional<UserScheduleEntity> original = userScheduleRepository.findByOriginKey(entity.getOriginKey());
 
 		original.ifPresent(schedule -> {
 			schedule.setName(entity.getName() != null ? entity.getName() : schedule.getName());
 			schedule.setStartAt(entity.getStartAt() != null ? entity.getStartAt() : schedule.getStartAt());
 			schedule.setEndAt(entity.getEndAt() != null ? entity.getEndAt() : schedule.getEndAt());
 			schedule.setMemo(entity.getMemo() != null ? entity.getMemo() : schedule.getMemo());
-			schedule.setNotification(entity.getNotification() != null ? entity.getNotification() : schedule.getNotification());
 			schedule.setAllDayToggle(entity.getAllDayToggle() != null ? entity.getAllDayToggle() : schedule.getAllDayToggle());
-			repository.save(schedule);
+			userScheduleRepository.save(schedule);
 		});
 
-		return retrieve(entity.getUserId());
+		return retrieveUserSchedule(entity.getUserId());
 	}
 
-	public List<PersonalScheduleEntity> updateGroupSchedule(final PersonalScheduleEntity entity) {
-		validate(entity);
+	public List<GroupScheduleEntity> updateGroupSchedule(final GroupScheduleEntity entity) {
+		//validate(entity);
+		final Optional<GroupScheduleEntity> original =groupScheduleRepository.findById(entity.getOriginKey());
 
-		List<GroupUserEntity> groupUserEntities = groupUserRepository.findByGroupOriginKey(entity.getGroupOriginKey());
-
-		for(GroupUserEntity e : groupUserEntities) {
-			repository.findByOriginKey();
-
-			Optional<SseEmitter> emitter = emitterRepository.get(e.getUserId());
-			emitter.ifPresent(emt -> {
-				emitterService.sendToClient(emt, e.getUserId(), entity);
-			});
-		}
-		final Optional<PersonalScheduleEntity> original = repository.findByOriginKey(entity.getOriginKey());
-
-		original.ifPresent(schedule -> {
-			schedule.setName(entity.getName() != null ? entity.getName() : schedule.getName());
-			schedule.setStartAt(entity.getStartAt() != null ? entity.getStartAt() : schedule.getStartAt());
-			schedule.setEndAt(entity.getEndAt() != null ? entity.getEndAt() : schedule.getEndAt());
-			schedule.setMemo(entity.getMemo() != null ? entity.getMemo() : schedule.getMemo());
-			schedule.setNotification(entity.getNotification() != null ? entity.getNotification() : schedule.getNotification());
-			schedule.setAllDayToggle(entity.getAllDayToggle() != null ? entity.getAllDayToggle() : schedule.getAllDayToggle());
-			repository.save(schedule);
+		original.ifPresent(groupSchedule ->{
+			groupSchedule.setGroupOriginKey(entity.getGroupOriginKey()!= null ? entity.getGroupOriginKey() : groupSchedule.getGroupOriginKey());
+			groupSchedule.setStartAt(entity.getStartAt() != null ? entity.getStartAt() : groupSchedule.getStartAt());
+			groupSchedule.setEndAt(entity.getEndAt() != null ? entity.getEndAt() : groupSchedule.getEndAt());
+			groupSchedule.setMemo(entity.getMemo() != null ? entity.getMemo() : groupSchedule.getMemo());
+			groupSchedule.setAllDayToggle(entity.getAllDayToggle() != null ? entity.getAllDayToggle() : groupSchedule.getAllDayToggle());
+			groupSchedule.setColor(entity.getColor() != null ? entity.getColor() : groupSchedule.getColor());
+			groupScheduleRepository.save(groupSchedule);
 		});
 
-		return retrieve(entity.getUserId());
+		return retrieveGroupSchedule(entity.getGroupOriginKey());
 	}
 
-	public List<PersonalScheduleEntity> delete(final PersonalScheduleEntity entity) {
+	public List<UserScheduleEntity> deleteUserSchedule(final UserScheduleEntity entity) {
 		validate(entity);
 
 		try {
-			repository.delete(entity);
+			userScheduleRepository.delete(entity);
 		} catch(Exception e) {
 			log.error("error deleting entity", entity.getUserId(), e);
 
 			throw new RuntimeException("error deleting entity " + entity.getUserId());
 		}
 
-		return retrieve(entity.getUserId());
+		return retrieveUserSchedule(entity.getUserId());
 	}
 
-	private void validate(final PersonalScheduleEntity entity) {
+	private void validate(final UserScheduleEntity entity) {
 		if(entity == null) {
 			log.warn("Entity cannot be null");
 			throw new RuntimeException("Entity cannot be null");
@@ -137,6 +109,5 @@ public class ScheduleService {
 			log.warn("Unknown user.");
 			throw new RuntimeException("Unknown user.");
 		}
-
 	}
 }

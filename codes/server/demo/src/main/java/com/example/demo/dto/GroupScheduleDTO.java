@@ -1,7 +1,6 @@
 package com.example.demo.dto;
 
 import com.example.demo.model.GroupScheduleEntity;
-import com.example.demo.model.PersonalScheduleEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -21,7 +20,6 @@ public class GroupScheduleDTO {
 	private String startAt;
 	private String endAt;
 	private String memo;
-	private String notification;
 	private String allDayToggle;
 	private LocalDateTime lastModifiedAt;
 	private LocalDateTime createdAt;
@@ -34,24 +32,21 @@ public class GroupScheduleDTO {
 		this.startAt = entity.getStartAt();
 		this.endAt = entity.getEndAt();
 		this.memo = entity.getMemo();
-		this.notification = entity.getNotification();
 		this.allDayToggle = entity.getAllDayToggle();
 		this.lastModifiedAt = entity.getLastModifiedAt();
 		this.createdAt = entity.getCreatedAt();
 		this.color = entity.getColor();
-		this.groupOriginKey = entity.getGroupOriginKey();
 	}
 
 	// DTO -> Entity 변환
-	public static PersonalScheduleEntity toEntity(final GroupScheduleDTO dto) {
-		return PersonalScheduleEntity.builder()
+	public static GroupScheduleEntity toEntity(final GroupScheduleDTO dto) {
+		return GroupScheduleEntity.builder()
 				.originKey(dto.getOriginKey())
 				.groupOriginKey(dto.getGroupOriginKey())
 				.name(dto.getName())
 				.startAt(dto.getStartAt())
 				.endAt(dto.getEndAt())
 				.memo(dto.getMemo())
-				.notification(dto.getNotification())
 				.allDayToggle(dto.getAllDayToggle())
 				.lastModifiedAt(dto.getLastModifiedAt())
 				.createdAt(dto.getCreatedAt())
