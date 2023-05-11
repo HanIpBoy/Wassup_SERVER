@@ -1,37 +1,24 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.ResponseDTO;
-import com.example.demo.dto.ScheduleDTO;
 import com.example.demo.dto.UserDTO;
-import com.example.demo.model.ScheduleEntity;
 import com.example.demo.model.UserEntity;
 import com.example.demo.security.TokenProvider;
 import com.example.demo.service.EmitterService;
 import com.example.demo.service.MailService;
 import com.example.demo.service.UserService;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.env.RandomValuePropertySource;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.List;
 import java.util.Random;
-import java.util.random.RandomGenerator;
 import java.util.stream.Collectors;
 
 @Slf4j

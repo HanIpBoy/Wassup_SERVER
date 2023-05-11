@@ -1,6 +1,5 @@
 package com.example.demo.dto;
 
-import com.example.demo.model.ScheduleEntity;
 import com.example.demo.model.UserEntity;
 import lombok.Builder;
 import lombok.NoArgsConstructor;

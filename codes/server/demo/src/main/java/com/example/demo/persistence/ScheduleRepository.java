@@ -1,6 +1,6 @@
 package com.example.demo.persistence;
 
-import com.example.demo.model.ScheduleEntity;
+import com.example.demo.model.PersonalScheduleEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -8,11 +8,11 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface ScheduleRepository extends JpaRepository<ScheduleEntity, String> {
+public interface ScheduleRepository extends JpaRepository<PersonalScheduleEntity, String> {
 
-	List<ScheduleEntity> findByUserId(String userId);
-	Optional<ScheduleEntity> findByOriginKey(String originKey);
-	List<ScheduleEntity> findAllByUserIdOrderByStartAtAsc(String userId);
-	List<ScheduleEntity> findByGroupOriginKey(String groupOriginKey);
+	List<PersonalScheduleEntity> findByUserId(String userId);
+	Optional<PersonalScheduleEntity> findByOriginKey(String originKey);
+	List<PersonalScheduleEntity> findAllByUserIdOrderByStartAtAsc(String userId);
+	List<PersonalScheduleEntity> findByGroupOriginKey(String groupOriginKey);
 }
 

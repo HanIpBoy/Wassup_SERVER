@@ -19,19 +19,25 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Data
 @Entity
-@Table(name = "Group")
-public class GroupEntity {
+@Table(name = "groupSchedule")
+public class GroupScheduleEntity {
     @Id
     @GeneratedValue(generator="system-uuid")
     @GenericGenerator(name="system-uuid", strategy="uuid")
     private String originKey;
-    private String groupName;
-    private String leaderId;
-    private int numOfUsers;
-    private String description;
+    private String groupOriginKey;
+
+    private String name;
+    private String startAt;
+    private String endAt;
+    private String memo;
+    private String notification;
+    private String allDayToggle;
+    private String color;
 
     @UpdateTimestamp
     private LocalDateTime lastModifiedAt;
+
     @CreationTimestamp
     private LocalDateTime createdAt;
 }

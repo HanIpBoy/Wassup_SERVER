@@ -1,7 +1,7 @@
 package com.example.demo.service;
 
 import com.example.demo.model.GroupUserEntity;
-import com.example.demo.model.ScheduleEntity;
+import com.example.demo.model.PersonalScheduleEntity;
 import com.example.demo.persistence.EmitterRepository;
 import com.example.demo.persistence.GroupUserRepository;
 import com.example.demo.persistence.ScheduleRepository;
@@ -29,7 +29,7 @@ public class ScheduleService {
 	@Autowired
 	private EmitterService emitterService;
 
-	public List<ScheduleEntity> create(final ScheduleEntity entity) {
+	public List<PersonalScheduleEntity> create(final PersonalScheduleEntity entity) {
 		// Validations
 		validate(entity);
 
@@ -40,7 +40,7 @@ public class ScheduleService {
 		return repository.findByUserId(entity.getUserId());
 	}
 
-	public List<ScheduleEntity> createGroupSchedule(ScheduleEntity entity) {
+	public List<PersonalScheduleEntity> createGroupSchedule(PersonalScheduleEntity entity) {
 		// Validations
 		validate(entity);
 
@@ -62,15 +62,15 @@ public class ScheduleService {
 		return repository.findByGroupOriginKey(entity.getGroupOriginKey());
 	}
 
-	public List<ScheduleEntity> retrieve(final String userId) {
+	public List<PersonalScheduleEntity> retrieve(final String userId) {
 
 		return repository.findAllByUserIdOrderByStartAtAsc(userId);
 	}
 
-	public List<ScheduleEntity> update(final ScheduleEntity entity) {
+	public List<PersonalScheduleEntity> update(final PersonalScheduleEntity entity) {
 		validate(entity);
 
-		final Optional<ScheduleEntity> original = repository.findByOriginKey(entity.getOriginKey());
+		final Optional<PersonalScheduleEntity> original = repository.findByOriginKey(entity.getOriginKey());
 
 		original.ifPresent(schedule -> {
 			schedule.setName(entity.getName() != null ? entity.getName() : schedule.getName());
@@ -85,7 +85,7 @@ public class ScheduleService {
 		return retrieve(entity.getUserId());
 	}
 
-	public List<ScheduleEntity> updateGroupSchedule(final ScheduleEntity entity) {
+	public List<PersonalScheduleEntity> updateGroupSchedule(final PersonalScheduleEntity entity) {
 		validate(entity);
 
 		List<GroupUserEntity> groupUserEntities = groupUserRepository.findByGroupOriginKey(entity.getGroupOriginKey());
@@ -98,7 +98,7 @@ public class ScheduleService {
 				emitterService.sendToClient(emt, e.getUserId(), entity);
 			});
 		}
-		final Optional<ScheduleEntity> original = repository.findByOriginKey(entity.getOriginKey());
+		final Optional<PersonalScheduleEntity> original = repository.findByOriginKey(entity.getOriginKey());
 
 		original.ifPresent(schedule -> {
 			schedule.setName(entity.getName() != null ? entity.getName() : schedule.getName());
@@ -113,7 +113,7 @@ public class ScheduleService {
 		return retrieve(entity.getUserId());
 	}
 
-	public List<ScheduleEntity> delete(final ScheduleEntity entity) {
+	public List<PersonalScheduleEntity> delete(final PersonalScheduleEntity entity) {
 		validate(entity);
 
 		try {
@@ -127,7 +127,7 @@ public class ScheduleService {
 		return retrieve(entity.getUserId());
 	}
 
-	private void validate(final ScheduleEntity entity) {
+	private void validate(final PersonalScheduleEntity entity) {
 		if(entity == null) {
 			log.warn("Entity cannot be null");
 			throw new RuntimeException("Entity cannot be null");

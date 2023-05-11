@@ -3,7 +3,7 @@ package com.example.demo.controller;
 
 import com.example.demo.dto.ResponseDTO;
 import com.example.demo.dto.ScheduleDTO;
-import com.example.demo.model.ScheduleEntity;
+import com.example.demo.model.PersonalScheduleEntity;
 import com.example.demo.service.ScheduleService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,9 +24,9 @@ public class GroupScheduleController {
     @PostMapping
     public ResponseEntity<?> createGroupSchedule(@AuthenticationPrincipal String userId, @RequestBody ScheduleDTO dto) {
         try {
-            ScheduleEntity entity = ScheduleDTO.toEntity(dto);
+            PersonalScheduleEntity entity = ScheduleDTO.toEntity(dto);
 
-            List<ScheduleEntity> entities = service.createGroupSchedule(entity);
+            List<PersonalScheduleEntity> entities = service.createGroupSchedule(entity);
 
             List<ScheduleDTO> dtos = entities.stream().map(ScheduleDTO::new).collect(Collectors.toList());
 
@@ -45,12 +45,12 @@ public class GroupScheduleController {
 
     @PutMapping
     public ResponseEntity<?> updateSchedule(@AuthenticationPrincipal String userId, @RequestBody ScheduleDTO dto) {
-        ScheduleEntity entity = ScheduleDTO.toEntity(dto);
+        PersonalScheduleEntity entity = ScheduleDTO.toEntity(dto);
         log.info("update originKey : " + entity.getOriginKey());
 
         entity.setUserId(userId);
 
-        List<ScheduleEntity> entities = service.update(entity);
+        List<PersonalScheduleEntity> entities = service.update(entity);
 
         List<ScheduleDTO> dtos = entities.stream().map(ScheduleDTO::new).collect(Collectors.toList());
 
@@ -62,11 +62,11 @@ public class GroupScheduleController {
     @DeleteMapping
     public ResponseEntity<?> deleteSchedule(@AuthenticationPrincipal String userId, @RequestBody ScheduleDTO dto) {
         try {
-            ScheduleEntity entity = ScheduleDTO.toEntity(dto);
+            PersonalScheduleEntity entity = ScheduleDTO.toEntity(dto);
 
             entity.setUserId(userId);
 
-            List<ScheduleEntity> entities = service.delete(entity);
+            List<PersonalScheduleEntity> entities = service.delete(entity);
 
             List<ScheduleDTO> dtos = entities.stream().map(ScheduleDTO::new).collect(Collectors.toList());
 
