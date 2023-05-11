@@ -1,6 +1,5 @@
 package com.example.demo.service;
 
-import com.example.demo.dto.GroupDTO;
 import com.example.demo.dto.NotificationDTO;
 import com.example.demo.model.GroupEntity;
 import com.example.demo.model.GroupScheduleEntity;
@@ -52,7 +51,7 @@ public class NotificationService {
         return dtos;
     }
 
-    public List<NotificationDTO> createGroupScheduleNotification(GroupScheduleEntity groupScheduleEntity) {
+    public List<NotificationDTO> createGroupScheduleNotification(GroupScheduleEntity groupScheduleEntity,String notiType) {
         List<NotificationDTO> dtos = new ArrayList<>();
 
         // groupUserEntities 꺼내기
@@ -63,13 +62,35 @@ public class NotificationService {
 
         // 루프 돌면서 notificationDTO 만드는 과정
         for(GroupUserEntity groupUser : groupUserEntities) {
-            // notificationEntity 만들기
-            NotificationEntity notiEntity = NotificationEntity.builder()
-                    .userId(groupUser.getUserId())
-                    .title("그룹 일정 생성")
-                    .message(group.getGroupName() + " 그룹에서 " + groupScheduleEntity.getName() + " 일정을 생성하였습니다.")
-                    .build();
+            NotificationEntity notiEntity = null;
 
+            // notificationEntity 만들기
+            switch (notiType) {
+                case "Create":
+                     notiEntity = NotificationEntity.builder()
+                            .userId(groupUser.getUserId())
+                            .title("그룹 일정 생성")
+                            .message(group.getGroupName() + " 그룹에서 " + groupScheduleEntity.getName() + " 일정을 생성하였습니다.")
+                            .build();
+                    break;
+                case "Update":
+                    notiEntity = NotificationEntity.builder()
+                            .userId(groupUser.getUserId())
+                            .title("그룹 일정 수정")
+                            .message(group.getGroupName() + " 그룹에서 " + groupScheduleEntity.getName() + " 일정을 수정하였습니다.")
+                            .build();
+                    break;
+                case "Delete":
+                    notiEntity = NotificationEntity.builder()
+                            .userId(groupUser.getUserId())
+                            .title("그룹 일정 삭제")
+                            .message(group.getGroupName() + " 그룹에서 " + groupScheduleEntity.getName() + " 일정을 삭제하였습니다.")
+                            .build();
+                    break;
+                default:
+                    // 예외 처리 등을 수행하거나 기본값 할당
+                    break;
+            }
             // notificationEntities와 GroupEntity를 병합해 NotificationDTO 만들기
             NotificationDTO dto = NotificationDTO.builder()
                     .group(group)
@@ -80,6 +101,7 @@ public class NotificationService {
 
         return dtos;
     }
+
 
     public void deleteNotification(NotificationEntity entity) {
         notificationRepository.delete(entity);

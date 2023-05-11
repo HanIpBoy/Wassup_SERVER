@@ -40,7 +40,7 @@ public class GroupScheduleController {
             GroupScheduleEntity groupScheduleEntity = service.createGroupSchedule(entity);
 
             // 그룹원들에게 그룹 일정 생성 알림을 보내려면, 필요한 정보가 그룹에 대한 정보와 일정에 대한 정보
-            List<NotificationDTO> notificationDTOs = notificationService.createGroupScheduleNotification(groupScheduleEntity);
+            List<NotificationDTO> notificationDTOs = notificationService.createGroupScheduleNotification(groupScheduleEntity,"Create");
 
             // NotificationDTO를 만들어 SseEmitter로 요청 알림 전송
             emitterService.sendToClients(notificationDTOs);
@@ -56,15 +56,21 @@ public class GroupScheduleController {
 
     @PutMapping
     public ResponseEntity<?> updateGroupSchedule(@AuthenticationPrincipal String userId, @RequestBody GroupScheduleDTO dto) {
+
         GroupScheduleEntity entity = GroupScheduleDTO.toEntity(dto);
+        //그룹 스케쥴 수정
+        entity = service.updateGroupSchedule(entity);
 
-        List<GroupScheduleEntity> entities = service.updateGroupSchedule(entity);
+        //이전 코드
+        //List<GroupScheduleDTO> dtos = entities.stream().map(GroupScheduleDTO::new).collect(Collectors.toList());
 
-        List<GroupScheduleDTO> dtos = entities.stream().map(GroupScheduleDTO::new).collect(Collectors.toList());
+        // 그룹원들에게 그룹 일정 수정 알림을 보내려면, 필요한 정보가 그룹에 대한 정보와 일정에 대한 정보
+        List<NotificationDTO> notificationDTOs = notificationService.createGroupScheduleNotification(entity,"Update");
 
-        ResponseDTO<GroupScheduleDTO> response = ResponseDTO.<GroupScheduleDTO>builder().data(dtos).status("succeed").build();
+        // NotificationDTO를 만들어 SseEmitter로 요청 알림 전송
+        emitterService.sendToClients(notificationDTOs);
 
-        return ResponseEntity.ok().body(response);
+        return ResponseEntity.ok().body(notificationDTOs);
     }
 
     @DeleteMapping

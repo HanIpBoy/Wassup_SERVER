@@ -8,6 +8,7 @@ import com.example.demo.persistence.GroupUserRepository;
 import com.example.demo.persistence.UserScheduleRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -42,11 +43,13 @@ public class ScheduleService {
 		return entity;
 	}
 
+	//유저가 생성한 모든 스케쥴 검색
 	public List<UserScheduleEntity> retrieveUserSchedule(final String userId) {
 
 		return userScheduleRepository.findAllByUserIdOrderByStartAtAsc(userId);
 	}
 
+	//그룹이 생성한 모든 스케쥴 검색
 	public List<GroupScheduleEntity> retrieveGroupSchedule(final String groupOriginKey){
 		return groupScheduleRepository.findByGroupOriginKey(groupOriginKey);
 	}
@@ -68,7 +71,7 @@ public class ScheduleService {
 		return retrieveUserSchedule(entity.getUserId());
 	}
 
-	public List<GroupScheduleEntity> updateGroupSchedule(final GroupScheduleEntity entity) {
+	public GroupScheduleEntity updateGroupSchedule(final GroupScheduleEntity entity) {
 		//validate(entity);
 		final Optional<GroupScheduleEntity> original =groupScheduleRepository.findById(entity.getOriginKey());
 
@@ -82,7 +85,7 @@ public class ScheduleService {
 			groupScheduleRepository.save(groupSchedule);
 		});
 
-		return retrieveGroupSchedule(entity.getGroupOriginKey());
+		return groupScheduleRepository.findByOriginKey(entity.getOriginKey());
 	}
 
 	public List<UserScheduleEntity> deleteUserSchedule(final UserScheduleEntity entity) {
