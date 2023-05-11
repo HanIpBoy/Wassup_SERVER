@@ -25,12 +25,15 @@ public class GroupUserEntity {
     @GeneratedValue(generator="system-uuid")
     @GenericGenerator(name="system-uuid", strategy="uuid")
     private String originKey;
+    private String userId;
     private String groupOriginKey;
+<<<<<<< HEAD
     private String userId;
 
+=======
+>>>>>>> main
     @UpdateTimestamp
     private LocalDateTime lastModifiedAt;
-
     @CreationTimestamp
     private LocalDateTime createdAt;
 }

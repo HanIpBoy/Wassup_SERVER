@@ -36,8 +36,11 @@ public class NotificationService {
         return entities;
     }
 
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> main
     public void deleteNotification(NotificationEntity entity) {
         notificationRepository.delete(entity);
     }

@@ -57,8 +57,8 @@ public class GroupController {
 		try {
 			GroupEntity entity = GroupDTO.toEntity(dto);
 
-			// 그룹을 생성하는 유저가 그룹장이 되기 때문
-			entity.setLeaderId(userId);
+			//그룹장 검사, 그룹장이 맞으면 GroupEntity의 LedearId를 세팅해줌
+			entity = groupService.validateLeader(userId,entity);
 
 			//Group 생성
 			groupService.createGroup(entity);
@@ -83,7 +83,11 @@ public class GroupController {
 
 	@PostMapping("/createResponse")
 	public ResponseEntity<?> handleGroupCreateResponse(@AuthenticationPrincipal String userId, @RequestBody NotificationDTO dto) {
+<<<<<<< HEAD
 		// client는 사용자가 요청 알림을 받아서 버튼을 눌렀을 때, 이 API를 사용하면 됨. NotificationDTO의 status에 accept/deny 문자열이 날라옴.
+=======
+		// client는 사용자가 요청 알림을 받아서 버튼을 눌렀을 때, 이 API를 사용하면 됨. ResponseDTO의 status에 accept/deny 문자열이 날라옴.
+>>>>>>> main
 
 		GroupEntity entity = dto.getGroup();
 		if(dto.getIsAccepted().equals("accept")) { // 사용자가 그룹 초대 요청을 수락하면
@@ -101,10 +105,11 @@ public class GroupController {
 	public ResponseEntity<?> updateGroup(@AuthenticationPrincipal String userId, @RequestBody GroupDTO dto) {
 		GroupEntity entity = GroupDTO.toEntity(dto);
 
-		entity.setLeaderId(userId);
+		//그룹장 검사, 그룹장이 맞으면 GroupEntity의 LedearId를 세팅해줌
+		entity = groupService.validateLeader(userId,entity);
 
-		GroupEntity groupEntity = groupService.updateGroup(entity);
 
+<<<<<<< HEAD
 		if(dto.getGroupUsers()!=null){
 			List<GroupUserEntity> savedGroupUsers =  groupService.retrieveByGroupOriginKey(groupEntity.getOriginKey());
 			List<String> requestGroupUsers = dto.getGroupUsers();
@@ -137,6 +142,14 @@ public class GroupController {
 				}
 			}
 		}
+=======
+		// 그룹장이 확인되면 다시 dto의 내용 세팅
+		// (왜 이렇게 하나요?: 그룹장 변경 시 권한 검사 후 그룹장을 변경해야댐)
+		entity.setLeaderId(dto.getLeaderId());
+
+		GroupEntity groupEntity = groupService.updateGroup(entity);
+		groupService.updateGroupUser(groupEntity,dto.getGroupUsers());
+>>>>>>> main
 
 		return ResponseEntity.ok().body(setGroupDTO(groupEntity));
 	}
@@ -146,10 +159,8 @@ public class GroupController {
 		try {
 			GroupEntity entity = GroupDTO.toEntity(dto);
 
-			//권한 검사???
-
-			// 그룹을 생성하는 유저가 그룹장이 되기 때문
-			entity.setLeaderId(userId);
+			//그룹장 검사, 그룹장이 맞으면 GroupEntity의 LedearId를 세팅해줌
+			entity = groupService.validateLeader(userId,entity);
 
 			groupService.deleteGroup(entity);
 

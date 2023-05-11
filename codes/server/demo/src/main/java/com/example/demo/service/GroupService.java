@@ -53,6 +53,7 @@ public class GroupService {
 	}
 
 	public GroupEntity updateGroup(final GroupEntity entity) {
+
 		validate(entity);
 
 		final Optional<GroupEntity> original = Optional.ofNullable(groupRepository.findByOriginKey(entity.getOriginKey()));
@@ -135,4 +136,8 @@ public class GroupService {
 		}
 		return entity;
 	}
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> main
