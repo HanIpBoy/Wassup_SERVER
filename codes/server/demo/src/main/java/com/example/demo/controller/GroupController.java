@@ -65,10 +65,10 @@ public class GroupController {
 			GroupUserEntity groupUserEntity = groupService.createGroupUser(userId, entity);
 
 			//생성하는 그룹 정보를 토대로 각 유저 아이디를 세팅해 noti를 만들고 DB에 저장
-			List<NotificationEntity> notificationEntities = notificationService.createGroupInviteNotification(dto.getGroupUsers(), entity);
+			List<NotificationDTO> notificationDTO = notificationService.createGroupInviteNotification(dto.getGroupUsers(), entity);
 
 			// 생성한 notificationEntity와 groupEntity로 NotificationDTO를 만들어 SseEmitter로 요청 알림 전송
-			emitterService.sendToClientsGroupInviteEvent(notificationEntities, entity);
+			emitterService.sendToClients(notificationDTO);
 
 			return ResponseEntity.ok().body("success");
 

@@ -43,7 +43,7 @@ public class GroupScheduleController {
             List<NotificationDTO> notificationDTOs = notificationService.createGroupScheduleNotification(groupScheduleEntity);
 
             // NotificationDTO를 만들어 SseEmitter로 요청 알림 전송
-            emitterService.sendToClientsGroupScheduleEvent(notificationDTOs);
+            emitterService.sendToClients(notificationDTOs);
 
             return ResponseEntity.ok().body(notificationDTOs);
 

@@ -29,8 +29,8 @@ public class NotificationService {
     @Autowired
     private GroupRepository groupRepository;
 
-    public List<NotificationEntity> createGroupInviteNotification(List<String> groupUsers, GroupEntity entity) {
-        List<NotificationEntity> entities = new ArrayList<>();
+    public List<NotificationDTO> createGroupInviteNotification(List<String> groupUsers, GroupEntity entity) {
+        List<NotificationDTO> dtos = new ArrayList<>();
 
         for (String user : groupUsers) {
             if (user.equals(entity.getLeaderId())) continue;
@@ -42,9 +42,14 @@ public class NotificationService {
                     .build();
 
             notificationRepository.save(notiEntity);
-            entities.add(notiEntity);
+
+            NotificationDTO dto = NotificationDTO.builder()
+                    .group(entity)
+                    .notification(notiEntity)
+                    .build();
+            dtos.add(dto);
         }
-        return entities;
+        return dtos;
     }
 
     public List<NotificationDTO> createGroupScheduleNotification(GroupScheduleEntity groupScheduleEntity) {

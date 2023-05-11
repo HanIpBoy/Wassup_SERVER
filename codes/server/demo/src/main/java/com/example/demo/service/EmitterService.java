@@ -1,8 +1,6 @@
 package com.example.demo.service;
 
 import com.example.demo.dto.NotificationDTO;
-import com.example.demo.model.GroupEntity;
-import com.example.demo.model.NotificationEntity;
 import com.example.demo.persistence.EmitterRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,29 +65,7 @@ public class EmitterService {
         }
     }
 
-    public void sendToClientsGroupInviteEvent(List<NotificationEntity> notificationEntities, GroupEntity groupEntity) {
-        for(NotificationEntity noti : notificationEntities) {
-            // 각 groupUser마다 notificationDTO를 만듦, 지금 for문에서 leader 거는 존재X
-            NotificationDTO dto = NotificationDTO.builder()
-                    .group(groupEntity)
-                    .notification(noti)
-                    .build();
-
-            Optional<SseEmitter> optionalEmitter = emitterRepository.get(noti.getUserId());
-            optionalEmitter.ifPresent(emitter -> {
-                try {
-                    emitter.send(SseEmitter.event()
-                            .id(noti.getUserId())
-                            .name("notification")
-                            .data(dto));
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            });
-        }
-    }
-
-    public void sendToClientsGroupScheduleEvent(List<NotificationDTO> dto) {
+    public void sendToClients(List<NotificationDTO> dto) {
         for(NotificationDTO noti : dto) {
             String userId = noti.getNotification().getUserId();
             Optional<SseEmitter> optionalEmitter = emitterRepository.get(userId);
