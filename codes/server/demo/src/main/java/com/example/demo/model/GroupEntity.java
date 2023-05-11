@@ -29,13 +29,7 @@ public class GroupEntity {
     private String leaderId;
     private int numOfUsers;
     private String description;
-<<<<<<< HEAD
-    private String groupName;
-    private String leaderId;
-    private int numOfUsers;
 
-=======
->>>>>>> main
     @UpdateTimestamp
     private LocalDateTime lastModifiedAt;
     @CreationTimestamp

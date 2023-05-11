@@ -23,10 +23,7 @@ public class GroupDTO {
 	private LocalDateTime createdAt;
 	private List<String> groupUsers;
 
-<<<<<<< HEAD
-=======
 	//Entity -> DTO
->>>>>>> main
 	public GroupDTO(GroupEntity entity) {
 		this.originKey = entity.getOriginKey();
 		this.groupName = entity.getGroupName();

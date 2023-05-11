@@ -3,8 +3,6 @@ package com.example.demo.controller;
 import com.example.demo.dto.ResponseDTO;
 import com.example.demo.dto.ScheduleDTO;
 import com.example.demo.model.ScheduleEntity;
-import com.example.demo.model.TodoEntity;
-import com.example.demo.security.TokenProvider;
 import com.example.demo.service.ScheduleService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

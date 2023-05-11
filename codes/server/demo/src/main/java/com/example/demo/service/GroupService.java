@@ -40,15 +40,16 @@ public class GroupService {
 	public List<GroupEntity> retrieveByUserId(final String userId) {
 		// 사용자의 Id로 groupUser 테이블을 검색
 		List<GroupUserEntity> groupUserEntities = groupUserRepository.findByUserId(userId);
-		List<GroupEntity> groupEntities = new ArrayList<>();; // 최종적으로 반환할 List
+		List<GroupEntity> groupEntities = new ArrayList<>();
+		; // 최종적으로 반환할 List
 
-		for(GroupUserEntity entitiy : groupUserEntities) {
+		for (GroupUserEntity entitiy : groupUserEntities) {
 			groupEntities.add(groupRepository.findByOriginKey(entitiy.getGroupOriginKey()));
 		}
 		return groupEntities;
 	}
 
-	public List<GroupUserEntity> retrieveByGroupOriginKey(final String groupOriginKey){
+	public List<GroupUserEntity> retrieveByGroupOriginKey(final String groupOriginKey) {
 		return groupUserRepository.findByGroupOriginKey(groupOriginKey);
 	}
 
@@ -69,20 +70,20 @@ public class GroupService {
 		return groupRepository.findByOriginKey(entity.getOriginKey());
 	}
 
-	public List<GroupUserEntity> updateGroupUser(final GroupEntity groupEntity,final List<String> requestGroupUsers){
-		List<GroupUserEntity> savedGroupUsers =  retrieveByGroupOriginKey(groupEntity.getOriginKey());
+	public List<GroupUserEntity> updateGroupUser(final GroupEntity groupEntity, final List<String> requestGroupUsers) {
+		List<GroupUserEntity> savedGroupUsers = retrieveByGroupOriginKey(groupEntity.getOriginKey());
 
 		// 기존에 저장된 그룹 유저 목록에서 삭제 대상인 유저를 찾아서 삭제
-		for(GroupUserEntity savedGroupUser : savedGroupUsers) {
-			if(!requestGroupUsers.contains(savedGroupUser.getUserId())) {
+		for (GroupUserEntity savedGroupUser : savedGroupUsers) {
+			if (!requestGroupUsers.contains(savedGroupUser.getUserId())) {
 				deleteGroupUser(savedGroupUser);
 			}
 		}
 
 		// 새로 추가할 유저 목록을 찾아서 추가
-		for(String uid : requestGroupUsers) {
+		for (String uid : requestGroupUsers) {
 			boolean isNewUser = true;
-			for (Iterator<GroupUserEntity> iterator = savedGroupUsers.iterator(); iterator.hasNext();) {
+			for (Iterator<GroupUserEntity> iterator = savedGroupUsers.iterator(); iterator.hasNext(); ) {
 				GroupUserEntity savedGroupUser = iterator.next();
 				if (savedGroupUser.getUserId().equals(uid)) {
 					isNewUser = false;
@@ -90,8 +91,8 @@ public class GroupService {
 					break;
 				}
 			}
-			if(isNewUser) {
-				createGroupUser(uid,groupEntity);
+			if (isNewUser) {
+				createGroupUser(uid, groupEntity);
 			}
 		}
 		return retrieveByGroupOriginKey(groupEntity.getOriginKey());
@@ -102,12 +103,12 @@ public class GroupService {
 
 		try {
 			List<GroupUserEntity> groupUserEntities = groupUserRepository.findByGroupOriginKey(entity.getOriginKey());
-			for(GroupUserEntity k : groupUserEntities) {
+			for (GroupUserEntity k : groupUserEntities) {
 				deleteGroupUser(k);
 			}
 			groupRepository.delete(entity);
 			return null;
-		} catch(Exception e) {
+		} catch (Exception e) {
 			log.error("error deleting entity", entity.getOriginKey(), e);
 			throw new RuntimeException("error deleting entity " + entity.getOriginKey());
 		}
@@ -118,26 +119,24 @@ public class GroupService {
 	}
 
 	private void validate(final GroupEntity entity) {
-		if(entity == null) {
+		if (entity == null) {
 			log.warn("Entity cannot be null");
 			throw new RuntimeException("Entity cannot be null");
 		}
-		if(entity.getLeaderId() == null) {
+		if (entity.getLeaderId() == null) {
 			log.warn("Unknown user.");
 			throw new RuntimeException("Unknown user.");
 		}
 
 	}
-	public GroupEntity validateLeader(final String userId,final GroupEntity entity) {
+
+	public GroupEntity validateLeader(final String userId, final GroupEntity entity) {
 		entity.setLeaderId(userId);
-		if(!entity.getLeaderId().equals(groupRepository.findByOriginKey(entity.getOriginKey()).getLeaderId())){
+		if (!entity.getLeaderId().equals(groupRepository.findByOriginKey(entity.getOriginKey()).getLeaderId())) {
 			log.warn("Unauthorized user is trying to access the group");
 			throw new RuntimeException("Unauthorized user is trying to access the group");
 		}
 		return entity;
 	}
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> main
+

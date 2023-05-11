@@ -77,10 +77,6 @@ public class EmitterService {
                     .group(groupEntity)
                     .notification(noti)
                     .build();
-<<<<<<< HEAD
-=======
-            Optional<EmitterEntity> emitterEntity = emitterRepository.findByuserId(noti.getUserId());
->>>>>>> main
 
             Optional<SseEmitter> optionalEmitter = emitterRepository.get(noti.getUserId());
             optionalEmitter.ifPresent(emitter -> {

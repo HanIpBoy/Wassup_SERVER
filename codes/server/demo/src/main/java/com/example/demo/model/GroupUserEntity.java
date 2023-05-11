@@ -27,11 +27,7 @@ public class GroupUserEntity {
     private String originKey;
     private String userId;
     private String groupOriginKey;
-<<<<<<< HEAD
-    private String userId;
 
-=======
->>>>>>> main
     @UpdateTimestamp
     private LocalDateTime lastModifiedAt;
     @CreationTimestamp
