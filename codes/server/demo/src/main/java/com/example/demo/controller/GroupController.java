@@ -57,8 +57,8 @@ public class GroupController {
 		try {
 			GroupEntity entity = GroupDTO.toEntity(dto);
 
-			// 그룹을 생성하는 유저가 그룹장이 되기 때문
-			entity.setLeaderId(userId);
+			//그룹장 검사, 그룹장이 맞으면 GroupEntity의 LedearId를 세팅해줌
+			entity = groupService.validateLeader(userId,entity);
 
 			//Group 생성
 			groupService.createGroup(entity);
@@ -101,42 +101,16 @@ public class GroupController {
 	public ResponseEntity<?> updateGroup(@AuthenticationPrincipal String userId, @RequestBody GroupDTO dto) {
 		GroupEntity entity = GroupDTO.toEntity(dto);
 
-		entity.setLeaderId(userId);
+		//그룹장 검사, 그룹장이 맞으면 GroupEntity의 LedearId를 세팅해줌
+		entity = groupService.validateLeader(userId,entity);
+
+
+		// 그룹장이 확인되면 다시 dto의 내용 세팅
+		// (왜 이렇게 하나요?: 그룹장 변경 시 권한 검사 후 그룹장을 변경해야댐)
+		entity.setLeaderId(dto.getLeaderId());
 
 		GroupEntity groupEntity = groupService.updateGroup(entity);
-
-		if(dto.getGroupUsers()!=null){
-			List<GroupUserEntity> savedGroupUsers =  groupService.retrieveByGroupOriginKey(groupEntity.getOriginKey());
-			List<String> requestGroupUsers = dto.getGroupUsers();
-
-			// 기존에 저장된 그룹 유저 목록에서 삭제 대상인 유저를 찾아서 삭제
-			for(GroupUserEntity savedGroupUser : savedGroupUsers) {
-				if(!requestGroupUsers.contains(savedGroupUser.getUserId())) {
-					groupService.deleteGroupUser(savedGroupUser);
-				}
-			}
-
-			// 새로 추가할 유저 목록을 찾아서 추가
-			for(String uid : requestGroupUsers) {
-				boolean isNewUser = true;
-				for (Iterator<GroupUserEntity> iterator = savedGroupUsers.iterator(); iterator.hasNext();) {
-					GroupUserEntity savedGroupUser = iterator.next();
-					if (savedGroupUser.getUserId().equals(userId)) {
-						isNewUser = false;
-						iterator.remove();
-						break;
-					}
-				}
-
-				if(isNewUser) {
-					GroupUserEntity newGroupUser = new GroupUserEntity();
-					newGroupUser.setGroupOriginKey(groupEntity.getOriginKey());
-					newGroupUser.setUserId(uid);
-					newGroupUser.setGroupName(groupEntity.getGroupName());
-//					groupService.createGroupUser(newGroupUser);
-				}
-			}
-		}
+		groupService.updateGroupUser(groupEntity,dto.getGroupUsers());
 
 		return ResponseEntity.ok().body(setGroupDTO(groupEntity));
 	}
@@ -146,10 +120,8 @@ public class GroupController {
 		try {
 			GroupEntity entity = GroupDTO.toEntity(dto);
 
-			//권한 검사???
-
-			// 그룹을 생성하는 유저가 그룹장이 되기 때문
-			entity.setLeaderId(userId);
+			//그룹장 검사, 그룹장이 맞으면 GroupEntity의 LedearId를 세팅해줌
+			entity = groupService.validateLeader(userId,entity);
 
 			groupService.deleteGroup(entity);
 

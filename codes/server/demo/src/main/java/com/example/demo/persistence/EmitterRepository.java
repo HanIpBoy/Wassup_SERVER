@@ -13,6 +13,7 @@ import java.util.Optional;
 
 @Repository
 public interface EmitterRepository extends JpaRepository<EmitterEntity, String> {
+    Optional<EmitterEntity> findByuserId(String userId);
 
 //
 //    // 유저ID를 키로 SseEmitter를 해시맵에 저장할 수 있도록 구현했다.
@@ -41,4 +42,6 @@ public interface EmitterRepository extends JpaRepository<EmitterEntity, String> 
 ////    public Map<String, SseEmitter> findAllStartWithById(String receiverId) {
 ////        return emitterMap.get(receiverId);
 ////    }
+    
+    
 }

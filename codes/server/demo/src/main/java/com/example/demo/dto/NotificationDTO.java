@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @Data
-public class NotificationDTO<T> {
+public class NotificationDTO {
 	private GroupEntity group;
 	private NotificationEntity notification;
 	private String isAccepted;

@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,7 +33,6 @@ public class GroupService {
 		GroupUserEntity groupUserEntity = new GroupUserEntity();
 		groupUserEntity.setUserId(userId);
 		groupUserEntity.setGroupOriginKey(groupEntity.getOriginKey());
-		groupUserEntity.setGroupName(groupEntity.getGroupName());
 		groupUserRepository.save(groupUserEntity);
 		return groupUserEntity;
 	}
@@ -53,27 +53,50 @@ public class GroupService {
 	}
 
 	public GroupEntity updateGroup(final GroupEntity entity) {
+
 		validate(entity);
 
 		validateLeader(entity);
 
 		final Optional<GroupEntity> original = Optional.ofNullable(groupRepository.findByOriginKey(entity.getOriginKey()));
 
-
 		original.ifPresent(group -> {
 			group.setGroupName(entity.getGroupName() != null ? entity.getGroupName() : group.getGroupName());
 			group.setDescription(entity.getDescription() != null ? entity.getDescription() : group.getDescription());
 			group.setNumOfUsers(group.getNumOfUsers());
 			group.setLeaderId(entity.getLeaderId() != null ? entity.getLeaderId() : group.getLeaderId());
-			//group.setGroupUsers(entity.getGroupUsers() != null ? entity.getGroupUsers() : group.getGroupUsers());
 			groupRepository.save(group);
 		});
 
 		return groupRepository.findByOriginKey(entity.getOriginKey());
 	}
 
-	public GroupUserEntity updateGroupUser(final GroupUserEntity entity){
-		return null;
+	public List<GroupUserEntity> updateGroupUser(final GroupEntity groupEntity,final List<String> requestGroupUsers){
+		List<GroupUserEntity> savedGroupUsers =  retrieveByGroupOriginKey(groupEntity.getOriginKey());
+
+		// 기존에 저장된 그룹 유저 목록에서 삭제 대상인 유저를 찾아서 삭제
+		for(GroupUserEntity savedGroupUser : savedGroupUsers) {
+			if(!requestGroupUsers.contains(savedGroupUser.getUserId())) {
+				deleteGroupUser(savedGroupUser);
+			}
+		}
+
+		// 새로 추가할 유저 목록을 찾아서 추가
+		for(String uid : requestGroupUsers) {
+			boolean isNewUser = true;
+			for (Iterator<GroupUserEntity> iterator = savedGroupUsers.iterator(); iterator.hasNext();) {
+				GroupUserEntity savedGroupUser = iterator.next();
+				if (savedGroupUser.getUserId().equals(uid)) {
+					isNewUser = false;
+					iterator.remove();
+					break;
+				}
+			}
+			if(isNewUser) {
+				createGroupUser(uid,groupEntity);
+			}
+		}
+		return retrieveByGroupOriginKey(groupEntity.getOriginKey());
 	}
 
 	public GroupEntity deleteGroup(final GroupEntity entity) {
@@ -88,7 +111,6 @@ public class GroupService {
 			return null;
 		} catch(Exception e) {
 			log.error("error deleting entity", entity.getOriginKey(), e);
-
 			throw new RuntimeException("error deleting entity " + entity.getOriginKey());
 		}
 	}
@@ -102,20 +124,18 @@ public class GroupService {
 			log.warn("Entity cannot be null");
 			throw new RuntimeException("Entity cannot be null");
 		}
-
 		if(entity.getLeaderId() == null) {
 			log.warn("Unknown user.");
 			throw new RuntimeException("Unknown user.");
 		}
 
 	}
-	private void validateLeader(final GroupEntity entity) {
+	public GroupEntity validateLeader(final String userId,final GroupEntity entity) {
+		entity.setLeaderId(userId);
 		if(!entity.getLeaderId().equals(groupRepository.findByOriginKey(entity.getOriginKey()).getLeaderId())){
 			log.warn("Unauthorized user is trying to access the group");
 			throw new RuntimeException("Unauthorized user is trying to access the group");
 		}
+		return entity;
 	}
-
-
-
 }

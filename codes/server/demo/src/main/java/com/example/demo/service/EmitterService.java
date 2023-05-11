@@ -92,7 +92,7 @@ public class EmitterService {
                     .group(groupEntity)
                     .notification(noti)
                     .build();
-            Optional<EmitterEntity> emitterEntity = emitterRepository.findById(noti.getUserId());
+            Optional<EmitterEntity> emitterEntity = emitterRepository.findByuserId(noti.getUserId());
 
             if (emitterEntity.isPresent()) {
                 String jsonEmitter = emitterEntity.get().getSseEmitter();

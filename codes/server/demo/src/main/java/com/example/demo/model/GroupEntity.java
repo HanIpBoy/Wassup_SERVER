@@ -21,25 +21,16 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "Grp")
 public class GroupEntity {
-    private String groupName;
-    private String leaderId;
-    private int numOfUsers;
-
     @Id
     @GeneratedValue(generator="system-uuid")
     @GenericGenerator(name="system-uuid", strategy="uuid")
     private String originKey;
+    private String groupName;
+    private String leaderId;
+    private int numOfUsers;
     private String description;
-
-
-
-
     @UpdateTimestamp
     private LocalDateTime lastModifiedAt;
-
     @CreationTimestamp
     private LocalDateTime createdAt;
-
-
-
 }
