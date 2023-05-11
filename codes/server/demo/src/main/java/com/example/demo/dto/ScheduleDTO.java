@@ -25,6 +25,7 @@ public class ScheduleDTO {
 	private LocalDateTime lastModifiedAt;
 	private LocalDateTime createdAt;
 	private String color;
+	private String groupOriginKey;
 //	private String token;
 
 	public ScheduleDTO(final ScheduleEntity entity) {
@@ -39,6 +40,7 @@ public class ScheduleDTO {
 		this.lastModifiedAt = entity.getLastModifiedAt();
 		this.createdAt = entity.getCreatedAt();
 		this.color = entity.getColor();
+		this.groupOriginKey = entity.getGroupOriginKey();
 //		this.token = entity.getToken();
 	}
 
@@ -56,6 +58,7 @@ public class ScheduleDTO {
 				.lastModifiedAt(dto.getLastModifiedAt())
 				.createdAt(dto.getCreatedAt())
 				.color(dto.getColor())
+				.groupOriginKey(dto.getGroupOriginKey())
 //				.token(dto.getToken())
 				.build();
 	}

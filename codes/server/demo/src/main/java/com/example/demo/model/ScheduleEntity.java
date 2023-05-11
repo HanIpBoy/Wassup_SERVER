@@ -36,6 +36,7 @@ public class ScheduleEntity {
     private String allDayToggle;
     private String color;
 
+    private String groupOriginKey;
     @UpdateTimestamp
     private LocalDateTime lastModifiedAt;
 

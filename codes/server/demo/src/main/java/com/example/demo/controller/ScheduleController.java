@@ -58,6 +58,8 @@ public class ScheduleController {
 		}
 	}
 
+
+
 	@PutMapping
 	public ResponseEntity<?> updateSchedule(@AuthenticationPrincipal String userId, @RequestBody ScheduleDTO dto) {
 		ScheduleEntity entity = ScheduleDTO.toEntity(dto);

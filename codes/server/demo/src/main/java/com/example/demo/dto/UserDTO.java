@@ -32,7 +32,6 @@ public class UserDTO {
 		this.createdAt = entity.getCreatedAt();
 		this.token = entity.getToken();
 		this.emailAuthCode = entity.getEmailAuthCode();
-
 	}
 	public static UserEntity toEntity(UserDTO userDTO){
 		return UserEntity.builder()

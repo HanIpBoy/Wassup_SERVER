@@ -83,7 +83,7 @@ public class GroupController {
 
 	@PostMapping("/createResponse")
 	public ResponseEntity<?> handleGroupCreateResponse(@AuthenticationPrincipal String userId, @RequestBody NotificationDTO dto) {
-		// client는 사용자가 요청 알림을 받아서 버튼을 눌렀을 때, 이 API를 사용하면 됨. ResponseDTO의 status에 accept/deny 문자열이 날라옴.
+		// client는 사용자가 요청 알림을 받아서 버튼을 눌렀을 때, 이 API를 사용하면 됨. NotificationDTO의 status에 accept/deny 문자열이 날라옴.
 
 		GroupEntity entity = dto.getGroup();
 		if(dto.getIsAccepted().equals("accept")) { // 사용자가 그룹 초대 요청을 수락하면
