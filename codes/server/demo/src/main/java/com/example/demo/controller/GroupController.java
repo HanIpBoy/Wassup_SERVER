@@ -58,6 +58,9 @@ public class GroupController {
 			//그룹장 검사, 그룹장이 맞으면 GroupEntity의 LedearId를 세팅해줌
 			entity = groupService.validateLeader(userId,entity);
 
+			//그룹원 수 세팅
+			entity.setNumOfUsers(dto.getGroupUsers().size());
+
 			//Group 생성
 			groupService.createGroup(entity);
 

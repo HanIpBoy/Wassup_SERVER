@@ -1,6 +1,7 @@
 package com.example.demo.service;
 
 import com.example.demo.model.GroupScheduleEntity;
+import com.example.demo.model.GroupUserEntity;
 import com.example.demo.model.UserScheduleEntity;
 import com.example.demo.persistence.EmitterRepository;
 import com.example.demo.persistence.GroupScheduleRepository;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,6 +25,9 @@ public class ScheduleService {
 
 	@Autowired
 	private GroupScheduleRepository groupScheduleRepository;
+
+	@Autowired
+	private GroupUserRepository groupUserRepository;
 
 	public List<UserScheduleEntity> createUserSchedule(final UserScheduleEntity entity) {
 		// Validations
@@ -43,9 +48,8 @@ public class ScheduleService {
 		return entity;
 	}
 
-	//유저가 생성한 모든 스케쥴 검색
+	//유저가 생성한 모든 스케쥴 검색 + 자신이 속해있는 그룹의 일정까지 전부 검색
 	public List<UserScheduleEntity> retrieveUserSchedule(final String userId) {
-
 		return userScheduleRepository.findAllByUserIdOrderByStartAtAsc(userId);
 	}
 
@@ -53,6 +57,20 @@ public class ScheduleService {
 	public List<GroupScheduleEntity> retrieveGroupSchedule(final String groupOriginKey){
 		return groupScheduleRepository.findByGroupOriginKey(groupOriginKey);
 	}
+
+	//사용자가 속한 모든 그룹의 일정들을 리스트로 반환
+	public List<GroupScheduleEntity> retrieveGroupScheduleByUserId(final String userId) {
+		List<GroupUserEntity> groupUsers = groupUserRepository.findByUserId(userId);
+		List<GroupScheduleEntity> groupSchedules = new ArrayList<>();
+
+		for(GroupUserEntity users : groupUsers) {
+			for(GroupScheduleEntity schedule : retrieveGroupSchedule(users.getGroupOriginKey())) {
+				groupSchedules.add(schedule);
+			}
+		}
+		return groupSchedules;
+	}
+
 
 	public List<UserScheduleEntity> updateUserSchedule(final UserScheduleEntity entity) {
 		validate(entity);
@@ -100,6 +118,20 @@ public class ScheduleService {
 		}
 
 		return retrieveUserSchedule(entity.getUserId());
+	}
+
+	public GroupScheduleEntity deleteGroupSchedule(final GroupScheduleEntity entity) {
+
+		GroupScheduleEntity target = groupScheduleRepository.findByOriginKey(entity.getOriginKey());
+
+		try {
+			groupScheduleRepository.delete(entity);
+		} catch(Exception e) {
+			log.error("error deleting entity", entity.getOriginKey(), e);
+
+			throw new RuntimeException("error deleting entity " + entity.getOriginKey());
+		}
+		return target;
 	}
 
 	private void validate(final UserScheduleEntity entity) {

@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.dto.ResponseDTO;
 import com.example.demo.dto.UserScheduleDTO;
+import com.example.demo.model.GroupScheduleEntity;
 import com.example.demo.model.UserScheduleEntity;
 import com.example.demo.service.ScheduleService;
 import lombok.extern.slf4j.Slf4j;
@@ -23,9 +24,10 @@ public class UserScheduleController {
 
 	@GetMapping
 	public ResponseEntity<?> retrieveSchedule(@AuthenticationPrincipal String userId) {
-		List<UserScheduleEntity> entites = service.retrieveUserSchedule(userId);
+		List<UserScheduleEntity> userEntites = service.retrieveUserSchedule(userId);
+		List<GroupScheduleEntity> groupEntities = service.retrieveGroupSchedule(userId);
 
-		List<UserScheduleDTO> dtos = entites.stream().map(UserScheduleDTO::new).collect(Collectors.toList());
+		List<UserScheduleDTO> dtos = userEntites.stream().map(UserScheduleDTO::new).collect(Collectors.toList());
 
 		ResponseDTO response = ResponseDTO.<UserScheduleDTO>builder().data(dtos).status("succeed").build();
 

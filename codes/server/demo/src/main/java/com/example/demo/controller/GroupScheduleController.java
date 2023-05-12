@@ -32,7 +32,7 @@ public class GroupScheduleController {
     private NotificationService notificationService;
 
     @PostMapping
-    public ResponseEntity<?> createGroupSchedule(@AuthenticationPrincipal String userId, @RequestBody GroupScheduleDTO dto) {
+    public ResponseEntity<?> createGroupSchedule(@RequestBody GroupScheduleDTO dto) {
         try {
             GroupScheduleEntity entity = GroupScheduleDTO.toEntity(dto);
 
@@ -54,15 +54,32 @@ public class GroupScheduleController {
         }
     }
 
+    @GetMapping
+    public ResponseEntity<?> retrieveGroupSchedule(@RequestBody GroupScheduleDTO dto) {
+        try {
+            GroupScheduleEntity entity = GroupScheduleDTO.toEntity(dto);
+
+            List<GroupScheduleEntity> entities = service.retrieveGroupSchedule(dto.getOriginKey());
+
+            List<GroupScheduleDTO> dtos = entities.stream().map(GroupScheduleDTO::new).collect(Collectors.toList());
+
+            ResponseDTO response = ResponseDTO.<GroupScheduleDTO>builder().data(dtos).status("succeed").build();
+
+            return ResponseEntity.ok().body(response);
+
+        } catch(Exception e) {
+            String error = e.getMessage();
+            ResponseDTO<GroupScheduleDTO> response = ResponseDTO.<GroupScheduleDTO>builder().error(error).build();
+            return ResponseEntity.badRequest().body(response);
+        }
+    }
+
     @PutMapping
-    public ResponseEntity<?> updateGroupSchedule(@AuthenticationPrincipal String userId, @RequestBody GroupScheduleDTO dto) {
+    public ResponseEntity<?> updateGroupSchedule(@RequestBody GroupScheduleDTO dto) {
 
         GroupScheduleEntity entity = GroupScheduleDTO.toEntity(dto);
         //그룹 스케쥴 수정
         entity = service.updateGroupSchedule(entity);
-
-        //이전 코드
-        //List<GroupScheduleDTO> dtos = entities.stream().map(GroupScheduleDTO::new).collect(Collectors.toList());
 
         // 그룹원들에게 그룹 일정 수정 알림을 보내려면, 필요한 정보가 그룹에 대한 정보와 일정에 대한 정보
         List<NotificationDTO> notificationDTOs = notificationService.createGroupScheduleNotification(entity,"Update");
@@ -74,19 +91,18 @@ public class GroupScheduleController {
     }
 
     @DeleteMapping
-    public ResponseEntity<?> deleteSchedule(@AuthenticationPrincipal String userId, @RequestBody UserScheduleDTO dto) {
+    public ResponseEntity<?> deleteGroupSchedule(@RequestBody GroupScheduleDTO dto) {
         try {
-            UserScheduleEntity entity = UserScheduleDTO.toEntity(dto);
+            GroupScheduleEntity entity = GroupScheduleDTO.toEntity(dto);
 
-            entity.setUserId(userId);
+            entity = service.deleteGroupSchedule(entity);
 
-            List<UserScheduleEntity> entities = service.deleteUserSchedule(entity);
+            List<NotificationDTO> notificationDTOs = notificationService.createGroupScheduleNotification(entity,"Delete");
 
-            List<UserScheduleDTO> dtos = entities.stream().map(UserScheduleDTO::new).collect(Collectors.toList());
+            // NotificationDTO를 만들어 SseEmitter로 요청 알림 전송
+            emitterService.sendToClients(notificationDTOs);
 
-            ResponseDTO response = ResponseDTO.<UserScheduleDTO>builder().data(dtos).status("succeed").build();
-
-            return ResponseEntity.ok().body(response);
+            return ResponseEntity.ok().body(notificationDTOs);
 
         } catch (Exception e) {
             String error = e.getMessage();
