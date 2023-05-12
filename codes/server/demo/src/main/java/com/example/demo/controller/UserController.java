@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.dto.ResponseDTO;
 import com.example.demo.dto.UserDTO;
+import com.example.demo.dto.UserScheduleDTO;
 import com.example.demo.model.UserEntity;
 import com.example.demo.security.TokenProvider;
 import com.example.demo.service.EmitterService;
@@ -59,8 +60,8 @@ public class UserController {
 				.userName(userEntity.getUserName())
 				.birth(userEntity.getBirth())
 				.build();
-
-		return ResponseEntity.ok().body(user);
+		ResponseDTO response = ResponseDTO.<UserDTO>builder().data((List<UserDTO>) user).status("succeed").build();
+		return ResponseEntity.ok().body(response);
 	}
 
 	@PostMapping("/auth/email-send")
@@ -80,7 +81,9 @@ public class UserController {
 
 		mailService.send(userDTO);
 
-		return ResponseEntity.ok().body(userDTO);
+		ResponseDTO<UserDTO> response = ResponseDTO.<UserDTO>builder().data((List<UserDTO>) userDTO).status("success").build();
+
+		return ResponseEntity.ok().body(response);
 	}
 
 	@PostMapping("/auth/email-verify")
@@ -88,10 +91,15 @@ public class UserController {
 
 		UserEntity user = userService.getByUserId(userDTO.getUserId());
 
-		if(mailService.verifyEmailCode(user, userDTO.getEmailAuthCode()))
-			return ResponseEntity.ok().body(userDTO.getUserId() + " status : success");
-		else
-			return ResponseEntity.ok().body(userDTO.getUserId() + " status : failure");
+		if(mailService.verifyEmailCode(user, userDTO.getEmailAuthCode())) {
+			ResponseDTO<UserDTO> successResponse = ResponseDTO.<UserDTO>builder().data((List<UserDTO>) userDTO).status("succeed").build();
+			return ResponseEntity.ok().body(successResponse);
+		}
+
+		else {
+			ResponseDTO<UserDTO> failResponse = ResponseDTO.<UserDTO>builder().status("failure").build();
+			return ResponseEntity.ok().body(failResponse);
+		}
 	}
 
 	@PostMapping("/auth/signup")

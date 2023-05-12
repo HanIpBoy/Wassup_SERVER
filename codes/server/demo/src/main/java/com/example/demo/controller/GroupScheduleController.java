@@ -1,9 +1,6 @@
 package com.example.demo.controller;
 
-import com.example.demo.dto.GroupScheduleDTO;
-import com.example.demo.dto.NotificationDTO;
-import com.example.demo.dto.ResponseDTO;
-import com.example.demo.dto.UserScheduleDTO;
+import com.example.demo.dto.*;
 import com.example.demo.model.GroupScheduleEntity;
 import com.example.demo.model.UserScheduleEntity;
 import com.example.demo.service.EmitterService;
@@ -45,7 +42,9 @@ public class GroupScheduleController {
             // NotificationDTO를 만들어 SseEmitter로 요청 알림 전송
             emitterService.sendToClients(notificationDTOs);
 
-            return ResponseEntity.ok().body(notificationDTOs);
+            ResponseDTO<?> response = ResponseDTO.<GroupDTO>builder().status("succeed").build();
+
+            return ResponseEntity.ok().body(response);
 
         } catch(Exception e) {
             String error = e.getMessage();
@@ -87,7 +86,9 @@ public class GroupScheduleController {
         // NotificationDTO를 만들어 SseEmitter로 요청 알림 전송
         emitterService.sendToClients(notificationDTOs);
 
-        return ResponseEntity.ok().body(notificationDTOs);
+        ResponseDTO<?> response = ResponseDTO.<GroupDTO>builder().status("succeed").build();
+
+        return ResponseEntity.ok().body(response);
     }
 
     @DeleteMapping
@@ -102,7 +103,9 @@ public class GroupScheduleController {
             // NotificationDTO를 만들어 SseEmitter로 요청 알림 전송
             emitterService.sendToClients(notificationDTOs);
 
-            return ResponseEntity.ok().body(notificationDTOs);
+            ResponseDTO<?> response = ResponseDTO.<GroupDTO>builder().status("succeed").build();
+
+            return ResponseEntity.ok().body(response);
 
         } catch (Exception e) {
             String error = e.getMessage();

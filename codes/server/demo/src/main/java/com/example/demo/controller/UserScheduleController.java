@@ -1,8 +1,6 @@
 package com.example.demo.controller;
 
-import com.example.demo.dto.GroupScheduleDTO;
-import com.example.demo.dto.ResponseDTO;
-import com.example.demo.dto.UserScheduleDTO;
+import com.example.demo.dto.*;
 import com.example.demo.model.GroupScheduleEntity;
 import com.example.demo.model.UserScheduleEntity;
 import com.example.demo.service.ScheduleService;
@@ -34,10 +32,9 @@ public class UserScheduleController {
 		List<UserScheduleDTO> userScheduleDTO = userEntites.stream().map(UserScheduleDTO::new).collect(Collectors.toList());
 		List<GroupScheduleDTO> groupScheduleDTO = groupEntities.stream().map(GroupScheduleDTO::new).collect(Collectors.toList());
 
-		Map<String, Object> response = new HashMap<>();
-		response.put("userId", userId);
-		response.put("userSchedules", userScheduleDTO);
-		response.put("groupSchedules", groupScheduleDTO);
+		ScheduleDTO schedule = new ScheduleDTO(userId, groupScheduleDTO, userScheduleDTO);
+
+		ResponseDTO<ScheduleDTO> response = ResponseDTO.<ScheduleDTO>builder().data((List<ScheduleDTO>) schedule).status("succeed").build();
 
 		return ResponseEntity.ok().body(response);
 	}

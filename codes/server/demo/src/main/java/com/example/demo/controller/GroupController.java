@@ -3,6 +3,7 @@ package com.example.demo.controller;
 import com.example.demo.dto.GroupDTO;
 import com.example.demo.dto.NotificationDTO;
 import com.example.demo.dto.ResponseDTO;
+import com.example.demo.dto.UserDTO;
 import com.example.demo.model.GroupEntity;
 import com.example.demo.model.GroupUserEntity;
 import com.example.demo.model.NotificationEntity;
@@ -55,8 +56,7 @@ public class GroupController {
 		try {
 			GroupEntity entity = GroupDTO.toEntity(dto);
 
-			//그룹장 검사, 그룹장이 맞으면 GroupEntity의 LedearId를 세팅해줌
-			entity = groupService.validateLeader(userId,entity);
+			entity.setLeaderId(userId);
 
 			//그룹원 수 세팅
 			entity.setNumOfUsers(dto.getGroupUsers().size());
@@ -73,7 +73,9 @@ public class GroupController {
 			// 생성한 notificationEntity와 groupEntity로 NotificationDTO를 만들어 SseEmitter로 요청 알림 전송
 			emitterService.sendToClients(notificationDTO);
 
-			return ResponseEntity.ok().body("success");
+			ResponseDTO<?> response = ResponseDTO.<GroupDTO>builder().status("succeed").build();
+
+			return ResponseEntity.ok().body(response);
 
 		} catch(Exception e) {
 			String error = e.getMessage();
@@ -93,6 +95,7 @@ public class GroupController {
 			// 해당 notification을 DB에서 삭제해야 함. -> notificationEntity를 찾아야 함. -> 그래서 매개변수 자체를 notificationDTO로 받음.
 			notificationService.deleteNotification(dto.getNotification());
 		}
+
 		ResponseDTO response = ResponseDTO.<GroupDTO>builder().status("succeed").build();
 
 		return ResponseEntity.ok().body(response);
@@ -112,7 +115,9 @@ public class GroupController {
 		GroupEntity groupEntity = groupService.updateGroup(entity);
 		groupService.updateGroupUser(groupEntity,dto.getGroupUsers());
 
-		return ResponseEntity.ok().body(setGroupDTO(groupEntity));
+		ResponseDTO<GroupDTO> response = ResponseDTO.<GroupDTO>builder().data((List<GroupDTO>) setGroupDTO(groupEntity)).status("succeed").build();
+
+		return ResponseEntity.ok().body(response);
 	}
 
 	@DeleteMapping
