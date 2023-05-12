@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Data
 @Entity
-@Table(name = "GroupUser")
+@Table(name = "GrpUsr")
 public class GroupUserEntity {
     @Id
     @GeneratedValue(generator="system-uuid")

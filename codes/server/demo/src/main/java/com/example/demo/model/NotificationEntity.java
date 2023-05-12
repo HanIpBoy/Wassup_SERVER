@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Builder
 @Entity
-@Table(name = "Notification")
+@Table(name = "Noti")
 public class NotificationEntity {
     @Id
     @GeneratedValue(generator="system-uuid")

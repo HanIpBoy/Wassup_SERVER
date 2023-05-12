@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "User",uniqueConstraints = {@UniqueConstraint(columnNames = "userId")})
+@Table(name = "Usr",uniqueConstraints = {@UniqueConstraint(columnNames = "userId")})
 public class UserEntity {
 	@Id
 	@GeneratedValue(generator = "system-uuid")

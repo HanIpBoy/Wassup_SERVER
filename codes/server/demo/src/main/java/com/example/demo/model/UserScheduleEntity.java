@@ -21,7 +21,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Data
 @Entity
-@Table(name = "Schedule")
+@Table(name = "UsrSche")
 public class UserScheduleEntity {
     @Id
     @GeneratedValue(generator="system-uuid")
