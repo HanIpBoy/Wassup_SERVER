@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
-@RequestMapping("group")
+@RequestMapping("/group")
 public class GroupController {
 
     @Autowired
