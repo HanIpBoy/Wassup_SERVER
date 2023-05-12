@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import com.example.demo.dto.GroupScheduleDTO;
 import com.example.demo.dto.ResponseDTO;
 import com.example.demo.dto.UserScheduleDTO;
 import com.example.demo.model.GroupScheduleEntity;
@@ -11,7 +12,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -27,9 +31,13 @@ public class UserScheduleController {
 		List<UserScheduleEntity> userEntites = service.retrieveUserSchedule(userId);
 		List<GroupScheduleEntity> groupEntities = service.retrieveGroupSchedule(userId);
 
-		List<UserScheduleDTO> dtos = userEntites.stream().map(UserScheduleDTO::new).collect(Collectors.toList());
+		List<UserScheduleDTO> userScheduleDTO = userEntites.stream().map(UserScheduleDTO::new).collect(Collectors.toList());
+		List<GroupScheduleDTO> groupScheduleDTO = groupEntities.stream().map(GroupScheduleDTO::new).collect(Collectors.toList());
 
-		ResponseDTO response = ResponseDTO.<UserScheduleDTO>builder().data(dtos).status("succeed").build();
+		Map<String, Object> response = new HashMap<>();
+		response.put("userId", userId);
+		response.put("userSchedules", userScheduleDTO);
+		response.put("groupSchedules", groupScheduleDTO);
 
 		return ResponseEntity.ok().body(response);
 	}

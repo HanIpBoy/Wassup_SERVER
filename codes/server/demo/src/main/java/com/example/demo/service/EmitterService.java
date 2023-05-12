@@ -31,28 +31,6 @@ public class EmitterService {
         return emitter;
     }
 
-//    public void send(String receiverId, NotificationEntity notification, String content) {
-//        NotificationEntity noti = createNotification(receiverId, notification, content);
-//
-//        // 로그인 한 유저의 SseEmitter 모두 가져오기
-//        Map<String, SseEmitter> sseEmitters = emitterRepository.findAllStartWithById(receiverId);
-//        sseEmitters.forEach(
-//                (key, emitter) -> {
-//                    // 데이터 전송
-//                    sendToClient(emitter, key, noti);
-//                }
-//        );
-//    }
-//
-//    private NotificationEntity createNotification(String receiver, NotificationEntity notification, String content) {
-//        return NotificationEntity.builder()
-//                .receiver(receiver)
-//                .content(content)
-//                .notification(notification)
-//                .url("/group/schedule/" + notification.getNotificationId())
-//                .build();
-//    }
-
     public void sendToClient(SseEmitter emitter, String id, Object data) {
         try {
             emitter.send(SseEmitter.event()
