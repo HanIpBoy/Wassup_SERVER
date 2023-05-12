@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
-@RequestMapping("/group")
+@RequestMapping("group")
 public class GroupController {
 
     @Autowired
@@ -47,6 +47,7 @@ public class GroupController {
     @PostMapping
 	public ResponseEntity<?> createGroup(@AuthenticationPrincipal String userId, @RequestBody GroupDTO dto) {
 		try {
+			log.info("Server received Group Create request with" + dto);
 			GroupEntity entity = GroupDTO.toEntity(dto);
 
 			// 그룹을 생성하는 유저가 그룹장이 되기 때문
