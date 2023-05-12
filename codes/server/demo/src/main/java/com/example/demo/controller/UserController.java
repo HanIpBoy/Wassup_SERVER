@@ -134,6 +134,7 @@ public class UserController {
 			log.info(token);
 			final UserDTO responseUserDTO = UserDTO.builder()
 					.userId(user.getUserId())
+					.userName(user.getUserName())
 					.token(token)
 					.build();
 
