@@ -34,8 +34,6 @@ public class UserScheduleEntity {
     private String memo;
     private String allDayToggle;
     private String color;
-
-    private String groupOriginKey;
     @UpdateTimestamp
     private LocalDateTime lastModifiedAt;
 

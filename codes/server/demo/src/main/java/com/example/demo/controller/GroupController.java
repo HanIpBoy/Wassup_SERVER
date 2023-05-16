@@ -1,17 +1,10 @@
 package com.example.demo.controller;
 
-import com.example.demo.dto.GroupDTO;
-import com.example.demo.dto.NotificationDTO;
-import com.example.demo.dto.ResponseDTO;
-import com.example.demo.dto.UserDTO;
-import com.example.demo.model.GroupEntity;
-import com.example.demo.model.GroupUserEntity;
-import com.example.demo.model.NotificationEntity;
-import com.example.demo.service.EmitterService;
-import com.example.demo.service.GroupService;
-import com.example.demo.service.NotificationService;
-import com.example.demo.service.UserService;
+import com.example.demo.dto.*;
+import com.example.demo.model.*;
+import com.example.demo.service.*;
 import lombok.extern.slf4j.Slf4j;
+import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -28,6 +21,9 @@ public class GroupController {
 
     @Autowired
     private GroupService groupService;
+
+	@Autowired
+	private ScheduleService scheduleService;
 
 	@Autowired
 	private UserService userService;
@@ -47,6 +43,28 @@ public class GroupController {
 		//setGroupDTO()
 
 		ResponseDTO response = ResponseDTO.<GroupDTO>builder().data(dtos).status("succeed").build();
+
+		return ResponseEntity.ok().body(response);
+	}
+	@GetMapping("/user/schedule")
+	public ResponseEntity<?> retrieveGroupCombinedSchedule(@RequestBody GroupDTO dto){
+		//dto에서 OriginKey와 groupUsers를 받음.
+//		GroupEntity entity = GroupDTO.toEntity(dto);
+//		List<ScheduleEn> = scheduleService.retrieveGroupCombinedSchedules(entity);
+
+		List<ScheduleDTO> dtos = new ArrayList<>();
+		for (String userId:dto.getGroupUsers()) {
+			List<UserScheduleEntity> userEntites = scheduleService.retrieveUserSchedule(userId);
+			List<GroupScheduleEntity> groupEntities = scheduleService.retrieveGroupSchedule(userId);
+
+			List<UserScheduleDTO> userScheduleDTO = userEntites.stream().map(UserScheduleDTO::new).collect(Collectors.toList());
+			List<GroupScheduleDTO> groupScheduleDTO = groupEntities.stream().map(GroupScheduleDTO::new).collect(Collectors.toList());
+
+			ScheduleDTO schedule = new ScheduleDTO(userId, groupScheduleDTO, userScheduleDTO);
+			dtos.add(schedule);
+		}
+
+		ResponseDTO response = ResponseDTO.<ScheduleDTO>builder().data(dtos).status("succeed").build();
 
 		return ResponseEntity.ok().body(response);
 	}

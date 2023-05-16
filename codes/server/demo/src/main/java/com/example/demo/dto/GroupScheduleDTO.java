@@ -15,7 +15,6 @@ import java.time.LocalDateTime;
 public class GroupScheduleDTO {
 	private String originKey;
 	private String groupOriginKey;
-
 	private String name;
 	private String startAt;
 	private String endAt;
