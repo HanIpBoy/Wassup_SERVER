@@ -73,9 +73,9 @@ public class GroupController {
 			}
 
 			GroupDTO dtos = setGroupDTO(groupEntity);
+            ResponseDTO<GroupDTO> response = ResponseDTO.<GroupDTO>builder().data((List<GroupDTO>) dtos).status("succeed").build();
 
-
-			return ResponseEntity.ok().body(dtos);
+			return ResponseEntity.ok().body(response);
 
 		} catch(Exception e) {
 			String error = e.getMessage();
