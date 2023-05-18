@@ -39,36 +39,7 @@ public class UserController {
 
 	@Autowired
 	private EmitterService emitterService;
-
 	private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-
-	/***
-	 * 유저 전체 리스트를 반환해줌
-	 * @return ResponseEntity <List<UserDTO>> 유저 전체 정보를 담은 ResponseEntity 객체
-	 */
-	@GetMapping("/user")
-	public ResponseEntity<?> retrieveUserList() {
-		List<UserEntity> entites = userService.retrieve();
-
-		List<UserDTO> dtos = entites.stream().map(UserDTO::new).collect(Collectors.toList());
-
-		ResponseDTO response = ResponseDTO.<UserDTO>builder().data(dtos).status("succeed").build();
-
-		return ResponseEntity.ok().body(response);
-	}
-
-	/***
-	 * User 한명을 찾아서 반환해줌
-	 * @param userId 찾고 싶은 유저의 userId
-	 * @return ResponseEntity <UserDTO> 유저 정보를 담은 ResponseEntity 객체
-	 */
-	@GetMapping("/user/search/{userId}")
-	public ResponseEntity<?> retrieveUser(@PathVariable("userId") String userId) {
-		UserEntity userEntity = userService.getByUserId(userId);
-		UserDTO responseUserDTO = new UserDTO(userEntity);
-		ResponseDTO response = ResponseDTO.<UserDTO>builder().data(Collections.singletonList(responseUserDTO)).status("succeed").build();
-		return ResponseEntity.ok().body(response);
-	}
 
 	@PostMapping("/auth/email-send")
 	public ResponseEntity<?> sendEmail(@RequestBody UserDTO userDTO){
@@ -168,5 +139,35 @@ public class UserController {
 			return ResponseEntity.badRequest().body(responseDTO);
 		}
 	}
+
+
+	/***
+	 * 유저 전체 리스트를 반환해줌
+	 * @return ResponseEntity <List<UserDTO>> 유저 전체 정보를 담은 ResponseEntity 객체
+	 */
+	@GetMapping("/user")
+	public ResponseEntity<?> retrieveUserList() {
+		List<UserEntity> entites = userService.retrieve();
+
+		List<UserDTO> dtos = entites.stream().map(UserDTO::new).collect(Collectors.toList());
+
+		ResponseDTO response = ResponseDTO.<UserDTO>builder().data(dtos).status("succeed").build();
+
+		return ResponseEntity.ok().body(response);
+	}
+
+	/***
+	 * User 한명을 찾아서 반환해줌
+	 * @param userId 찾고 싶은 유저의 userId
+	 * @return ResponseEntity <UserDTO> 유저 정보를 담은 ResponseEntity 객체
+	 */
+	@GetMapping("/user/search/{userId}")
+	public ResponseEntity<?> retrieveUser(@PathVariable("userId") String userId) {
+		UserEntity userEntity = userService.getByUserId(userId);
+		UserDTO responseUserDTO = new UserDTO(userEntity);
+		ResponseDTO response = ResponseDTO.<UserDTO>builder().data(Collections.singletonList(responseUserDTO)).status("succeed").build();
+		return ResponseEntity.ok().body(response);
+	}
+
 }
 
