@@ -4,7 +4,6 @@ import com.example.demo.dto.*;
 import com.example.demo.model.*;
 import com.example.demo.service.*;
 import lombok.extern.slf4j.Slf4j;
-import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -34,9 +33,14 @@ public class GroupController {
 	@Autowired
 	private EmitterService emitterService;
 
-	@GetMapping
-	public ResponseEntity<?> retrieveGroup(@AuthenticationPrincipal String userId) {
-		List<GroupEntity> entites = groupService.retrieveByUserId(userId);
+	/***
+	 *  유저의 아이디를 받아서 유저가 속한 그룹의 리스트를 반환
+	 * @param userId 유저의 아이디
+	 * @return ResponseEntity <List<GroupDTO>> 유저가 속한 그룹의 리스트를 담은 ResponseEntity 객체
+	 */
+	@GetMapping("/{userId}")
+	public ResponseEntity<?> retrieveGroup(@PathVariable("userId") String userId) {
+		List<GroupEntity> entites = groupService.retrieveGroupsByUserId(userId);
 
 		List<GroupDTO> dtos = entites.stream().map(GroupDTO::new).collect(Collectors.toList());
 
@@ -46,21 +50,29 @@ public class GroupController {
 
 		return ResponseEntity.ok().body(response);
 	}
-	@GetMapping("/user/schedule")
-	public ResponseEntity<?> retrieveGroupCombinedSchedule(@RequestBody GroupDTO dto){
-		//dto에서 OriginKey와 groupUsers를 받음.
-//		GroupEntity entity = GroupDTO.toEntity(dto);
-//		List<ScheduleEn> = scheduleService.retrieveGroupCombinedSchedules(entity);
 
+	/***
+	 * 그룹의 OriginKey를 받아서 GroupUser들의 개인일정과 GroupUser들이 속한 그룹의 그룹일정들을 반환
+	 * @param groupOriginKey 그룹의 OriginKey
+	 * @return ResponseEntity <List<ScheduleDTO>> GroupUser들의 개인일정과 GroupUser들이 속한 그룹의 그룹일정들을 담은 ResponseEntity 객체
+	 */
+	@GetMapping("/user/schedule/{groupOriginKey}")
+	public ResponseEntity<?> retrieveGroupCombinedSchedule(@PathVariable("groupOriginKey") String groupOriginKey){
+		
+		List<GroupUserEntity> groupUserEntities= groupService.retrieveUsersByGroupOriginKey(groupOriginKey);
+		
+		//반환용 List 생성
 		List<ScheduleDTO> dtos = new ArrayList<>();
-		for (String userId:dto.getGroupUsers()) {
-			List<UserScheduleEntity> userEntites = scheduleService.retrieveUserSchedule(userId);
-			List<GroupScheduleEntity> groupEntities = scheduleService.retrieveGroupSchedule(userId);
+		
+		for (GroupUserEntity entity :groupUserEntities) {
+			List<UserScheduleEntity> userEntites = scheduleService.retrieveUserSchedules(entity.getUserId());
+			List<GroupScheduleEntity> groupEntities = scheduleService.retrieveGroupSchedule(entity.getUserId());
 
 			List<UserScheduleDTO> userScheduleDTO = userEntites.stream().map(UserScheduleDTO::new).collect(Collectors.toList());
 			List<GroupScheduleDTO> groupScheduleDTO = groupEntities.stream().map(GroupScheduleDTO::new).collect(Collectors.toList());
 
-			ScheduleDTO schedule = new ScheduleDTO(userId, groupScheduleDTO, userScheduleDTO);
+			ScheduleDTO schedule = new ScheduleDTO(entity.getUserId(), groupScheduleDTO, userScheduleDTO);
+			//반환용 List 에 추가
 			dtos.add(schedule);
 		}
 
@@ -138,10 +150,11 @@ public class GroupController {
 		return ResponseEntity.ok().body(response);
 	}
 
-	@DeleteMapping
-	public ResponseEntity<?> deleteGroup(@AuthenticationPrincipal String userId, @RequestBody GroupDTO dto) {
+	@DeleteMapping("/{groupOriginKey}")
+	public ResponseEntity<?> deleteGroup(@PathVariable("groupOriginKey") String groupOriginKey,@AuthenticationPrincipal String userId) {
 		try {
-			GroupEntity entity = GroupDTO.toEntity(dto);
+
+			GroupEntity entity = groupService.retrieveGroupByOriginKey(groupOriginKey);
 
 			//그룹장 검사, 그룹장이 맞으면 GroupEntity의 LedearId를 세팅해줌
 			entity = groupService.validateLeader(userId,entity);
@@ -160,7 +173,7 @@ public class GroupController {
 	}
 	private GroupDTO setGroupDTO(GroupEntity groupEntity) {
 		// 클라에게 보낼 DTO 세팅
-		List<GroupUserEntity> groupUserEntities = groupService.retrieveByGroupOriginKey(groupEntity.getOriginKey());
+		List<GroupUserEntity> groupUserEntities = groupService.retrieveUsersByGroupOriginKey(groupEntity.getOriginKey());
 		List<String> userIds = new ArrayList<>();
 		for (GroupUserEntity groupUserEntity : groupUserEntities) {
 			userIds.add(groupUserEntity.getUserId());

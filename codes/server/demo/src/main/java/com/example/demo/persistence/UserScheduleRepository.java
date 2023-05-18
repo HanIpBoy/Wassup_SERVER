@@ -11,7 +11,7 @@ import java.util.Optional;
 public interface UserScheduleRepository extends JpaRepository<UserScheduleEntity, String> {
 
 	List<UserScheduleEntity> findByUserId(String userId);
-	Optional<UserScheduleEntity> findByOriginKey(String originKey);
+	UserScheduleEntity findByOriginKey(String originKey);
 	List<UserScheduleEntity> findAllByUserIdOrderByStartAtAsc(String userId);
 }
 

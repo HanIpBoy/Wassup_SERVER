@@ -3,13 +3,11 @@ package com.example.demo.service;
 import com.example.demo.model.GroupScheduleEntity;
 import com.example.demo.model.GroupUserEntity;
 import com.example.demo.model.UserScheduleEntity;
-import com.example.demo.persistence.EmitterRepository;
 import com.example.demo.persistence.GroupScheduleRepository;
 import com.example.demo.persistence.GroupUserRepository;
 import com.example.demo.persistence.UserScheduleRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -49,7 +47,7 @@ public class ScheduleService {
 	}
 
 	//유저가 생성한 모든 스케쥴 검색 + 자신이 속해있는 그룹의 일정까지 전부 검색
-	public List<UserScheduleEntity> retrieveUserSchedule(final String userId) {
+	public List<UserScheduleEntity> retrieveUserSchedules(final String userId) {
 		return userScheduleRepository.findAllByUserIdOrderByStartAtAsc(userId);
 	}
 
@@ -71,11 +69,14 @@ public class ScheduleService {
 		return groupSchedules;
 	}
 
+	public UserScheduleEntity retrieveUserSchedule(final String originKey) {
+		return userScheduleRepository.findByOriginKey(originKey);
+	}
 
 	public List<UserScheduleEntity> updateUserSchedule(final UserScheduleEntity entity) {
 		validate(entity);
 
-		final Optional<UserScheduleEntity> original = userScheduleRepository.findByOriginKey(entity.getOriginKey());
+		final Optional<UserScheduleEntity> original = Optional.ofNullable(userScheduleRepository.findByOriginKey(entity.getOriginKey()));
 
 		original.ifPresent(schedule -> {
 			schedule.setName(entity.getName() != null ? entity.getName() : schedule.getName());
@@ -86,7 +87,7 @@ public class ScheduleService {
 			userScheduleRepository.save(schedule);
 		});
 
-		return retrieveUserSchedule(entity.getUserId());
+		return retrieveUserSchedules(entity.getUserId());
 	}
 
 	public GroupScheduleEntity updateGroupSchedule(final GroupScheduleEntity entity) {
@@ -117,7 +118,7 @@ public class ScheduleService {
 			throw new RuntimeException("error deleting entity " + entity.getUserId());
 		}
 
-		return retrieveUserSchedule(entity.getUserId());
+		return retrieveUserSchedules(entity.getUserId());
 	}
 
 	public GroupScheduleEntity deleteGroupSchedule(final GroupScheduleEntity entity) {

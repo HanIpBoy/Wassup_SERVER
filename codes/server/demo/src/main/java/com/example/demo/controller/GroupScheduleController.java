@@ -53,12 +53,12 @@ public class GroupScheduleController {
         }
     }
 
-    @GetMapping
-    public ResponseEntity<?> retrieveGroupSchedule(@RequestBody GroupScheduleDTO dto) {
+    @GetMapping("/{originKey}")
+    public ResponseEntity<?> retrieveGroupSchedule(@PathVariable("originKey") String originKey) {
         try {
-            GroupScheduleEntity entity = GroupScheduleDTO.toEntity(dto);
+            //GroupScheduleEntity entity = GroupScheduleDTO.toEntity(dto);
 
-            List<GroupScheduleEntity> entities = service.retrieveGroupSchedule(dto.getOriginKey());
+            List<GroupScheduleEntity> entities = service.retrieveGroupSchedule(originKey);
 
             List<GroupScheduleDTO> dtos = entities.stream().map(GroupScheduleDTO::new).collect(Collectors.toList());
 
@@ -91,7 +91,7 @@ public class GroupScheduleController {
         return ResponseEntity.ok().body(response);
     }
 
-    @DeleteMapping
+    @DeleteMapping("/{originKey}")
     public ResponseEntity<?> deleteGroupSchedule(@RequestBody GroupScheduleDTO dto) {
         try {
             GroupScheduleEntity entity = GroupScheduleDTO.toEntity(dto);

@@ -42,7 +42,10 @@ public class UserController {
 
 	private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-
+	/***
+	 * 유저 전체 리스트를 반환해줌
+	 * @return ResponseEntity <List<UserDTO>> 유저 전체 정보를 담은 ResponseEntity 객체
+	 */
 	@GetMapping("/user")
 	public ResponseEntity<?> retrieveUserList() {
 		List<UserEntity> entites = userService.retrieve();
@@ -54,9 +57,14 @@ public class UserController {
 		return ResponseEntity.ok().body(response);
 	}
 
-	@PostMapping("/user/search")
-	public ResponseEntity<?> retrieveUser(@RequestBody UserDTO userDTO) {
-		UserEntity userEntity = userService.getByUserId(userDTO.getUserId());
+	/***
+	 * User 한명을 찾아서 반환해줌
+	 * @param userId 찾고 싶은 유저의 userId
+	 * @return ResponseEntity <UserDTO> 유저 정보를 담은 ResponseEntity 객체
+	 */
+	@GetMapping("/user/search/{userId}")
+	public ResponseEntity<?> retrieveUser(@PathVariable("userId") String userId) {
+		UserEntity userEntity = userService.getByUserId(userId);
 		UserDTO responseUserDTO = new UserDTO(userEntity);
 		ResponseDTO response = ResponseDTO.<UserDTO>builder().data(Collections.singletonList(responseUserDTO)).status("succeed").build();
 		return ResponseEntity.ok().body(response);

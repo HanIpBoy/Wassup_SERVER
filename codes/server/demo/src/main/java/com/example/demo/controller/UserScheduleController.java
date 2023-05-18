@@ -21,9 +21,14 @@ public class UserScheduleController {
     @Autowired
     private ScheduleService service;
 
+	/***
+	 * userId를 받아 유저의 개인 일정 + 유저가 속한 모든 그룹 공통 일정 반환
+	 * @param userId token에서 얻은 유저의 아이디
+	 * @return 유저의 개인 일정 + 유저가 속한 모든 그룹 공통 일정 반환
+	 */
 	@GetMapping
 	public ResponseEntity<?> retrieveSchedule(@AuthenticationPrincipal String userId) {
-		List<UserScheduleEntity> userEntites = service.retrieveUserSchedule(userId);
+		List<UserScheduleEntity> userEntites = service.retrieveUserSchedules(userId);
 		List<GroupScheduleEntity> groupEntities = service.retrieveGroupSchedule(userId);
 
 		List<UserScheduleDTO> userScheduleDTO = userEntites.stream().map(UserScheduleDTO::new).collect(Collectors.toList());
@@ -74,12 +79,10 @@ public class UserScheduleController {
 		return ResponseEntity.ok().body(response);
 	}
 
-	@DeleteMapping
-	public ResponseEntity<?> deleteSchedule(@AuthenticationPrincipal String userId, @RequestBody UserScheduleDTO dto) {
+	@DeleteMapping("/{originKey}")
+	public ResponseEntity<?> deleteSchedule(@AuthenticationPrincipal String userId, @PathVariable("originKey") String originKey) {
 		try {
-			UserScheduleEntity entity = UserScheduleDTO.toEntity(dto);
-
-			entity.setUserId(userId);
+			UserScheduleEntity entity = service.retrieveUserSchedule(originKey);
 
 			List<UserScheduleEntity> entities = service.deleteUserSchedule(entity);
 

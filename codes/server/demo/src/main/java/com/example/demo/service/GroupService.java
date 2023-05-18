@@ -37,7 +37,7 @@ public class GroupService {
 		return groupUserEntity;
 	}
 
-	public List<GroupEntity> retrieveByUserId(final String userId) {
+	public List<GroupEntity> retrieveGroupsByUserId(final String userId) {
 		// 사용자의 Id로 groupUser 테이블을 검색
 		List<GroupUserEntity> groupUserEntities = groupUserRepository.findByUserId(userId);
 		List<GroupEntity> groupEntities = new ArrayList<>();
@@ -49,8 +49,12 @@ public class GroupService {
 		return groupEntities;
 	}
 
-	public List<GroupUserEntity> retrieveByGroupOriginKey(final String groupOriginKey) {
+	public List<GroupUserEntity> retrieveUsersByGroupOriginKey(final String groupOriginKey) {
 		return groupUserRepository.findByGroupOriginKey(groupOriginKey);
+	}
+
+	public GroupEntity retrieveGroupByOriginKey(final String groupOriginKey){
+		return groupRepository.findByOriginKey(groupOriginKey);
 	}
 
 	public GroupEntity updateGroup(final GroupEntity entity) {
@@ -71,7 +75,7 @@ public class GroupService {
 	}
 
 	public List<GroupUserEntity> updateGroupUser(final GroupEntity groupEntity, final List<String> requestGroupUsers) {
-		List<GroupUserEntity> savedGroupUsers = retrieveByGroupOriginKey(groupEntity.getOriginKey());
+		List<GroupUserEntity> savedGroupUsers = retrieveUsersByGroupOriginKey(groupEntity.getOriginKey());
 
 		// 기존에 저장된 그룹 유저 목록에서 삭제 대상인 유저를 찾아서 삭제
 		for (GroupUserEntity savedGroupUser : savedGroupUsers) {
@@ -95,7 +99,7 @@ public class GroupService {
 				createGroupUser(uid, groupEntity);
 			}
 		}
-		return retrieveByGroupOriginKey(groupEntity.getOriginKey());
+		return retrieveUsersByGroupOriginKey(groupEntity.getOriginKey());
 	}
 
 	public GroupEntity deleteGroup(final GroupEntity entity) {

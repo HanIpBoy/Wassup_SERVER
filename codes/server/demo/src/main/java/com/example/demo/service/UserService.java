@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.example.demo.model.UserEntity;
@@ -52,6 +53,10 @@ public class UserService {
 
 	public UserEntity getByUserId(String userId) {
 		return userRepository.findByUserId(userId);
+	}
+
+	public UserEntity getByOriginKey(String originKey){
+		return userRepository.findByOriginKey(originKey);
 	}
 
 	public UserEntity getByCredentials(final String userId, final String password, final PasswordEncoder encoder) {
