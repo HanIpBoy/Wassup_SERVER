@@ -19,7 +19,7 @@ public class UserDTO {
 	private String birth;
 	private LocalDateTime lastModifiedAt;
 	private LocalDateTime createdAt;
-	private String token;
+	private String token; // user 응답으로 token을 보내줘야 해서 필요
 	private String emailAuthCode;
 
 	public UserDTO(final UserEntity entity) {
@@ -38,6 +38,7 @@ public class UserDTO {
 				.password(userDTO.getPassword())
 				.userName(userDTO.getUserName())
 				.birth(userDTO.getBirth())
+				.emailAuthCode(userDTO.getEmailAuthCode())
 				.build();
 	}
 }

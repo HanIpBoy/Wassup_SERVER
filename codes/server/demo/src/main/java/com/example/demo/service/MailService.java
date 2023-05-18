@@ -19,11 +19,11 @@ public class MailService {
     @Autowired
     private UserRepository userRepository;
 
-    public void send(UserDTO userDTO){
+    public void send(UserEntity userEntity){
         SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(userDTO.getUserId()); // To: 수신자
+        message.setTo(userEntity.getUserId()); // To: 수신자
         message.setSubject("Wscalendar 계정 이메일 주소 인증"); // Subject 제목
-        message.setText(userDTO.getEmailAuthCode()); // Text: 본문
+        message.setText(userEntity.getEmailAuthCode()); // Text: 본문
 
         mailSender.send(message);
     }

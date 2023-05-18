@@ -10,10 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -32,9 +29,9 @@ public class UserScheduleController {
 		List<UserScheduleDTO> userScheduleDTO = userEntites.stream().map(UserScheduleDTO::new).collect(Collectors.toList());
 		List<GroupScheduleDTO> groupScheduleDTO = groupEntities.stream().map(GroupScheduleDTO::new).collect(Collectors.toList());
 
-		ScheduleDTO schedule = new ScheduleDTO(userId, groupScheduleDTO, userScheduleDTO);
+		ScheduleDTO responseScheduleDTO = new ScheduleDTO(userId, groupScheduleDTO, userScheduleDTO);
 
-		ResponseDTO<ScheduleDTO> response = ResponseDTO.<ScheduleDTO>builder().data((List<ScheduleDTO>) schedule).status("succeed").build();
+		ResponseDTO<ScheduleDTO> response = ResponseDTO.<ScheduleDTO>builder().data(Collections.singletonList(responseScheduleDTO)).status("succeed").build();
 
 		return ResponseEntity.ok().body(response);
 	}
