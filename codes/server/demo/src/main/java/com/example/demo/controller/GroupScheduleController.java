@@ -56,8 +56,6 @@ public class GroupScheduleController {
     @GetMapping("/{originKey}")
     public ResponseEntity<?> retrieveGroupSchedule(@PathVariable("originKey") String originKey) {
         try {
-            //GroupScheduleEntity entity = GroupScheduleDTO.toEntity(dto);
-
             List<GroupScheduleEntity> entities = service.retrieveGroupSchedule(originKey);
 
             List<GroupScheduleDTO> dtos = entities.stream().map(GroupScheduleDTO::new).collect(Collectors.toList());

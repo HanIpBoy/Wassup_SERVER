@@ -33,55 +33,7 @@ public class GroupController {
 	@Autowired
 	private EmitterService emitterService;
 
-	/***
-	 *  유저의 아이디를 받아서 유저가 속한 그룹의 리스트를 반환
-	 * @param userId 유저의 아이디
-	 * @return ResponseEntity <List<GroupDTO>> 유저가 속한 그룹의 리스트를 담은 ResponseEntity 객체
-	 */
-	@GetMapping("/{userId}")
-	public ResponseEntity<?> retrieveGroup(@PathVariable("userId") String userId) {
-		List<GroupEntity> entites = groupService.retrieveGroupsByUserId(userId);
-
-		List<GroupDTO> dtos = entites.stream().map(GroupDTO::new).collect(Collectors.toList());
-
-		//setGroupDTO()
-
-		ResponseDTO response = ResponseDTO.<GroupDTO>builder().data(dtos).status("succeed").build();
-
-		return ResponseEntity.ok().body(response);
-	}
-
-	/***
-	 * 그룹의 OriginKey를 받아서 GroupUser들의 개인일정과 GroupUser들이 속한 그룹의 그룹일정들을 반환
-	 * @param groupOriginKey 그룹의 OriginKey
-	 * @return ResponseEntity <List<ScheduleDTO>> GroupUser들의 개인일정과 GroupUser들이 속한 그룹의 그룹일정들을 담은 ResponseEntity 객체
-	 */
-	@GetMapping("/user/schedule/{groupOriginKey}")
-	public ResponseEntity<?> retrieveGroupCombinedSchedule(@PathVariable("groupOriginKey") String groupOriginKey){
-		
-		List<GroupUserEntity> groupUserEntities= groupService.retrieveUsersByGroupOriginKey(groupOriginKey);
-		
-		//반환용 List 생성
-		List<ScheduleDTO> dtos = new ArrayList<>();
-		
-		for (GroupUserEntity entity :groupUserEntities) {
-			List<UserScheduleEntity> userEntites = scheduleService.retrieveUserSchedules(entity.getUserId());
-			List<GroupScheduleEntity> groupEntities = scheduleService.retrieveGroupSchedule(entity.getUserId());
-
-			List<UserScheduleDTO> userScheduleDTO = userEntites.stream().map(UserScheduleDTO::new).collect(Collectors.toList());
-			List<GroupScheduleDTO> groupScheduleDTO = groupEntities.stream().map(GroupScheduleDTO::new).collect(Collectors.toList());
-
-			ScheduleDTO schedule = new ScheduleDTO(entity.getUserId(), groupScheduleDTO, userScheduleDTO);
-			//반환용 List 에 추가
-			dtos.add(schedule);
-		}
-
-		ResponseDTO response = ResponseDTO.<ScheduleDTO>builder().data(dtos).status("succeed").build();
-
-		return ResponseEntity.ok().body(response);
-	}
-
-    @PostMapping("/createRequest")
+	@PostMapping("/createRequest")
 	public ResponseEntity<?> createGroup(@AuthenticationPrincipal String userId, @RequestBody GroupDTO dto) {
 		try {
 			GroupEntity entity = GroupDTO.toEntity(dto);
@@ -127,6 +79,55 @@ public class GroupController {
 		}
 
 		ResponseDTO response = ResponseDTO.<GroupDTO>builder().status("succeed").build();
+
+		return ResponseEntity.ok().body(response);
+	}
+
+
+	/***
+	 *  유저의 아이디를 받아서 유저가 속한 그룹의 리스트를 반환
+	 * @param userId 유저의 아이디
+	 * @return ResponseEntity <List<GroupDTO>> 유저가 속한 그룹의 리스트를 담은 ResponseEntity 객체
+	 */
+	@GetMapping("/{userId}")
+	public ResponseEntity<?> retrieveGroup(@PathVariable("userId") String userId) {
+		List<GroupEntity> entites = groupService.retrieveGroupsByUserId(userId);
+
+		List<GroupDTO> dtos = entites.stream().map(GroupDTO::new).collect(Collectors.toList());
+
+		//setGroupDTO()
+
+		ResponseDTO response = ResponseDTO.<GroupDTO>builder().data(dtos).status("succeed").build();
+
+		return ResponseEntity.ok().body(response);
+	}
+
+	/***
+	 * 그룹의 OriginKey를 받아서 GroupUser들의 개인일정과 GroupUser들이 속한 그룹의 그룹일정들을 반환
+	 * @param groupOriginKey 그룹의 OriginKey
+	 * @return ResponseEntity <List<ScheduleDTO>> GroupUser들의 개인일정과 GroupUser들이 속한 그룹의 그룹일정들을 담은 ResponseEntity 객체
+	 */
+	@GetMapping("/user/schedule/{groupOriginKey}")
+	public ResponseEntity<?> retrieveGroupCombinedSchedule(@PathVariable("groupOriginKey") String groupOriginKey){
+		
+		List<GroupUserEntity> groupUserEntities= groupService.retrieveUsersByGroupOriginKey(groupOriginKey);
+		
+		//반환용 List 생성
+		List<ScheduleDTO> dtos = new ArrayList<>();
+		
+		for (GroupUserEntity entity :groupUserEntities) {
+			List<UserScheduleEntity> userEntites = scheduleService.retrieveUserSchedules(entity.getUserId());
+			List<GroupScheduleEntity> groupEntities = scheduleService.retrieveGroupSchedule(entity.getUserId());
+
+			List<UserScheduleDTO> userScheduleDTO = userEntites.stream().map(UserScheduleDTO::new).collect(Collectors.toList());
+			List<GroupScheduleDTO> groupScheduleDTO = groupEntities.stream().map(GroupScheduleDTO::new).collect(Collectors.toList());
+
+			ScheduleDTO schedule = new ScheduleDTO(entity.getUserId(), groupScheduleDTO, userScheduleDTO);
+			//반환용 List 에 추가
+			dtos.add(schedule);
+		}
+
+		ResponseDTO response = ResponseDTO.<ScheduleDTO>builder().data(dtos).status("succeed").build();
 
 		return ResponseEntity.ok().body(response);
 	}
