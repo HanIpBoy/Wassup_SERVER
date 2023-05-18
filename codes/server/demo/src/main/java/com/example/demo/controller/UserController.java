@@ -151,16 +151,16 @@ public class UserController {
 					.token(token)
 					.build();
 
-			// 유저가 로그인하면, Emitter 만들기
-			SseEmitter emitter = emitterService.subscribe(userDTO.getUserId());
-			try {
-				emitter.send(SseEmitter.event()
-						.name("login")
-						.data(responseUserDTO));
-			} catch (IOException e) {
-				throw new RuntimeException(e);
-			}
-			return ResponseEntity.ok().body(emitter);
+//			// 유저가 로그인하면, Emitter 만들기
+//			SseEmitter emitter = emitterService.subscribe(userDTO.getUserId());
+//			try {
+//				emitter.send(SseEmitter.event()
+//						.name("login")
+//						.data(responseUserDTO));
+//			} catch (IOException e) {
+//				throw new RuntimeException(e);
+//			}
+			return ResponseEntity.ok().body(responseUserDTO);
 		} else {
 			ResponseDTO responseDTO = ResponseDTO.builder()
 					.error("Login Failed")
