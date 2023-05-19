@@ -89,8 +89,8 @@ public class GroupController {
 	 * @param userId 유저의 아이디
 	 * @return ResponseEntity <List<GroupDTO>> 유저가 속한 그룹의 리스트를 담은 ResponseEntity 객체
 	 */
-	@GetMapping("/{userId}")
-	public ResponseEntity<?> retrieveGroup(@PathVariable("userId") String userId) {
+	@GetMapping()
+	public ResponseEntity<?> retrieveGroup(@AuthenticationPrincipal String userId) {
 		List<GroupEntity> entites = groupService.retrieveGroupsByUserId(userId);
 
 		List<GroupDTO> dtos = entites.stream().map(GroupDTO::new).collect(Collectors.toList());
