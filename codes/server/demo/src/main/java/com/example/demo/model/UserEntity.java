@@ -40,7 +40,5 @@ public class UserEntity {
 	@CreationTimestamp
 	private LocalDateTime createdAt;
 
-	private String token;
-
 	private String emailAuthCode;
 }

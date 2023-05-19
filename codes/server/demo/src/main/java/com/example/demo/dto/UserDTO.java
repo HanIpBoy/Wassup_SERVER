@@ -24,13 +24,10 @@ public class UserDTO {
 
 	public UserDTO(final UserEntity entity) {
 		this.userId = entity.getUserId();
-		this.password = entity.getPassword();
 		this.userName = entity.getUserName();
 		this.birth = entity.getBirth();
 		this.lastModifiedAt = entity.getLastModifiedAt();
 		this.createdAt = entity.getCreatedAt();
-		this.token = entity.getToken();
-		this.emailAuthCode = entity.getEmailAuthCode();
 	}
 	public static UserEntity toEntity(UserDTO userDTO){
 		return UserEntity.builder()

@@ -51,13 +51,11 @@ public class UserController {
 
 		UserEntity userEntity = UserDTO.toEntity(userDTO);
 
-		UserEntity responseUserEntity = userService.create(userEntity);
+		userService.create(userEntity);
 
 		mailService.send(userEntity);
 
-		UserDTO responseUserDTO = new UserDTO(responseUserEntity);
-
-		ResponseDTO<UserDTO> response = ResponseDTO.<UserDTO>builder().data(Collections.singletonList(responseUserDTO)).status("succeed").build();
+		ResponseDTO<UserDTO> response = ResponseDTO.<UserDTO>builder().status("succeed").build();
 
 		return ResponseEntity.ok().body(response);
 	}
@@ -69,9 +67,7 @@ public class UserController {
 
 		if(mailService.verifyEmailCode(user, userDTO.getEmailAuthCode())) {
 
-			UserDTO responseUserDTO = new UserDTO(user);
-
-			ResponseDTO<UserDTO> successResponse = ResponseDTO.<UserDTO>builder().data(Collections.singletonList(responseUserDTO)).status("succeed").build();
+			ResponseDTO<UserDTO> successResponse = ResponseDTO.<UserDTO>builder().status("succeed").build();
 
 			return ResponseEntity.ok().body(successResponse);
 		}
@@ -115,6 +111,7 @@ public class UserController {
 			final String token = tokenProvider.create(user);
 			log.info("token create!");
 			log.info(token);
+
 			//이때만 특별히 toEntity()를 사용하지 않고 빌더를 사용해 토큰을 붙여서 보내줌
 			final UserDTO responseUserDTO = UserDTO.builder()
 					.userId(user.getUserId())
@@ -122,15 +119,17 @@ public class UserController {
 					.token(token)
 					.build();
 
-//			// 유저가 로그인하면, Emitter 만들기
-//			SseEmitter emitter = emitterService.subscribe(userDTO.getUserId());
-//			try {
-//				emitter.send(SseEmitter.event()
-//						.name("login")
-//						.data(responseUserDTO));
-//			} catch (IOException e) {
-//				throw new RuntimeException(e);
-//			}
+			// 유저가 로그인하면, Emitter 만들기
+			SseEmitter emitter = emitterService.subscribe(userDTO.getUserId());
+			try {
+				emitter.send(SseEmitter.event()
+						.name("login")
+						.data(responseUserDTO));
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
+			//return emiiter
+
 			ResponseDTO responseDTO = ResponseDTO.builder().data(Collections.singletonList(responseUserDTO)).status("succeed").build();
 
 			return ResponseEntity.ok().body(responseDTO);
