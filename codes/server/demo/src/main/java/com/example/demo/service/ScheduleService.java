@@ -27,7 +27,7 @@ public class ScheduleService {
 	@Autowired
 	private GroupUserRepository groupUserRepository;
 
-	public List<UserScheduleEntity> createUserSchedule(final UserScheduleEntity entity) {
+	public UserScheduleEntity createUserSchedule(final UserScheduleEntity entity) {
 		// Validations
 		validate(entity);
 
@@ -35,7 +35,7 @@ public class ScheduleService {
 
 		log.info("Entity id : {} is saved.", entity.getOriginKey());
 
-		return userScheduleRepository.findByUserId(entity.getUserId());
+		return retrieveUserSchedule(entity.getOriginKey());
 	}
 
 	public GroupScheduleEntity createGroupSchedule(GroupScheduleEntity entity) {
@@ -73,7 +73,7 @@ public class ScheduleService {
 		return userScheduleRepository.findByOriginKey(originKey);
 	}
 
-	public List<UserScheduleEntity> updateUserSchedule(final UserScheduleEntity entity) {
+	public UserScheduleEntity updateUserSchedule(final UserScheduleEntity entity) {
 		validate(entity);
 
 		final Optional<UserScheduleEntity> original = Optional.ofNullable(userScheduleRepository.findByOriginKey(entity.getOriginKey()));
@@ -87,7 +87,7 @@ public class ScheduleService {
 			userScheduleRepository.save(schedule);
 		});
 
-		return retrieveUserSchedules(entity.getUserId());
+		return retrieveUserSchedule(entity.getOriginKey());
 	}
 
 	public GroupScheduleEntity updateGroupSchedule(final GroupScheduleEntity entity) {

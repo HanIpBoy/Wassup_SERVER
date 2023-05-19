@@ -29,11 +29,11 @@ public class UserScheduleController {
 
 			entity.setUserId(userId);
 
-			List<UserScheduleEntity> entities = service.createUserSchedule(entity);
+			UserScheduleEntity entitiy = service.createUserSchedule(entity);
 
-			List<UserScheduleDTO> dtos = entities.stream().map(UserScheduleDTO::new).collect(Collectors.toList());
+			UserScheduleDTO dtos = new UserScheduleDTO(entitiy);
 
-			ResponseDTO<UserScheduleDTO> response = ResponseDTO.<UserScheduleDTO>builder().data(dtos).status("succeed").build();
+			ResponseDTO<UserScheduleDTO> response = ResponseDTO.<UserScheduleDTO>builder().data(Collections.singletonList(dtos)).status("succeed").build();
 
 			return ResponseEntity.ok().body(response);
 
@@ -66,15 +66,14 @@ public class UserScheduleController {
 	@PutMapping
 	public ResponseEntity<?> updateSchedule(@AuthenticationPrincipal String userId, @RequestBody UserScheduleDTO dto) {
 		UserScheduleEntity entity = UserScheduleDTO.toEntity(dto);
-		log.info("update originKey : " + entity.getOriginKey());
 
 		entity.setUserId(userId);
 
-		List<UserScheduleEntity> entities = service.updateUserSchedule(entity);
+		UserScheduleEntity responseEntity = service.updateUserSchedule(entity);
 
-		List<UserScheduleDTO> dtos = entities.stream().map(UserScheduleDTO::new).collect(Collectors.toList());
+		UserScheduleDTO dtos = new UserScheduleDTO(responseEntity);
 
-		ResponseDTO<UserScheduleDTO> response = ResponseDTO.<UserScheduleDTO>builder().data(dtos).status("succeed").build();
+		ResponseDTO<UserScheduleDTO> response = ResponseDTO.<UserScheduleDTO>builder().data(Collections.singletonList(dtos)).status("succeed").build();
 
 		return ResponseEntity.ok().body(response);
 	}
@@ -82,13 +81,16 @@ public class UserScheduleController {
 	@DeleteMapping("/{originKey}")
 	public ResponseEntity<?> deleteSchedule(@AuthenticationPrincipal String userId, @PathVariable("originKey") String originKey) {
 		try {
+
+
 			UserScheduleEntity entity = service.retrieveUserSchedule(originKey);
+			
+			//응답용 DTO 미리 세팅
+			UserScheduleDTO dtos = new UserScheduleDTO(entity);
 
 			List<UserScheduleEntity> entities = service.deleteUserSchedule(entity);
 
-			List<UserScheduleDTO> dtos = entities.stream().map(UserScheduleDTO::new).collect(Collectors.toList());
-
-			ResponseDTO response = ResponseDTO.<UserScheduleDTO>builder().data(dtos).status("succeed").build();
+			ResponseDTO response = ResponseDTO.<UserScheduleDTO>builder().data(Collections.singletonList(dtos)).status("succeed").build();
 
 			return ResponseEntity.ok().body(response);
 
