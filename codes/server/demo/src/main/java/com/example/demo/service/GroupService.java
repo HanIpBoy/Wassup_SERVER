@@ -22,11 +22,12 @@ public class GroupService {
 	@Autowired
 	private GroupUserRepository groupUserRepository;
 
-	public void createGroup(final GroupEntity entity) {
+	public GroupEntity createGroup(final GroupEntity entity) {
 		// Validations
 		validate(entity);
 
 		groupRepository.save(entity);
+		return retrieveGroupByOriginKey(entity.getOriginKey());
 	}
 
 	public GroupUserEntity createGroupUser(String userId, GroupEntity groupEntity) {

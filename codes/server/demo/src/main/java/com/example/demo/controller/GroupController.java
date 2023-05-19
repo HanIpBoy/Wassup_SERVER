@@ -10,6 +10,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -44,7 +45,7 @@ public class GroupController {
 			entity.setNumOfUsers(dto.getGroupUsers().size());
 
 			//Group 생성
-			groupService.createGroup(entity);
+			GroupEntity responseGroupEntity = groupService.createGroup(entity);
 
 			//그룹장 GroupUser 테이블 생성
 			GroupUserEntity groupUserEntity = groupService.createGroupUser(userId, entity);
@@ -55,7 +56,9 @@ public class GroupController {
 			// 생성한 notificationEntity와 groupEntity로 NotificationDTO를 만들어 SseEmitter로 요청 알림 전송
 			emitterService.sendToClients(notificationDTO);
 
-			ResponseDTO<?> response = ResponseDTO.<GroupDTO>builder().status("succeed").build();
+			GroupDTO groupDTO = setGroupDTO(responseGroupEntity);
+
+			ResponseDTO<?> response = ResponseDTO.<GroupDTO>builder().data(Collections.singletonList(groupDTO)).status("succeed").build();
 
 			return ResponseEntity.ok().body(response);
 
@@ -89,7 +92,7 @@ public class GroupController {
 	 * @param userId 유저의 아이디
 	 * @return ResponseEntity <List<GroupDTO>> 유저가 속한 그룹의 리스트를 담은 ResponseEntity 객체
 	 */
-	@GetMapping()
+	@GetMapping
 	public ResponseEntity<?> retrieveGroup(@AuthenticationPrincipal String userId) {
 		List<GroupEntity> entites = groupService.retrieveGroupsByUserId(userId);
 
@@ -144,15 +147,18 @@ public class GroupController {
 		entity.setLeaderId(dto.getLeaderId());
 
 		GroupEntity groupEntity = groupService.updateGroup(entity);
+
 		groupService.updateGroupUser(groupEntity,dto.getGroupUsers());
 
-		ResponseDTO<GroupDTO> response = ResponseDTO.<GroupDTO>builder().data((List<GroupDTO>) setGroupDTO(groupEntity)).status("succeed").build();
+		GroupDTO responseGroupDTO = setGroupDTO(groupEntity);
+
+		ResponseDTO<GroupDTO> response = ResponseDTO.<GroupDTO>builder().data(Collections.singletonList(responseGroupDTO)).status("succeed").build();
 
 		return ResponseEntity.ok().body(response);
 	}
 
-	@DeleteMapping("/{groupOriginKey}")
-	public ResponseEntity<?> deleteGroup(@PathVariable("groupOriginKey") String groupOriginKey,@AuthenticationPrincipal String userId) {
+	@DeleteMapping("/{originKey}")
+	public ResponseEntity<?> deleteGroup(@PathVariable("originKey") String groupOriginKey,@AuthenticationPrincipal String userId) {
 		try {
 
 			GroupEntity entity = groupService.retrieveGroupByOriginKey(groupOriginKey);
@@ -162,7 +168,9 @@ public class GroupController {
 
 			groupService.deleteGroup(entity);
 
-			ResponseDTO response = ResponseDTO.<GroupDTO>builder().status("succeed").build();
+			GroupDTO responseGroupDTO = setGroupDTO(entity);
+
+			ResponseDTO response = ResponseDTO.<GroupDTO>builder().data(Collections.singletonList(responseGroupDTO)).status("succeed").build();
 
 			return ResponseEntity.ok().body(response);
 
