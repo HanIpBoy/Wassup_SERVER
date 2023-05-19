@@ -131,7 +131,9 @@ public class UserController {
 //			} catch (IOException e) {
 //				throw new RuntimeException(e);
 //			}
-			return ResponseEntity.ok().body(responseUserDTO);
+			ResponseDTO responseDTO = ResponseDTO.builder().data(Collections.singletonList(responseUserDTO)).status("succeed").build();
+
+			return ResponseEntity.ok().body(responseDTO);
 		} else {
 			ResponseDTO responseDTO = ResponseDTO.builder()
 					.error("Login Failed")

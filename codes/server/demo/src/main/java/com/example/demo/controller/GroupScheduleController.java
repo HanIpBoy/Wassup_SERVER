@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -42,7 +43,9 @@ public class GroupScheduleController {
             // NotificationDTO를 만들어 SseEmitter로 요청 알림 전송
             emitterService.sendToClients(notificationDTOs);
 
-            ResponseDTO<?> response = ResponseDTO.<GroupDTO>builder().status("succeed").build();
+            GroupScheduleDTO responseGroupScheduleDTO = new GroupScheduleDTO(groupScheduleEntity);
+
+            ResponseDTO<?> response = ResponseDTO.<GroupScheduleDTO>builder().data(Collections.singletonList(responseGroupScheduleDTO)).status("succeed").build();
 
             return ResponseEntity.ok().body(response);
 
@@ -84,7 +87,9 @@ public class GroupScheduleController {
         // NotificationDTO를 만들어 SseEmitter로 요청 알림 전송
         emitterService.sendToClients(notificationDTOs);
 
-        ResponseDTO<?> response = ResponseDTO.<GroupDTO>builder().status("succeed").build();
+        GroupScheduleDTO responseGroupScheduleDTO = new GroupScheduleDTO(entity);
+
+        ResponseDTO<?> response = ResponseDTO.<GroupScheduleDTO>builder().data(Collections.singletonList(responseGroupScheduleDTO)).status("succeed").build();
 
         return ResponseEntity.ok().body(response);
     }
