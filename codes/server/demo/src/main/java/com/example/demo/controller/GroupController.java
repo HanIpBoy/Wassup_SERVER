@@ -93,7 +93,7 @@ public class GroupController {
 	 * @return ResponseEntity <List<GroupDTO>> 유저가 속한 그룹의 리스트를 담은 ResponseEntity 객체
 	 */
 	@GetMapping
-	public ResponseEntity<?> retrieveGroup(@AuthenticationPrincipal String userId) {
+	public ResponseEntity<?> retrieveGroups(@AuthenticationPrincipal String userId) {
 		List<GroupEntity> entites = groupService.retrieveGroupsByUserId(userId);
 
 		List<GroupDTO> dtos = entites.stream().map(GroupDTO::new).collect(Collectors.toList());
@@ -103,8 +103,20 @@ public class GroupController {
 		ResponseDTO response = ResponseDTO.<GroupDTO>builder().data(dtos).status("succeed").build();
 
 		return ResponseEntity.ok().body(response);
+
 	}
 
+
+	@GetMapping("/{groupOriginKey}")
+	public ResponseEntity<?> retrieveGroup(@PathVariable("groupOriginKey") String groupOriginKey){
+		GroupEntity entity = groupService.retrieveGroupByOriginKey(groupOriginKey);
+
+		GroupDTO dtos = setGroupDTO(entity);
+
+		ResponseDTO response = ResponseDTO.<GroupDTO>builder().data(Collections.singletonList(dtos)).status("succeed").build();
+
+		return ResponseEntity.ok().body(response);
+	}
 	/***
 	 * 그룹의 OriginKey를 받아서 GroupUser들의 개인일정과 GroupUser들이 속한 그룹의 그룹일정들을 반환
 	 * @param groupOriginKey 그룹의 OriginKey
