@@ -52,7 +52,12 @@ public class UserService {
 
 
 	public UserEntity getByUserId(String userId) {
-		return userRepository.findByUserId(userId);
+		try {
+			return userRepository.findByUserId(userId);
+		}catch (Exception e){
+			log.info("UserService의 getByUserId 함수: "+e.getMessage());
+			return null;
+		}
 	}
 
 	public UserEntity getByOriginKey(String originKey){

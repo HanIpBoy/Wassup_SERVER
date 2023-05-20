@@ -84,6 +84,8 @@ public class ScheduleService {
 			schedule.setEndAt(entity.getEndAt() != null ? entity.getEndAt() : schedule.getEndAt());
 			schedule.setMemo(entity.getMemo() != null ? entity.getMemo() : schedule.getMemo());
 			schedule.setAllDayToggle(entity.getAllDayToggle() != null ? entity.getAllDayToggle() : schedule.getAllDayToggle());
+			schedule.setColor(entity.getColor()!= null ? entity.getColor() : schedule.getColor());
+
 			userScheduleRepository.save(schedule);
 		});
 

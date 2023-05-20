@@ -88,7 +88,7 @@ public class UserScheduleController {
 			//응답용 DTO 미리 세팅
 			UserScheduleDTO dtos = new UserScheduleDTO(entity);
 
-			List<UserScheduleEntity> entities = service.deleteUserSchedule(entity);
+			service.deleteUserSchedule(entity);
 
 			ResponseDTO response = ResponseDTO.<UserScheduleDTO>builder().data(Collections.singletonList(dtos)).status("succeed").build();
 

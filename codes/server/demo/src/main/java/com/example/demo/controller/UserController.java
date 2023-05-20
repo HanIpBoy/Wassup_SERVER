@@ -43,6 +43,12 @@ public class UserController {
 
 	@PostMapping("/auth/email-send")
 	public ResponseEntity<?> sendEmail(@RequestBody UserDTO userDTO){
+		
+		// 이메일 인증할려는 유저 이메일이 이미 존재하는 지 확인
+		if(userService.getByUserId(userDTO.getUserId())!= null){
+			ResponseDTO<UserDTO> response = ResponseDTO.<UserDTO>builder().status("fail").error("User is already exists").build();
+			return ResponseEntity.ok().body(response);
+		}
 
 		Random random = new Random(System.currentTimeMillis());
 		int randomNum = random.nextInt(9000) + 1000;
@@ -65,6 +71,12 @@ public class UserController {
 
 		UserEntity user = userService.getByUserId(userDTO.getUserId());
 
+		// 이메일 인증할려는 유저 이메일이 존재하는 지 확인
+		if(userService.getByUserId(userDTO.getUserId())== null){
+			ResponseDTO<UserDTO> response = ResponseDTO.<UserDTO>builder().status("fail").error("User is not exist").build();
+			return ResponseEntity.ok().body(response);
+		}
+
 		if(mailService.verifyEmailCode(user, userDTO.getEmailAuthCode())) {
 
 			ResponseDTO<UserDTO> successResponse = ResponseDTO.<UserDTO>builder().status("succeed").build();
@@ -73,7 +85,7 @@ public class UserController {
 		}
 
 		else {
-			ResponseDTO<UserDTO> failResponse = ResponseDTO.<UserDTO>builder().status("failure").build();
+			ResponseDTO<UserDTO> failResponse = ResponseDTO.<UserDTO>builder().status("fail").build();
 			return ResponseEntity.ok().body(failResponse);
 		}
 	}

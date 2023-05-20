@@ -42,13 +42,14 @@ public class GroupController {
 			entity.setLeaderId(userId);
 
 			//그룹원 수 세팅
-			entity.setNumOfUsers(dto.getGroupUsers().size());
+			// 처음 그룹을 생성 시에는 그룹 유저가 그룹장 한명 밖에 없음
+			entity.setNumOfUsers(1);
 
 			//Group 생성
 			GroupEntity responseGroupEntity = groupService.createGroup(entity);
 
 			//그룹장 GroupUser 테이블 생성
-			GroupUserEntity groupUserEntity = groupService.createGroupUser(userId, entity);
+			groupService.createGroupUser(userId, entity);
 
 			//생성하는 그룹 정보를 토대로 각 유저 아이디를 세팅해 noti를 만들고 DB에 저장
 			List<NotificationDTO> notificationDTO = notificationService.createGroupInviteNotification(dto.getGroupUsers(), entity);
@@ -64,7 +65,7 @@ public class GroupController {
 
 		} catch(Exception e) {
 			String error = e.getMessage();
-			ResponseDTO<GroupDTO> response = ResponseDTO.<GroupDTO>builder().error(error).build();
+			ResponseDTO<GroupDTO> response = ResponseDTO.<GroupDTO>builder().status("fail").error(error).build();
 			return ResponseEntity.badRequest().body(response);
 		}
 	}
@@ -76,6 +77,8 @@ public class GroupController {
 		GroupEntity entity = dto.getGroup();
 		if(dto.getIsAccepted().equals("accept")) { // 사용자가 그룹 초대 요청을 수락하면
 			groupService.createGroupUser(userId, entity); // groupUser 테이블을 생성
+
+			groupService.updateGroup(entity); //group의 numOfUsers 수정(그룹원 +1)
 
 			// 해당 notification을 DB에서 삭제해야 함. -> notificationEntity를 찾아야 함. -> 그래서 매개변수 자체를 notificationDTO로 받음.
 			notificationService.deleteNotification(dto.getNotification());
@@ -96,14 +99,11 @@ public class GroupController {
 	public ResponseEntity<?> retrieveGroups(@AuthenticationPrincipal String userId) {
 		List<GroupEntity> entites = groupService.retrieveGroupsByUserId(userId);
 
-		List<GroupDTO> dtos = entites.stream().map(GroupDTO::new).collect(Collectors.toList());
-
-		//setGroupDTO()
+		List<GroupDTO> dtos = entites.stream().map(this::setGroupDTO).collect(Collectors.toList());
 
 		ResponseDTO response = ResponseDTO.<GroupDTO>builder().data(dtos).status("succeed").build();
 
 		return ResponseEntity.ok().body(response);
-
 	}
 
 
@@ -175,24 +175,30 @@ public class GroupController {
 
 	@PutMapping
 	public ResponseEntity<?> updateGroup(@AuthenticationPrincipal String userId, @RequestBody GroupDTO dto) {
-		GroupEntity entity = GroupDTO.toEntity(dto);
+		try {
+			GroupEntity entity = GroupDTO.toEntity(dto);
 
-		//그룹장 검사, 그룹장이 맞으면 GroupEntity의 LedearId를 세팅해줌
-		entity = groupService.validateLeader(userId,entity);
+			//그룹장 검사, 그룹장이 맞으면 GroupEntity의 LedearId를 세팅해줌
+			entity = groupService.validateLeader(userId, entity);
 
-		// 그룹장이 확인되면 다시 dto의 내용 세팅
-		// (왜 이렇게 하나요?: 그룹장 변경 시 권한 검사 후 그룹장을 변경해야댐)
-		entity.setLeaderId(dto.getLeaderId());
+			// 그룹장이 확인되면 다시 dto의 내용 세팅
+			// (왜 이렇게 하나요?: 그룹장 변경 시 권한 검사 후 그룹장을 변경해야댐)
+			entity.setLeaderId(dto.getLeaderId());
 
-		GroupEntity groupEntity = groupService.updateGroup(entity);
+			GroupEntity groupEntity = groupService.updateGroup(entity);
 
-		groupService.updateGroupUser(groupEntity,dto.getGroupUsers());
+			groupService.updateGroupUser(groupEntity, dto.getGroupUsers());
 
-		GroupDTO responseGroupDTO = setGroupDTO(groupEntity);
+			GroupDTO responseGroupDTO = setGroupDTO(groupEntity);
 
-		ResponseDTO<GroupDTO> response = ResponseDTO.<GroupDTO>builder().data(Collections.singletonList(responseGroupDTO)).status("succeed").build();
+			ResponseDTO<GroupDTO> response = ResponseDTO.<GroupDTO>builder().data(Collections.singletonList(responseGroupDTO)).status("succeed").build();
 
-		return ResponseEntity.ok().body(response);
+			return ResponseEntity.ok().body(response);
+		}catch (Exception e){
+			String error = e.getMessage();
+			ResponseDTO response = ResponseDTO.<GroupDTO>builder().status("fail").error(error).build();
+			return ResponseEntity.badRequest().body(response);
+		}
 	}
 
 	@DeleteMapping("/{originKey}")
@@ -210,11 +216,13 @@ public class GroupController {
 
 			ResponseDTO response = ResponseDTO.<GroupDTO>builder().data(Collections.singletonList(responseGroupDTO)).status("succeed").build();
 
+			//notiEntity도 삭제해야 함
+
 			return ResponseEntity.ok().body(response);
 
 		} catch (Exception e) {
 			String error = e.getMessage();
-			ResponseDTO response = ResponseDTO.<GroupDTO>builder().error(error).build();
+			ResponseDTO response = ResponseDTO.<GroupDTO>builder().status("fail").error(error).build();
 			return ResponseEntity.badRequest().body(response);
 		}
 	}

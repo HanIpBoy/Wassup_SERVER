@@ -136,11 +136,14 @@ public class GroupService {
 	}
 
 	public GroupEntity validateLeader(final String userId, final GroupEntity entity) {
-		entity.setLeaderId(userId);
-		if (!entity.getLeaderId().equals(groupRepository.findByOriginKey(entity.getOriginKey()).getLeaderId())) {
+		//Leader가 맞는지 확인
+		if (!entity.getLeaderId().equals(userId)) {
 			log.warn("Unauthorized user is trying to access the group");
 			throw new RuntimeException("Unauthorized user is trying to access the group");
 		}
+		// Leader가 맞으면 LeaderId로 세팅
+		entity.setLeaderId(userId);
+		
 		return entity;
 	}
 }
