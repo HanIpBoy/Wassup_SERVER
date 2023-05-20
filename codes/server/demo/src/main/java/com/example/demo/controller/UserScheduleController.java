@@ -63,6 +63,18 @@ public class UserScheduleController {
 		return ResponseEntity.ok().body(response);
 	}
 
+	// 그룹 일정 다 빼고 해당 User의 일정들만 반환
+	@GetMapping("/user-schedules")
+	public ResponseEntity<?> retrieveUserSchedules(@AuthenticationPrincipal String userId){
+		List<UserScheduleEntity> userScheduleEntities = service.retrieveUserSchedules(userId);
+
+		List<UserScheduleDTO> userScheduleDTO = userScheduleEntities.stream().map(UserScheduleDTO::new).collect(Collectors.toList());
+
+		ResponseDTO<UserScheduleDTO> response = ResponseDTO.<UserScheduleDTO>builder().data(userScheduleDTO).status("succeed").build();
+
+		return ResponseEntity.ok().body(response);
+	}
+
 	@PutMapping
 	public ResponseEntity<?> updateSchedule(@AuthenticationPrincipal String userId, @RequestBody UserScheduleDTO dto) {
 		UserScheduleEntity entity = UserScheduleDTO.toEntity(dto);
