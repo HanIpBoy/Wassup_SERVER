@@ -10,13 +10,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 public class NotificationDTO {
-	private GroupEntity group;
 	private NotificationEntity notification;
+
+	private String groupOriginKey;
 	private String isAccepted;
 
-	public NotificationDTO(GroupEntity group, NotificationEntity notification, String isAccepted) {
-		this.group = group;
+	public NotificationDTO(NotificationEntity notification,String groupOriginKey,String isAccepted) {
 		this.notification = notification;
+		this.groupOriginKey = groupOriginKey;
 		this.isAccepted = isAccepted;
 	}
 }

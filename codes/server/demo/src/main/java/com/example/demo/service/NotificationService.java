@@ -28,8 +28,10 @@ public class NotificationService {
     @Autowired
     private GroupRepository groupRepository;
 
-    public List<NotificationDTO> createGroupInviteNotification(List<String> groupUsers, GroupEntity entity) {
+    public List<NotificationDTO> createGroupInviteNotification(List<String> groupUsers,String groupOriginKey) {
         List<NotificationDTO> dtos = new ArrayList<>();
+
+        GroupEntity entity = groupRepository.findByOriginKey(groupOriginKey);
 
         for (String user : groupUsers) {
             if (user.equals(entity.getLeaderId())) continue;
@@ -43,7 +45,7 @@ public class NotificationService {
             notificationRepository.save(notiEntity);
 
             NotificationDTO dto = NotificationDTO.builder()
-                    .group(entity)
+                    .groupOriginKey(entity.getOriginKey())
                     .notification(notiEntity)
                     .build();
             dtos.add(dto);
@@ -93,7 +95,7 @@ public class NotificationService {
             }
             // notificationEntities와 GroupEntity를 병합해 NotificationDTO 만들기
             NotificationDTO dto = NotificationDTO.builder()
-                    .group(group)
+                    .groupOriginKey(group.getOriginKey())
                     .notification(notiEntity)
                     .build();
             dtos.add(dto);
@@ -101,7 +103,9 @@ public class NotificationService {
 
         return dtos;
     }
-
+    public NotificationEntity retreieve(String originKey){
+        return null;
+    }
 
     public void deleteNotification(NotificationEntity entity) {
         notificationRepository.delete(entity);

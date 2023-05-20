@@ -2,8 +2,8 @@ package com.example.demo.controller;
 
 import com.example.demo.dto.*;
 import com.example.demo.model.GroupScheduleEntity;
-import com.example.demo.model.UserScheduleEntity;
 import com.example.demo.service.EmitterService;
+import com.example.demo.service.GroupService;
 import com.example.demo.service.NotificationService;
 import com.example.demo.service.ScheduleService;
 import lombok.extern.slf4j.Slf4j;
@@ -24,14 +24,20 @@ public class GroupScheduleController {
     private ScheduleService service;
 
     @Autowired
+    private GroupService groupService;
+
+    @Autowired
     private EmitterService emitterService;
 
     @Autowired
     private NotificationService notificationService;
 
     @PostMapping
-    public ResponseEntity<?> createGroupSchedule(@RequestBody GroupScheduleDTO dto) {
+    public ResponseEntity<?> createGroupSchedule(@AuthenticationPrincipal String userId,@RequestBody GroupScheduleDTO dto) {
         try {
+            //그룹장인지 확인
+            groupService.validateLeader(userId,groupService.retrieveGroupByOriginKey(dto.getGroupOriginKey()));
+
             GroupScheduleEntity entity = GroupScheduleDTO.toEntity(dto);
 
             // 그룹 일정 생성
@@ -51,7 +57,7 @@ public class GroupScheduleController {
 
         } catch(Exception e) {
             String error = e.getMessage();
-            ResponseDTO<GroupScheduleDTO> response = ResponseDTO.<GroupScheduleDTO>builder().error(error).build();
+            ResponseDTO<GroupScheduleDTO> response = ResponseDTO.<GroupScheduleDTO>builder().status("fail").error(error).build();
             return ResponseEntity.badRequest().body(response);
         }
     }
@@ -59,7 +65,7 @@ public class GroupScheduleController {
     @GetMapping("/{originKey}")
     public ResponseEntity<?> retrieveGroupSchedule(@PathVariable("originKey") String originKey) {
         try {
-            List<GroupScheduleEntity> entities = service.retrieveGroupSchedule(originKey);
+            List<GroupScheduleEntity> entities = service.retrieveGroupSchedules(originKey);
 
             List<GroupScheduleDTO> dtos = entities.stream().map(GroupScheduleDTO::new).collect(Collectors.toList());
 
@@ -75,9 +81,13 @@ public class GroupScheduleController {
     }
 
     @PutMapping
-    public ResponseEntity<?> updateGroupSchedule(@RequestBody GroupScheduleDTO dto) {
+    public ResponseEntity<?> updateGroupSchedule(@AuthenticationPrincipal String userId,@RequestBody GroupScheduleDTO dto) {
+        try{
+        //그룹장인지 확인
+        groupService.validateLeader(userId,groupService.retrieveGroupByOriginKey(dto.getGroupOriginKey()));
 
         GroupScheduleEntity entity = GroupScheduleDTO.toEntity(dto);
+
         //그룹 스케쥴 수정
         entity = service.updateGroupSchedule(entity);
 
@@ -92,12 +102,22 @@ public class GroupScheduleController {
         ResponseDTO<?> response = ResponseDTO.<GroupScheduleDTO>builder().data(Collections.singletonList(responseGroupScheduleDTO)).status("succeed").build();
 
         return ResponseEntity.ok().body(response);
+        }catch (Exception e){
+        String error = e.getMessage();
+        ResponseDTO<GroupScheduleDTO> response = ResponseDTO.<GroupScheduleDTO>builder().status("fail").error(error).build();
+        return ResponseEntity.badRequest().body(response);
+        }
     }
 
     @DeleteMapping("/{originKey}")
-    public ResponseEntity<?> deleteGroupSchedule(@RequestBody GroupScheduleDTO dto) {
+    public ResponseEntity<?> deleteGroupSchedule(@AuthenticationPrincipal String userId, @PathVariable("originKey") String groupScheduleOriginKey) {
         try {
-            GroupScheduleEntity entity = GroupScheduleDTO.toEntity(dto);
+            //그룹장인지 확인
+            groupService.validateLeader(userId,groupService.retrieveGroupByOriginKey(service.retrieveGroupSchedule(groupScheduleOriginKey).getGroupOriginKey()));
+
+            GroupScheduleEntity entity = service.retrieveGroupSchedule(groupScheduleOriginKey);
+
+            GroupScheduleDTO responseGroupScheduelDTO = new GroupScheduleDTO(entity);
 
             entity = service.deleteGroupSchedule(entity);
 
@@ -106,13 +126,13 @@ public class GroupScheduleController {
             // NotificationDTO를 만들어 SseEmitter로 요청 알림 전송
             emitterService.sendToClients(notificationDTOs);
 
-            ResponseDTO<?> response = ResponseDTO.<GroupDTO>builder().status("succeed").build();
+            ResponseDTO<?> response = ResponseDTO.<GroupScheduleDTO>builder().data(Collections.singletonList(responseGroupScheduelDTO)).status("succeed").build();
 
             return ResponseEntity.ok().body(response);
 
         } catch (Exception e) {
             String error = e.getMessage();
-            ResponseDTO response = ResponseDTO.<UserScheduleDTO>builder().error(error).build();
+            ResponseDTO<GroupScheduleDTO> response = ResponseDTO.<GroupScheduleDTO>builder().status("fail").error(error).build();
             return ResponseEntity.badRequest().body(response);
         }
     }

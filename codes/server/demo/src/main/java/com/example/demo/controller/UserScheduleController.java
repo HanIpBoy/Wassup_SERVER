@@ -49,9 +49,9 @@ public class UserScheduleController {
 	 * @return 유저의 개인 일정 + 유저가 속한 모든 그룹 공통 일정 반환
 	 */
 	@GetMapping
-	public ResponseEntity<?> retrieveSchedule(@AuthenticationPrincipal String userId) {
+	public ResponseEntity<?> retrieveAllSchedules(@AuthenticationPrincipal String userId) {
 		List<UserScheduleEntity> userEntites = service.retrieveUserSchedules(userId);
-		List<GroupScheduleEntity> groupEntities = service.retrieveGroupSchedule(userId);
+		List<GroupScheduleEntity> groupEntities = service.retrieveGroupSchedules(userId);
 
 		List<UserScheduleDTO> userScheduleDTO = userEntites.stream().map(UserScheduleDTO::new).collect(Collectors.toList());
 		List<GroupScheduleDTO> groupScheduleDTO = groupEntities.stream().map(GroupScheduleDTO::new).collect(Collectors.toList());
@@ -62,7 +62,6 @@ public class UserScheduleController {
 
 		return ResponseEntity.ok().body(response);
 	}
-
 	// 그룹 일정 다 빼고 해당 User의 일정들만 반환
 	@GetMapping("/user-schedules")
 	public ResponseEntity<?> retrieveUserSchedules(@AuthenticationPrincipal String userId){

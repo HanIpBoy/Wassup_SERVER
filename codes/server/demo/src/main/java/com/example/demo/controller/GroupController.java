@@ -52,7 +52,7 @@ public class GroupController {
 			groupService.createGroupUser(userId, entity);
 
 			//생성하는 그룹 정보를 토대로 각 유저 아이디를 세팅해 noti를 만들고 DB에 저장
-			List<NotificationDTO> notificationDTO = notificationService.createGroupInviteNotification(dto.getGroupUsers(), entity);
+			List<NotificationDTO> notificationDTO = notificationService.createGroupInviteNotification(dto.getGroupUsers(), responseGroupEntity.getOriginKey());
 
 			// 생성한 notificationEntity와 groupEntity로 NotificationDTO를 만들어 SseEmitter로 요청 알림 전송
 			emitterService.sendToClients(notificationDTO);
@@ -62,7 +62,6 @@ public class GroupController {
 			ResponseDTO<?> response = ResponseDTO.<GroupDTO>builder().data(Collections.singletonList(groupDTO)).status("succeed").build();
 
 			return ResponseEntity.ok().body(response);
-
 		} catch(Exception e) {
 			String error = e.getMessage();
 			ResponseDTO<GroupDTO> response = ResponseDTO.<GroupDTO>builder().status("fail").error(error).build();
@@ -74,9 +73,12 @@ public class GroupController {
 	public ResponseEntity<?> handleGroupCreateResponse(@AuthenticationPrincipal String userId, @RequestBody NotificationDTO dto) {
 		// client는 사용자가 요청 알림을 받아서 버튼을 눌렀을 때, 이 API를 사용하면 됨. ResponseDTO의 status에 accept/deny 문자열이 날라옴.
 
-		GroupEntity entity = dto.getGroup();
+		GroupEntity entity = groupService.retrieveGroupByOriginKey(dto.getGroupOriginKey());
+
 		if(dto.getIsAccepted().equals("accept")) { // 사용자가 그룹 초대 요청을 수락하면
 			groupService.createGroupUser(userId, entity); // groupUser 테이블을 생성
+
+			entity.setNumOfUsers(entity.getNumOfUsers()+1); // numofUsers를 + 1 해서 groupService에 넘겨줌
 
 			groupService.updateGroup(entity); //group의 numOfUsers 수정(그룹원 +1)
 
@@ -132,7 +134,7 @@ public class GroupController {
 		
 		for (GroupUserEntity entity :groupUserEntities) {
 			List<UserScheduleEntity> userEntites = scheduleService.retrieveUserSchedules(entity.getUserId());
-			List<GroupScheduleEntity> groupEntities = scheduleService.retrieveGroupSchedule(entity.getUserId());
+			List<GroupScheduleEntity> groupEntities = scheduleService.retrieveGroupSchedules(entity.getGroupOriginKey());
 
 			List<UserScheduleDTO> userScheduleDTO = userEntites.stream().map(UserScheduleDTO::new).collect(Collectors.toList());
 			List<GroupScheduleDTO> groupScheduleDTO = groupEntities.stream().map(GroupScheduleDTO::new).collect(Collectors.toList());
@@ -217,6 +219,7 @@ public class GroupController {
 			ResponseDTO response = ResponseDTO.<GroupDTO>builder().data(Collections.singletonList(responseGroupDTO)).status("succeed").build();
 
 			//notiEntity도 삭제해야 함
+			//groupSchedule 도 삭제해줘야 됨
 
 			return ResponseEntity.ok().body(response);
 

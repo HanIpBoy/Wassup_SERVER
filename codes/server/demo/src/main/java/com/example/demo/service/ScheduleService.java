@@ -51,8 +51,12 @@ public class ScheduleService {
 		return userScheduleRepository.findAllByUserIdOrderByStartAtAsc(userId);
 	}
 
+	public GroupScheduleEntity retrieveGroupSchedule(final String groupScheduleOriginKey) {
+		return groupScheduleRepository.findByOriginKey(groupScheduleOriginKey);
+	}
+
 	//그룹이 생성한 모든 스케쥴 검색
-	public List<GroupScheduleEntity> retrieveGroupSchedule(final String groupOriginKey){
+	public List<GroupScheduleEntity> retrieveGroupSchedules(final String groupOriginKey){
 		return groupScheduleRepository.findByGroupOriginKey(groupOriginKey);
 	}
 
@@ -62,7 +66,7 @@ public class ScheduleService {
 		List<GroupScheduleEntity> groupSchedules = new ArrayList<>();
 
 		for(GroupUserEntity users : groupUsers) {
-			for(GroupScheduleEntity schedule : retrieveGroupSchedule(users.getGroupOriginKey())) {
+			for(GroupScheduleEntity schedule : retrieveGroupSchedules(users.getGroupOriginKey())) {
 				groupSchedules.add(schedule);
 			}
 		}
@@ -148,4 +152,5 @@ public class ScheduleService {
 			throw new RuntimeException("Unknown user.");
 		}
 	}
+
 }

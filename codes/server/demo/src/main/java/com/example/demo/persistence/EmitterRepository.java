@@ -13,6 +13,10 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 public class EmitterRepository {
 
+    //field는
+    // String userId
+    // SseEmitter ssemitter
+
     // 유저ID를 키로 SseEmitter를 해시맵에 저장할 수 있도록 구현했다.
     private final Map<String, SseEmitter> emitterMap = new ConcurrentHashMap<>();
 
