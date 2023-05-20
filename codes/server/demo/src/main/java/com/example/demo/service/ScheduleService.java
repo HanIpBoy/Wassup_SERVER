@@ -46,7 +46,7 @@ public class ScheduleService {
 		return entity;
 	}
 
-	//유저가 생성한 모든 스케쥴 검색 + 자신이 속해있는 그룹의 일정까지 전부 검색
+
 	public List<UserScheduleEntity> retrieveUserSchedules(final String userId) {
 		return userScheduleRepository.findAllByUserIdOrderByStartAtAsc(userId);
 	}

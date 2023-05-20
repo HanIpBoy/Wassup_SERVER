@@ -147,6 +147,32 @@ public class GroupController {
 		return ResponseEntity.ok().body(response);
 	}
 
+	/***
+	 * 그룹의 originKey를 받아서 그룹에 속한 유저들의 개인 일정들만 반환
+	 * @param groupOriginKey 그룹의 originKey
+	 * @return ResponseEntity <List<UserScheduleDTO>> GroupUser들의 개인일정들을 담은 ResponseEntity 객체
+	 */
+	@GetMapping("/{groupOriginKey}/user-schedules")
+	public ResponseEntity<?> retrieveGroupUserSchedules(@PathVariable("groupOriginKey") String groupOriginKey) {
+		List<GroupUserEntity> groupUserEntities= groupService.retrieveUsersByGroupOriginKey(groupOriginKey);
+
+		//반환용 List 생성
+		List<UserScheduleDTO> dtos = new ArrayList<>();
+
+		for (GroupUserEntity entity :groupUserEntities) {
+			List<UserScheduleEntity> userEntites = scheduleService.retrieveUserSchedules(entity.getUserId());
+
+			List<UserScheduleDTO> userScheduleDTO = userEntites.stream().map(UserScheduleDTO::new).collect(Collectors.toList());
+
+			//반환용 List 에 추가
+			dtos.addAll(userScheduleDTO);
+		}
+
+		ResponseDTO response = ResponseDTO.<UserScheduleDTO>builder().data(dtos).status("succeed").build();
+
+		return ResponseEntity.ok().body(response);
+	}
+
 	@PutMapping
 	public ResponseEntity<?> updateGroup(@AuthenticationPrincipal String userId, @RequestBody GroupDTO dto) {
 		GroupEntity entity = GroupDTO.toEntity(dto);
