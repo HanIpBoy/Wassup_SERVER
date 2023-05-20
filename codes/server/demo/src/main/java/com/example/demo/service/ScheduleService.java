@@ -62,10 +62,15 @@ public class ScheduleService {
 
 	//사용자가 속한 모든 그룹의 일정들을 리스트로 반환
 	public List<GroupScheduleEntity> retrieveGroupScheduleByUserId(final String userId) {
+		//사용자가 속한 그룹 찾기
 		List<GroupUserEntity> groupUsers = groupUserRepository.findByUserId(userId);
+		
+		//반환용 List 생성
 		List<GroupScheduleEntity> groupSchedules = new ArrayList<>();
-
+		
+		//사용자가 속한 각각의 그룹들에서
 		for(GroupUserEntity users : groupUsers) {
+			//그룹들의 공통일정을 반환용 List에 추가
 			for(GroupScheduleEntity schedule : retrieveGroupSchedules(users.getGroupOriginKey())) {
 				groupSchedules.add(schedule);
 			}

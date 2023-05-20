@@ -3,6 +3,7 @@ package com.example.demo.controller;
 import com.example.demo.dto.*;
 import com.example.demo.model.GroupScheduleEntity;
 import com.example.demo.model.UserScheduleEntity;
+import com.example.demo.service.GroupService;
 import com.example.demo.service.ScheduleService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,7 +52,8 @@ public class UserScheduleController {
 	@GetMapping
 	public ResponseEntity<?> retrieveAllSchedules(@AuthenticationPrincipal String userId) {
 		List<UserScheduleEntity> userEntites = service.retrieveUserSchedules(userId);
-		List<GroupScheduleEntity> groupEntities = service.retrieveGroupSchedules(userId);
+
+		List<GroupScheduleEntity> groupEntities = service.retrieveGroupScheduleByUserId(userId);
 
 		List<UserScheduleDTO> userScheduleDTO = userEntites.stream().map(UserScheduleDTO::new).collect(Collectors.toList());
 		List<GroupScheduleDTO> groupScheduleDTO = groupEntities.stream().map(GroupScheduleDTO::new).collect(Collectors.toList());
