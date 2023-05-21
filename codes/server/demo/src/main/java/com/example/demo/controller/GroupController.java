@@ -73,18 +73,20 @@ public class GroupController {
 	public ResponseEntity<?> handleGroupCreateResponse(@AuthenticationPrincipal String userId, @RequestBody NotificationDTO dto) {
 		// client는 사용자가 요청 알림을 받아서 버튼을 눌렀을 때, 이 API를 사용하면 됨. ResponseDTO의 status에 accept/deny 문자열이 날라옴.
 
-		GroupEntity entity = groupService.retrieveGroupByOriginKey(dto.getGroupOriginKey());
-
 		if(dto.getIsAccepted().equals("accept")) { // 사용자가 그룹 초대 요청을 수락하면
+			// 받은 데이터로 groupEntity를 찾음
+			GroupEntity entity = groupService.retrieveGroupByOriginKey(dto.getGroupOriginKey());
+			
 			groupService.createGroupUser(userId, entity); // groupUser 테이블을 생성
 
 			entity.setNumOfUsers(entity.getNumOfUsers()+1); // numofUsers를 + 1 해서 groupService에 넘겨줌
 
 			groupService.updateGroup(entity); //group의 numOfUsers 수정(그룹원 +1)
 
-			// 해당 notification을 DB에서 삭제해야 함. -> notificationEntity를 찾아야 함. -> 그래서 매개변수 자체를 notificationDTO로 받음.
-			notificationService.deleteNotification(dto.getNotification());
 		}
+
+		// 해당 notification을 DB에서 삭제해야 함. -> notificationEntity를 찾아야 함. -> 그래서 매개변수 자체를 notificationDTO로 받음.
+		notificationService.deleteNotification(dto.getNotification());
 
 		ResponseDTO response = ResponseDTO.<GroupDTO>builder().status("succeed").build();
 
@@ -189,7 +191,10 @@ public class GroupController {
 
 			GroupEntity groupEntity = groupService.updateGroup(entity);
 
-			groupService.updateGroupUser(groupEntity, dto.getGroupUsers());
+			//GroupUser를 변경하고 싶을때
+			// GroupUser 생성 시 말고 Update 할 때 추가,삭제 하면 Emitter?
+            if(dto.getGroupUsers()!=null)
+				groupService.updateGroupUser(groupEntity, dto.getGroupUsers()); // groupUser를 변경해줌
 
 			GroupDTO responseGroupDTO = setGroupDTO(groupEntity);
 
