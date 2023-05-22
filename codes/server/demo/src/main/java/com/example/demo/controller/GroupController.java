@@ -177,6 +177,22 @@ public class GroupController {
 		return ResponseEntity.ok().body(response);
 	}
 
+	/** GroupDTO의 groupUsers 배열에 id를 넘겨주면, 이를 해당 userName으로 바꿔서 반환.
+	 * 	ios에서 그룹 타임테이블 만들 때 해당하는 유저의 색상 매핑할 때 사용하는 용도.
+	 **/
+	@PostMapping("/search/userName")
+	public ResponseEntity<?> retrieveUserIdToUserName(@RequestBody GroupDTO dto) {
+		List<String> userNameList = new ArrayList<>(); // 반환할 userName들을 담은 List
+		List<String> userList = dto.getGroupUsers(); // dto에서 받은 userId들을 담은 List
+		userNameList = userService.getByUserIdToUserName(userList);
+
+		GroupDTO responseDTO = GroupDTO.builder().groupUsers(userNameList).build();
+
+		ResponseDTO response = ResponseDTO.<GroupDTO>builder().data((List<GroupDTO>) responseDTO).status("succeed").build();
+
+		return ResponseEntity.ok().body(response);
+	}
+
 	@PutMapping
 	public ResponseEntity<?> updateGroup(@AuthenticationPrincipal String userId, @RequestBody GroupDTO dto) {
 		try {

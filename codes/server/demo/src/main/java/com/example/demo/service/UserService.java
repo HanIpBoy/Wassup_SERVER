@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -59,6 +60,16 @@ public class UserService {
 			return null;
 		}
 	}
+
+	public List<String> getByUserIdToUserName(List<String> userList) {
+		List<String> userNameList = new ArrayList<>();
+		for (int i = 0; i<userList.size(); i++) {
+			UserEntity userEntity = userRepository.findByUserId(userList.get(i));
+			userNameList.add(userEntity.getUserName());
+		}
+		return userNameList;
+	}
+
 
 	public UserEntity getByOriginKey(String originKey){
 		return userRepository.findByOriginKey(originKey);
