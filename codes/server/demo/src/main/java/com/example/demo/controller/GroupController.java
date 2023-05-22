@@ -219,12 +219,17 @@ public class GroupController {
 
 			groupService.deleteGroup(entity);
 
+			//groupSchedule 도 삭제해줘야 됨
+			scheduleService.deleteGroupScheduels(entity);
+
+			//notiEntity도 삭제해야 함
+			for (GroupUserEntity groupUser : groupService.retrieveUsersByGroupOriginKey(entity.getOriginKey())) {
+				notificationService.deleteNotificationByUserId(groupUser.getUserId());
+			}
+
 			GroupDTO responseGroupDTO = setGroupDTO(entity);
 
 			ResponseDTO response = ResponseDTO.<GroupDTO>builder().data(Collections.singletonList(responseGroupDTO)).status("succeed").build();
-
-			//notiEntity도 삭제해야 함
-			//groupSchedule 도 삭제해줘야 됨
 
 			return ResponseEntity.ok().body(response);
 

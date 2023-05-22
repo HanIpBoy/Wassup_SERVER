@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import com.example.demo.model.GroupEntity;
 import com.example.demo.model.GroupScheduleEntity;
 import com.example.demo.model.GroupUserEntity;
 import com.example.demo.model.UserScheduleEntity;
@@ -139,11 +140,18 @@ public class ScheduleService {
 		try {
 			groupScheduleRepository.delete(entity);
 		} catch(Exception e) {
-			log.error("error deleting entity", entity.getOriginKey(), e);
+			log.error("error deleting Group Schedule entity", entity.getOriginKey(), e);
 
 			throw new RuntimeException("error deleting entity " + entity.getOriginKey());
 		}
 		return target;
+	}
+	public void deleteGroupScheduels(final GroupEntity entity){
+		try {
+			groupScheduleRepository.deleteByGroupOriginKey(entity.getOriginKey());
+		}catch (Exception e){
+			throw new RuntimeException("error deleting GroupSchedule entities ");
+		}
 	}
 
 	private void validate(final UserScheduleEntity entity) {
