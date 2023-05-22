@@ -103,7 +103,7 @@ public class GroupController {
 	public ResponseEntity<?> retrieveGroups(@AuthenticationPrincipal String userId) {
 		List<GroupEntity> entites = groupService.retrieveGroupsByUserId(userId);
 
-		List<GroupDTO> dtos = entites.stream().map(groupEntity -> this.setGroupDTO(groupEntity)).collect(Collectors.toList());
+		List<GroupDTO> dtos = entites.stream().map(this::setGroupDTO).collect(Collectors.toList());
 
 		ResponseDTO response = ResponseDTO.<GroupDTO>builder().data(dtos).status("succeed").build();
 
