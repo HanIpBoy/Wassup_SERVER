@@ -176,10 +176,15 @@ public class UserController {
 	 */
 	@GetMapping("/user/search/{userId}")
 	public ResponseEntity<?> retrieveUser(@PathVariable("userId") String userId) {
-		UserEntity userEntity = userService.getByUserId(userId);
-		UserDTO responseUserDTO = new UserDTO(userEntity);
-		ResponseDTO response = ResponseDTO.<UserDTO>builder().data(Collections.singletonList(responseUserDTO)).status("succeed").build();
-		return ResponseEntity.ok().body(response);
+		try {
+			UserEntity userEntity = userService.getByUserId(userId);
+			UserDTO responseUserDTO = new UserDTO(userEntity);
+			ResponseDTO response = ResponseDTO.<UserDTO>builder().data(Collections.singletonList(responseUserDTO)).status("succeed").build();
+			return ResponseEntity.ok().body(response);
+		}catch (Exception e){
+			ResponseDTO responseDTO = ResponseDTO.builder().status("fail").error(e.getMessage()).build();
+			return ResponseEntity.badRequest().body(responseDTO);
+		}
 	}
 
 }
