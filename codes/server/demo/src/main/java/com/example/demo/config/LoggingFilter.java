@@ -15,6 +15,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Enumeration;
 
 @Component
@@ -59,7 +60,7 @@ public class LoggingFilter extends AbstractRequestLoggingFilter {
 
             byte[] responseBytes = responseWrapper.getContentAsByteArray();
             if (responseBytes.length > 0) {
-                String responseBody = new String(responseBytes, responseWrapper.getCharacterEncoding());
+                String responseBody = new String(responseBytes, StandardCharsets.UTF_8);
                 try {
                     Object json = mapper.readValue(responseBody, Object.class);
                     String prettyResponse = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(json);
