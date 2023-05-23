@@ -31,10 +31,8 @@ public class GroupController {
 	@Autowired
 	private NotificationService notificationService;
 
-	@Autowired
-	private EmitterService emitterService;
 
-	@PostMapping("/createRequest")
+	@PostMapping("/create")
 	public ResponseEntity<?> createGroup(@AuthenticationPrincipal String userId, @RequestBody GroupDTO dto) {
 		try {
 			GroupEntity entity = GroupDTO.toEntity(dto);
@@ -51,11 +49,8 @@ public class GroupController {
 			//그룹장 GroupUser 테이블 생성
 			groupService.createGroupUser(userId, entity);
 
-			//생성하는 그룹 정보를 토대로 각 유저 아이디를 세팅해 noti를 만들고 DB에 저장
-			List<NotificationDTO> notificationDTO = notificationService.createGroupInviteNotification(dto.getGroupUsers(), responseGroupEntity.getOriginKey());
-
-			// 생성한 notificationEntity와 groupEntity로 NotificationDTO를 만들어 SseEmitter로 요청 알림 전송
-			emitterService.sendToClients(notificationDTO);
+			//생성하는 그룹 정보를 토대로 각 그룹원들의 알림을 알림 DB에 저장
+			notificationService.createGroupInviteNotification(dto.getGroupUsers(), responseGroupEntity.getOriginKey());
 
 			GroupDTO groupDTO = setGroupDTO(responseGroupEntity);
 
@@ -68,30 +63,46 @@ public class GroupController {
 			return ResponseEntity.badRequest().body(response);
 		}
 	}
+	/***
+	 * 클라이언트에서 받은 NotificationDTO로 GroupUser와 Group을 업데이트, 알림을 삭제하고, 성공했다는 신호만 담아서 반환
+	 * @param dto 클라이언트에서 받은 Notification dto
+	 * @return ResponseEntity 데이터를 담지 않고, status에 succeed만 담아서 보냄
+	 */
+	@PostMapping("/invitation/accpect")
+	public ResponseEntity<?> acceptGroupInvitation(@AuthenticationPrincipal String userId, @RequestBody NotificationDTO dto) {
 
-	@PostMapping("/createResponse")
-	public ResponseEntity<?> handleGroupCreateResponse(@AuthenticationPrincipal String userId, @RequestBody NotificationDTO dto) {
-		// client는 사용자가 요청 알림을 받아서 버튼을 눌렀을 때, 이 API를 사용하면 됨. ResponseDTO의 status에 accept/deny 문자열이 날라옴.
+		// 받은 데이터로 groupEntity를 찾음
+		GroupEntity entity = groupService.retrieveGroupByOriginKey(dto.getGroupOriginKey());
 
-		if(dto.getIsAccepted().equals("accept")) { // 사용자가 그룹 초대 요청을 수락하면
-			// 받은 데이터로 groupEntity를 찾음
-			GroupEntity entity = groupService.retrieveGroupByOriginKey(dto.getGroupOriginKey());
-			
-			groupService.createGroupUser(userId, entity); // groupUser 테이블을 생성
+		groupService.createGroupUser(userId, entity); // groupUser 테이블을 생성
 
-			entity.setNumOfUsers(entity.getNumOfUsers()+1); // numofUsers를 + 1 해서 groupService에 넘겨줌
-
-			groupService.updateGroup(entity); //group의 numOfUsers 수정(그룹원 +1)
-
-		}
+		groupService.updateGroupNumOfUsers(entity); //group의 numOfUsers 수정(그룹원 +1)
 
 		// 해당 notification을 DB에서 삭제해야 함. -> notificationEntity를 찾아야 함. -> 그래서 매개변수 자체를 notificationDTO로 받음.
-		notificationService.deleteNotification(dto.getNotification());
+		notificationService.deleteNotification(notificationService.retreieveByOriginKey(dto.getOriginKey()));
 
 		ResponseDTO response = ResponseDTO.<GroupDTO>builder().status("succeed").build();
 
 		return ResponseEntity.ok().body(response);
 	}
+
+	/***
+	 * 클라이언트에서 받은 NotificationDTO로 알림을 삭제하고, 성공했다는 신호만 담아서 반환
+	 * @param dto 클라이언트에서 받은 Notification dto
+	 * @return ResponseEntity 데이터를 담지 않고, status에 succeed만 담아서 보냄
+	 */
+	@PostMapping("/invitation/decline")
+	public ResponseEntity<?> declineGroupInvitation(@RequestBody NotificationDTO dto) {
+		// 그룹 초대 거절 시 , 다른 동작은 하지 않고, 알림만 삭제
+
+		// 해당 notification을 DB에서 삭제해야 함. -> notificationEntity를 찾아야 함. -> 그래서 매개변수 자체를 notificationDTO로 받음.
+		notificationService.deleteNotification(notificationService.retreieveByOriginKey(dto.getOriginKey()));
+
+		ResponseDTO response = ResponseDTO.<GroupDTO>builder().status("succeed").build();
+
+		return ResponseEntity.ok().body(response);
+	}
+
 
 
 	/***

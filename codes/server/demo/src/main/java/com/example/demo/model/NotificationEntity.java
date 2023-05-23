@@ -21,11 +21,12 @@ public class NotificationEntity {
     @Id
     @GeneratedValue(generator="system-uuid")
     @GenericGenerator(name="system-uuid", strategy="uuid")
-    private String notificationId;
+    private String originKey;
     private String userId;
     private String title;
     private String message;
-
+    private String groupOriginKey;
     @CreationTimestamp
     private LocalDateTime createdAt;
 }
+

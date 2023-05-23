@@ -41,8 +41,9 @@ public class GroupService {
 	public List<GroupEntity> retrieveGroupsByUserId(final String userId) {
 		// 사용자의 Id로 groupUser 테이블을 검색
 		List<GroupUserEntity> groupUserEntities = groupUserRepository.findByUserId(userId);
+		
+		// 최종적으로 반환할 List 미리 생성
 		List<GroupEntity> groupEntities = new ArrayList<>();
-		; // 최종적으로 반환할 List
 
 		for (GroupUserEntity entitiy : groupUserEntities) {
 			groupEntities.add(groupRepository.findByOriginKey(entitiy.getGroupOriginKey()));
@@ -71,6 +72,13 @@ public class GroupService {
 			group.setLeaderId(entity.getLeaderId() != null ? entity.getLeaderId() : group.getLeaderId());
 			groupRepository.save(group);
 		});
+
+		return groupRepository.findByOriginKey(entity.getOriginKey());
+	}
+	public GroupEntity updateGroupNumOfUsers(GroupEntity entity) {
+		validate(entity);
+
+		entity.setNumOfUsers(entity.getNumOfUsers()+1);
 
 		return groupRepository.findByOriginKey(entity.getOriginKey());
 	}
@@ -146,5 +154,6 @@ public class GroupService {
 		
 		return entity;
 	}
+
 }
 
