@@ -190,7 +190,7 @@ public class GroupController {
 
 		ResponseDTO response = ResponseDTO.<GroupDTO>builder().data((List<GroupDTO>) responseDTO).status("succeed").build();
 
-		return ResponseEntity.ok().body(response);
+		return ResponseEntity.ok().body(response); 
 	}
 
 	@PutMapping
