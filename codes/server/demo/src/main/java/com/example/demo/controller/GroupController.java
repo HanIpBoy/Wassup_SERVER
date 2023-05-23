@@ -188,7 +188,7 @@ public class GroupController {
 
 		GroupDTO responseDTO = GroupDTO.builder().groupUsers(userNameList).build();
 
-		ResponseDTO response = ResponseDTO.<GroupDTO>builder().data((List<GroupDTO>) responseDTO).status("succeed").build();
+		ResponseDTO<GroupDTO> response = ResponseDTO.<GroupDTO>builder().data(Collections.singletonList(responseDTO)).status("succeed").build();
 
 		return ResponseEntity.ok().body(response); 
 	}
