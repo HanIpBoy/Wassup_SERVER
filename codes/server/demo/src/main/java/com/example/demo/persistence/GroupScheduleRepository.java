@@ -10,5 +10,6 @@ import java.util.List;
 public interface GroupScheduleRepository extends JpaRepository<GroupScheduleEntity, String> {
     List<GroupScheduleEntity> findByGroupOriginKey(String groupOriginKey);
     GroupScheduleEntity findByOriginKey(String originKey);
+    void deleteByGroupOriginKey(String groupOriginKey);
 }
 

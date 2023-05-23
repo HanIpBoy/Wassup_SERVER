@@ -104,10 +104,14 @@ public class NotificationService {
         return dtos;
     }
     public NotificationEntity retreieve(String originKey){
-        return null;
+        return notificationRepository.findByNotificationId(originKey);
     }
 
     public void deleteNotification(NotificationEntity entity) {
         notificationRepository.delete(entity);
+    }
+
+    public void deleteNotificationByUserId(String userId) {
+        notificationRepository.deleteByuserId(userId);
     }
 }
