@@ -32,7 +32,7 @@ public class GroupService {
 	}
 
 	public GroupUserEntity createGroupUser(String userId, GroupEntity groupEntity) {
-		GroupUserEntity groupUserEntity = new GroupUserEntity();
+		GroupUserEntity groupUserEntity = null;
 		groupUserEntity.setUserId(userId);
 		groupUserEntity.setGroupOriginKey(groupEntity.getOriginKey());
 		groupUserRepository.save(groupUserEntity);

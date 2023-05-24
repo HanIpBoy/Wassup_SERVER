@@ -47,7 +47,7 @@ public class GroupController {
 			GroupEntity responseGroupEntity = groupService.createGroup(entity);
 
 			//그룹장 GroupUser 테이블 생성
-			groupService.createGroupUser(userId, entity);
+			groupService.createGroupUser(userId, responseGroupEntity);
 
 			//생성하는 그룹 정보를 토대로 각 그룹원들의 알림을 알림 DB에 저장
 			notificationService.createGroupInviteNotification(dto.getGroupUsers(), responseGroupEntity.getOriginKey());
