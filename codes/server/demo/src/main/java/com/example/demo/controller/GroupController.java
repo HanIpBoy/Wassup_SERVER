@@ -266,7 +266,7 @@ public class GroupController {
 			return ResponseEntity.badRequest().body(response);
 		}
 	}
-	private GroupDTO setGroupDTO(GroupEntity groupEntity) {
+	private GroupDTO setGroupDTO(final GroupEntity groupEntity) {
 		// 클라에게 보낼 DTO 세팅
 		List<GroupUserEntity> groupUserEntities = groupService.retrieveUsersByGroupOriginKey(groupEntity.getOriginKey());
 		List<String> userIds = new ArrayList<>();

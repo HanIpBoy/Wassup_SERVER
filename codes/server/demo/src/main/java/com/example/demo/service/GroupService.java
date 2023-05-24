@@ -49,6 +49,7 @@ public class GroupService {
 		for (GroupUserEntity entitiy : groupUserEntities) {
 			groupEntities.add(groupRepository.findByOriginKey(entitiy.getGroupOriginKey()));
 		}
+		log.info("retrieveGroupsByUserId 함수의 반환 값:"+groupEntities.toString());
 		return groupEntities;
 	}
 
