@@ -77,9 +77,14 @@ public class GroupService {
 		return groupRepository.findByOriginKey(entity.getOriginKey());
 	}
 	public GroupEntity updateGroupNumOfUsers(GroupEntity entity) {
+
 		validate(entity);
 
+		// 그룹원을 한명 추가하는 것으로 세팅
 		entity.setNumOfUsers(entity.getNumOfUsers()+1);
+
+		// 그룹원 +1 의 내용을 DB에 반영
+		groupRepository.save(entity);
 
 		return groupRepository.findByOriginKey(entity.getOriginKey());
 	}
