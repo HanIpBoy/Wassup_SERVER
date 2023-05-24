@@ -68,7 +68,7 @@ public class GroupController {
 	 * @param dto 클라이언트에서 받은 Notification dto
 	 * @return ResponseEntity 데이터를 담지 않고, status에 succeed만 담아서 보냄
 	 */
-	@PostMapping("/invitation/accpect")
+	@PostMapping("/invitation/accept")
 	public ResponseEntity<?> acceptGroupInvitation(@AuthenticationPrincipal String userId, @RequestBody NotificationDTO dto) {
 
 		// 받은 데이터로 groupEntity를 찾음
