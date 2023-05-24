@@ -65,6 +65,7 @@ public class UserService {
 		List<String> userNameList = new ArrayList<>();
 		for (int i = 0; i<userList.size(); i++) {
 			UserEntity userEntity = userRepository.findByUserId(userList.get(i));
+			log.info("UserService의 getByUserIdToUserName 함수: "+ userList.get(i) + " " + userEntity);
 			userNameList.add(userEntity.getUserName());
 		}
 		return userNameList;
