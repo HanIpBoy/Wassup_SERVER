@@ -201,14 +201,14 @@ public class UserController {
     public ResponseEntity<?> DeleteNoti(@AuthenticationPrincipal String userId, @PathVariable("notificationOriginKey") String notiOriginKey) {
         try {
             NotificationEntity entity = notificationService.retreieveByOriginKey(notiOriginKey);
-
+            NotificationDTO reseponseDTO = new NotificationDTO(entity);
 			//Validate Code
 			if(entity.getUserId().equals(userId))
             	notificationService.deleteNotification(entity); // Validate를 성공하면 알림을 삭제
 			else
 				new RuntimeException("Unauthorized user attempted to delete the notification");
 
-			ResponseDTO response = ResponseDTO.<NotificationDTO>builder().status("succeed").build();
+			ResponseDTO response = ResponseDTO.<NotificationDTO>builder().data(Collections.singletonList(reseponseDTO)).status("succeed").build();
 
 			return ResponseEntity.ok().body(response);
         } catch (Exception e) {
