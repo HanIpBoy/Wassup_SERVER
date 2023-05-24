@@ -26,8 +26,9 @@ public class GroupService {
 		// Validations
 		validate(entity);
 
-		groupRepository.save(entity);
-		return retrieveGroupByOriginKey(entity.getOriginKey());
+		GroupEntity savedGroupEntity = groupRepository.save(entity);
+
+		return savedGroupEntity;
 	}
 
 	public GroupUserEntity createGroupUser(String userId, GroupEntity groupEntity) {
