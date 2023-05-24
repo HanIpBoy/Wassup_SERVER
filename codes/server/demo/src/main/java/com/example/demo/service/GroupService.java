@@ -68,7 +68,7 @@ public class GroupService {
 		original.ifPresent(group -> {
 			group.setGroupName(entity.getGroupName() != null ? entity.getGroupName() : group.getGroupName());
 			group.setDescription(entity.getDescription() != null ? entity.getDescription() : group.getDescription());
-			group.setNumOfUsers(group.getNumOfUsers());
+			group.setNumOfUsers(entity.getNumOfUsers());
 			group.setLeaderId(entity.getLeaderId() != null ? entity.getLeaderId() : group.getLeaderId());
 			groupRepository.save(group);
 		});
@@ -108,6 +108,11 @@ public class GroupService {
 				createGroupUser(uid, groupEntity);
 			}
 		}
+
+		//Group의 NumofUsers 가 바뀌였으면 수정
+		if(requestGroupUsers.size()!=groupEntity.getNumOfUsers())
+			groupEntity.setNumOfUsers(requestGroupUsers.size());
+
 		return retrieveUsersByGroupOriginKey(groupEntity.getOriginKey());
 	}
 
