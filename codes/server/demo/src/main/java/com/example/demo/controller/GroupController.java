@@ -270,9 +270,16 @@ public class GroupController {
 		// 클라에게 보낼 DTO 세팅
 		List<GroupUserEntity> groupUserEntities = groupService.retrieveUsersByGroupOriginKey(groupEntity.getOriginKey());
 		List<String> userIds = new ArrayList<>();
-		for (GroupUserEntity groupUserEntity : groupUserEntities) {
-			userIds.add(groupUserEntity.getUserId());
+
+		// null 체크를 수행하고, null이 아닌 경우에만 userIds에 추가
+		if (groupUserEntities != null) {
+			for (GroupUserEntity groupUserEntity : groupUserEntities) {
+				if (groupUserEntity.getUserId() != null) {
+					userIds.add(groupUserEntity.getUserId());
+				}
+			}
 		}
+
 		GroupDTO dtos = new GroupDTO(groupEntity);
 		dtos.setGroupUsers(userIds);
 		return dtos;
