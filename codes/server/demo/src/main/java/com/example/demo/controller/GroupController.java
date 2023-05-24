@@ -272,11 +272,9 @@ public class GroupController {
 		List<String> userIds = new ArrayList<>();
 
 		// null 체크를 수행하고, null이 아닌 경우에만 userIds에 추가
-		if (groupUserEntities != null) {
-			for (GroupUserEntity groupUserEntity : groupUserEntities) {
-				if (groupUserEntity.getUserId() != null) {
-					userIds.add(groupUserEntity.getUserId());
-				}
+		for (GroupUserEntity groupUserEntity : groupUserEntities) {
+			if (groupUserEntity.getUserId() != null) {
+				userIds.add(groupUserEntity.getUserId());
 			}
 		}
 
