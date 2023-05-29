@@ -45,7 +45,7 @@ public class NotificationService {
             NotificationEntity notiEntity = NotificationEntity.builder()
                     .userId(user)
                     .title("그룹 초대")
-                    .message(groupLeaderName+"("+entity.getLeaderId() + ") 님이 당신을 " + entity.getGroupName() + " 그룹에 초대하셨습니다.")
+                    .message(groupLeaderName+"("+entity.getLeaderId() + ") 님이 당신을 \"" + entity.getGroupName() + "\" 그룹에 초대하셨습니다.")
                     .groupOriginKey(groupOriginKey)
                     .build();
 
