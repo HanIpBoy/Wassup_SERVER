@@ -107,6 +107,17 @@ public class GroupController {
 
 		GroupDTO dtos = setGroupDTO(entity);
 
+		//groupUsers에 Id 대신 넣을 새로운 List 생성
+		List<String> userNames = new ArrayList<>();
+
+		//이 API 만 groupUser의 목록을 Id가 아닌 UserName으로 보냄
+		for (String userId: dtos.getGroupUsers()) {
+			userNames.add(userService.getByUserId(userId).getUserName());
+		}
+
+		//GroupUsers의 내용을 바꿔치기
+		dtos.setGroupUsers(userNames);
+
 		ResponseDTO response = ResponseDTO.<GroupDTO>builder().data(Collections.singletonList(dtos)).status("succeed").build();
 
 		return ResponseEntity.ok().body(response);
