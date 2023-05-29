@@ -8,6 +8,7 @@ import com.example.demo.model.NotificationEntity;
 import com.example.demo.persistence.GroupRepository;
 import com.example.demo.persistence.GroupUserRepository;
 import com.example.demo.persistence.NotificationRepository;
+import com.example.demo.persistence.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,10 +29,14 @@ public class NotificationService {
     @Autowired
     private GroupRepository groupRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     public List<NotificationDTO> createGroupInviteNotification(List<String> groupUsers, String groupOriginKey) {
         List<NotificationDTO> dtos = new ArrayList<>();
 
         GroupEntity entity = groupRepository.findByOriginKey(groupOriginKey);
+        String groupLeaderName = userRepository.findByUserId(entity.getLeaderId()).getUserName();
 
         for (String user : groupUsers) {
             //그룹장은 알림을 생성하지 않음
@@ -40,7 +45,7 @@ public class NotificationService {
             NotificationEntity notiEntity = NotificationEntity.builder()
                     .userId(user)
                     .title("그룹 초대")
-                    .message(entity.getLeaderId() + " 님이 당신을 " + entity.getGroupName() + " 그룹에 초대하셨습니다.")
+                    .message(groupLeaderName+"("+entity.getLeaderId() + ") 님이 당신을 " + entity.getGroupName() + " 그룹에 초대하셨습니다.")
                     .groupOriginKey(groupOriginKey)
                     .build();
 
