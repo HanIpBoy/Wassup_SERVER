@@ -107,6 +107,7 @@ public class ScheduleService {
 		final Optional<GroupScheduleEntity> original =groupScheduleRepository.findById(entity.getOriginKey());
 
 		original.ifPresent(groupSchedule ->{
+			groupSchedule.setName(entity.getName()!=null ? entity.getName() : groupSchedule.getName());
 			groupSchedule.setGroupOriginKey(entity.getGroupOriginKey()!= null ? entity.getGroupOriginKey() : groupSchedule.getGroupOriginKey());
 			groupSchedule.setStartAt(entity.getStartAt() != null ? entity.getStartAt() : groupSchedule.getStartAt());
 			groupSchedule.setEndAt(entity.getEndAt() != null ? entity.getEndAt() : groupSchedule.getEndAt());
