@@ -38,9 +38,12 @@ public class NotificationService {
         GroupEntity entity = groupRepository.findByOriginKey(groupOriginKey);
         String groupLeaderName = userRepository.findByUserId(entity.getLeaderId()).getUserName();
 
+        //그룹장 아이디 가져오기
+        String leaderId = entity.getLeaderId();
+
         for (String user : groupUsers) {
             //그룹장은 알림을 생성하지 않음
-            if (user.equals(entity.getLeaderId())) continue;
+            if (user.equals(leaderId)) continue;
 
             NotificationEntity notiEntity = NotificationEntity.builder()
                     .userId(user)
@@ -66,8 +69,15 @@ public class NotificationService {
         // 그룹 정보 가져오기
         GroupEntity group = groupRepository.findByOriginKey(groupUserEntities.get(0).getGroupOriginKey());
 
+        //그룹장 아이디 가져오기
+        String leaderId = group.getLeaderId();
+
         // 루프 돌면서 notificationDTO 만드는 과정
         for (GroupUserEntity groupUser : groupUserEntities) {
+
+            //그룹장은 알림을 생성하지 않음
+            if (groupUser.getUserId().equals(leaderId)) continue;
+
             NotificationEntity notiEntity = null;
             notiEntity = NotificationEntity.builder()
                     .userId(groupUser.getUserId())
@@ -90,8 +100,15 @@ public class NotificationService {
         // 그룹 정보 가져오기
         GroupEntity group = groupRepository.findByOriginKey(groupUserEntities.get(0).getGroupOriginKey());
 
+        //그룹장 아이디 가져오기
+        String leaderId = group.getLeaderId();
+
         // 루프 돌면서 notificationDTO 만드는 과정
         for (GroupUserEntity groupUser : groupUserEntities) {
+
+            //그룹장은 알림을 생성하지 않음
+            if (groupUser.getUserId().equals(leaderId)) continue;
+
             NotificationEntity notiEntity = null;
             notiEntity = NotificationEntity.builder()
                     .userId(groupUser.getUserId())
@@ -114,8 +131,15 @@ public class NotificationService {
         // 그룹 정보 가져오기
         GroupEntity group = groupRepository.findByOriginKey(groupUserEntities.get(0).getGroupOriginKey());
 
+        //그룹장 아이디 가져오기
+        String leaderId = group.getLeaderId();
+
         // 루프 돌면서 notificationDTO 만드는 과정
         for (GroupUserEntity groupUser : groupUserEntities) {
+
+            //그룹장은 알림을 생성하지 않음
+            if (groupUser.equals(leaderId)) continue;
+
             NotificationEntity notiEntity = null;
             notiEntity = NotificationEntity.builder()
                     .userId(groupUser.getUserId())
