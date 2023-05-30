@@ -137,7 +137,7 @@ public class GroupController {
 		
 		for (GroupUserEntity entity :groupUserEntities) {
 			List<UserScheduleEntity> userEntites = scheduleService.retrieveUserSchedules(entity.getUserId());
-			List<GroupScheduleEntity> groupEntities = scheduleService.retrieveGroupSchedules(entity.getGroupOriginKey());
+			List<GroupScheduleEntity> groupEntities = scheduleService.retrieveGroupScheduleByUserId(entity.getUserId());
 
 			List<UserScheduleDTO> userScheduleDTO = userEntites.stream().map(UserScheduleDTO::new).collect(Collectors.toList());
 			List<GroupScheduleDTO> groupScheduleDTO = groupEntities.stream().map(GroupScheduleDTO::new).collect(Collectors.toList());
