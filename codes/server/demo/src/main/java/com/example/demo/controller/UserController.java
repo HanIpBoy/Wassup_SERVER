@@ -216,5 +216,16 @@ public class UserController {
             return ResponseEntity.badRequest().body(responseDTO);
         }
     }
+    @DeleteMapping("user/notification")
+    public ResponseEntity<?> DeleteNotis(@AuthenticationPrincipal String userId){
+        try {
+            notificationService.deleteNotificationByUserId(userId);
+            ResponseDTO response = ResponseDTO.<NotificationDTO>builder().data(null).status("succeed").build();
+            return ResponseEntity.ok().body(response);
+        } catch (Exception e) {
+            ResponseDTO responseDTO = ResponseDTO.builder().status("fail").error(e.getMessage()).build();
+            return ResponseEntity.badRequest().body(responseDTO);
+        }
+    }
 }
 

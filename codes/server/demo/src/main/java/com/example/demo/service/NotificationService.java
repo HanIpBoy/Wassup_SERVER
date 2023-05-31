@@ -82,7 +82,7 @@ public class NotificationService {
             notiEntity = NotificationEntity.builder()
                     .userId(groupUser.getUserId())
                     .title("그룹 일정 생성")
-                    .message(group.getGroupName() + " 그룹에서 " + groupScheduleEntity.getName() + " 일정을 생성하였습니다.")
+                    .message("\""+group.getGroupName() + "\" 그룹에서 \"" + groupScheduleEntity.getName() + "\" 일정을 생성하였습니다.")
                     .groupOriginKey(groupUser.getGroupOriginKey())
                     .build();
             notificationRepository.save(notiEntity);
@@ -113,7 +113,7 @@ public class NotificationService {
             notiEntity = NotificationEntity.builder()
                     .userId(groupUser.getUserId())
                     .title("그룹 일정 수정")
-                    .message(group.getGroupName() + " 그룹에서 " + groupScheduleEntity.getName() + " 일정을 수정하였습니다.")
+                    .message("\""+group.getGroupName() + "\" 그룹에서 \"" + groupScheduleEntity.getName() + "\" 일정을 수정하였습니다.")
                     .groupOriginKey(groupUser.getGroupOriginKey())
                     .build();
             notificationRepository.save(notiEntity);
@@ -144,7 +144,7 @@ public class NotificationService {
             notiEntity = NotificationEntity.builder()
                     .userId(groupUser.getUserId())
                     .title("그룹 일정 삭제")
-                    .message(group.getGroupName() + " 그룹에서 " + groupScheduleEntity.getName() + " 일정을 삭제하였습니다.")
+                    .message("\""+group.getGroupName() + "\" 그룹에서 \"" + groupScheduleEntity.getName() + "\" 일정을 삭제하였습니다.")
                     .groupOriginKey(groupUser.getGroupOriginKey())
                     .build();
             notificationRepository.save(notiEntity);
