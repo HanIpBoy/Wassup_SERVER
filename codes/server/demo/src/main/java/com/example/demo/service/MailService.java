@@ -23,7 +23,11 @@ public class MailService {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(userEntity.getUserId()); // To: 수신자
         message.setSubject("이때 모해? 이메일 계정 인증"); // Subject 제목
-        message.setText("이때 모해? 계정 인증을 위해 아래의 인증 코드를 사용해주세요:\n\n인증 코드: " +userEntity.getEmailAuthCode()+" \n\n 감사합니다.");
+        message.setText("이때 모해? 계정 인증을 위해 아래의 인증 코드를 사용해주세요:\n\n인증 코드: " +userEntity.getEmailAuthCode()+" \n\n 계정 보안을 위해 인증 코드를 타인과 공유하지 마세요. 저희는 고객의 개인 정보를 중요하게 여기며, 인증 과정을 통해 안전한 서비스를 제공하고 있습니다.\n" +
+                "\n" +
+                "궁금한 사항이 있으시면 언제든지 문의해주세요.\n" +
+                "\n" +
+                "감사합니다.");
         mailSender.send(message);
     }
 
