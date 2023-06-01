@@ -23,7 +23,7 @@ public class MailService {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(userEntity.getUserId()); // To: 수신자
         message.setSubject("Wscalendar 계정 이메일 주소 인증"); // Subject 제목
-        message.setText(userEntity.getEmailAuthCode()); // Text: 본문
+        message.setText("귀하의 이메일 인증 코드는 " + userEntity.getEmailAuthCode() + " 입니다. 서비스로 돌아가 인증 코드를 입력해 주세요."); // Text: 본문
 
         mailSender.send(message);
     }
