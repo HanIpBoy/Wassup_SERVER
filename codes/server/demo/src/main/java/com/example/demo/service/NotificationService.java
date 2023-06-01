@@ -166,6 +166,6 @@ public class NotificationService {
     }
 
     public void deleteNotificationByUserId(String userId) {
-        notificationRepository.deleteByuserId(userId);
+        notificationRepository.deleteAllByUserId(userId);
     }
 }

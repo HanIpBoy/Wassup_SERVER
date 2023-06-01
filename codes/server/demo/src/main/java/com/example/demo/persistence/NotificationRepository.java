@@ -9,7 +9,8 @@ import java.util.List;
 @Repository
 public interface NotificationRepository extends JpaRepository<NotificationEntity, String> {
     NotificationEntity findByOriginKey(String notificationOriginKey);
-    void deleteByuserId(String userId);
+    void deleteAllByUserId(String userId);
+
     List<NotificationEntity> findByUserId(String userId);
 
 }
