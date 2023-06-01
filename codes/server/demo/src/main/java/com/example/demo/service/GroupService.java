@@ -69,7 +69,6 @@ public class GroupService {
 		original.ifPresent(group -> {
 			group.setGroupName(entity.getGroupName() != null ? entity.getGroupName() : group.getGroupName());
 			group.setDescription(entity.getDescription() != null ? entity.getDescription() : group.getDescription());
-			group.setNumOfUsers(entity.getNumOfUsers());
 			group.setLeaderId(entity.getLeaderId() != null ? entity.getLeaderId() : group.getLeaderId());
 			groupRepository.save(group);
 		});
